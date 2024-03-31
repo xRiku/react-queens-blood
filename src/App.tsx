@@ -1,11 +1,12 @@
-import Board from "./components/Board"
+import Board from './components/Board'
+import Hand from './components/Hand'
 
 function App() {
   return (
-    <Board />
-    // <h1 className="text-3xl font-bold underline">
-    //   Hello world!
-    // </h1>
+    <>
+      <Board />
+      <Hand />
+    </>
   )
 }
 
