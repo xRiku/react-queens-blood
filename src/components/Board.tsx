@@ -79,23 +79,12 @@ export default function Board() {
     rowIndex: number,
     colIndex: number,
   ) {
-    // for (let i = 0; i < card.pawnsPositions.length; i++) {
-    //   tiles[rowIndex + card.pawnsPositions[i][0]][
-    //     colIndex + card.pawnsPositions[i][1]
-    //   ] = {
-    //     playerOnePoints: card.points,
-    //     playerTwoPoints: 0,
-    //     playerOnePawns: isPlayerOneTurn
-    //       ? position.playerOnePawns - card.pawnsCost
-    //       : position.playerOnePawns,
-    //     playerTwoPawns: 0,
-    //   }
-    // }
+    const transformedRowIndex = colIndex
+    const transformedColIndex = -rowIndex
     const newTiles = [...tiles]
-    console.log(newTiles)
-    for (let i = 0; i < card.pawnsPositions.length - 1; i++) {
-      const newCol = colIndex + card.pawnsPositions[i][0]
-      const newRow = rowIndex + card.pawnsPositions[i][1]
+    for (let i = 0; i < card.pawnsPositions.length; i++) {
+      const newRow = -(transformedColIndex + card.pawnsPositions[i][1])
+      const newCol = transformedRowIndex + card.pawnsPositions[i][0]
 
       if (newRow < 0 || newRow >= rows || newCol < 0 || newCol >= cols - 2) {
         continue
