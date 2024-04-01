@@ -1,34 +1,35 @@
-type Card = {
-  name: string
-  pawnsPositions: number[]
-  points: number
-  pawnsCost: number
-}
+import { Card } from '../@types/Card'
+import useCardStore from '../store/CardStore'
 
 type Hand = {
   cards: Card[]
 }
 
 export default function Hand() {
+  const [selectedCard, setSelectedCard] = useCardStore((state) => [
+    state.selectedCard,
+    state.setSelectedCard,
+  ])
+
   const hand: Hand = {
     cards: [
       {
         name: 'Monster',
-        pawnsPositions: fillMonsterPositions([
+        pawnsPositions: [
           [1, 0],
           [0, 1],
-        ]),
+        ],
         points: 2,
         pawnsCost: 1,
       },
       {
         name: 'Soldier',
-        pawnsPositions: fillMonsterPositions([
+        pawnsPositions: [
           [0, 1],
           [1, 0],
           [-1, 0],
           [0, -1],
-        ]),
+        ],
         points: 1,
         pawnsCost: 1,
       },
@@ -53,8 +54,14 @@ export default function Hand() {
       <div className="flex flex-row gap-3 w-10/12">
         {hand.cards.map((card, index) => (
           <div
-            className="border-2 border-solid rounded-lg border-black h-72 w-60 flex flex-col justify-between"
+            className={`border-2 border-solid shadow-2xl rounded-lg cursor-pointer ${selectedCard?.name === card.name ? 'border-green-400' : 'border-black'} h-72 w-60
+             flex flex-col justify-between transition duration-300 ease-in-out hover:-translate-y-4 hover:transform`}
             key={index}
+            onClick={
+              selectedCard?.name === card.name
+                ? () => setSelectedCard(null)
+                : () => setSelectedCard(card)
+            }
           >
             <div className="flex justify-between items-center">
               <span className="p-2 text-3xl">
@@ -66,32 +73,34 @@ export default function Hand() {
             </div>
             <div className="flex justify-center items-center">
               <div className="grid grid-cols-5 border-black border">
-                {card.pawnsPositions.map((pawn, index) => {
-                  if (index === 12) {
+                {fillMonsterPositions(card.pawnsPositions).map(
+                  (pawn, index) => {
+                    if (index === 12) {
+                      return (
+                        <div
+                          key={index}
+                          className={`h-4 w-4 border-solid border-2 border-black bg-white`}
+                        ></div>
+                      )
+                    }
+
+                    if (pawn === 1) {
+                      return (
+                        <div
+                          key={index}
+                          className={`h-4 w-4 border-solid border-2 border-black bg-yellow-400`}
+                        ></div>
+                      )
+                    }
+
                     return (
                       <div
                         key={index}
-                        className={`h-4 w-4 border-solid border-2 border-black bg-white`}
+                        className={`h-4 w-4 border-solid border-2 border-black bg-gray-400`}
                       ></div>
                     )
-                  }
-
-                  if (pawn === 1) {
-                    return (
-                      <div
-                        key={index}
-                        className={`h-4 w-4 border-solid border-2 border-black bg-yellow-400`}
-                      ></div>
-                    )
-                  }
-
-                  return (
-                    <div
-                      key={index}
-                      className={`h-4 w-4 border-solid border-2 border-black bg-gray-400`}
-                    ></div>
-                  )
-                })}
+                  },
+                )}
               </div>
             </div>
             <div className="flex items-center justify-center p-4">
