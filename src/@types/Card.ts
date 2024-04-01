@@ -1,4 +1,4 @@
-export type Card = {
+export type CardInfo = {
   name: string
   pawnsPositions: number[][]
   points: number

@@ -17,6 +17,7 @@ const useBoardStore = create<BoardStore>((set) => ({
           playerTwoPoints: 0,
           playerOnePawns: 1,
           playerTwoPawns: 0,
+          card: null,
         }
       }
       if (columnIndex === 4) {
@@ -25,6 +26,7 @@ const useBoardStore = create<BoardStore>((set) => ({
           playerTwoPoints: 0,
           playerOnePawns: 0,
           playerTwoPawns: 1,
+          card: null,
         }
       }
       return {
@@ -32,6 +34,7 @@ const useBoardStore = create<BoardStore>((set) => ({
         playerTwoPoints: 0,
         playerOnePawns: 0,
         playerTwoPawns: 0,
+        card: null,
       }
     })
   }),

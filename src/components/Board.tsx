@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Tile } from '../@types/Tile'
-import { Card } from '../@types/Card'
+import { CardInfo } from '../@types/Card'
 import useCardStore from '../store/CardStore'
 import useBoardStore from '../store/BoardStore'
+import Card from './Card'
 
 export default function Board() {
   const [selectedCard, resetSelectedCard] = useCardStore((state) => [
@@ -24,7 +25,7 @@ export default function Board() {
 
   console.log(tiles)
 
-  function canAddCardToPosition(card: Card | null, position: Tile) {
+  function canAddCardToPosition(card: CardInfo | null, position: Tile) {
     if (!card) {
       return false
     }
@@ -48,7 +49,7 @@ export default function Board() {
     return true
   }
 
-  function mapPawns(card: Card, rowIndex: number, colIndex: number) {
+  function mapPawns(card: CardInfo, rowIndex: number, colIndex: number) {
     const transformedRowIndex = colIndex
     const transformedColIndex = -rowIndex
     const newTiles = [...tiles]
@@ -72,6 +73,10 @@ export default function Board() {
             ? tiles[newRow][newCol].playerOnePawns + 1
             : tiles[newRow][newCol].playerOnePawns,
         playerTwoPawns: 0,
+        card:
+          tiles[newRow][newCol].playerOnePawns === -1
+            ? tiles[newRow][newCol].card
+            : null,
       }
     }
 
@@ -80,6 +85,7 @@ export default function Board() {
       playerTwoPoints: 0,
       playerOnePawns: -1,
       playerTwoPawns: 0,
+      card,
     }
 
     return newTiles
@@ -135,20 +141,24 @@ export default function Board() {
       const color = (i + j) % 2 === 0 ? 'bg-white' : 'bg-black'
       tilesElements[i][j] = (
         <div
-          className={`${color} h-60 w-full border-solid border-4 hover:border-4 flex justify-center items-center border-black
-           ${canAddCardToPosition(selectedCard, tiles[i][j - 1]) ? 'cursor-pointer  hover:border-green-400' : 'cursor-not-allowed hover:border-red-400'}
+          className={`${color} h-60 w-full border-solid border-4 hover:border-4 ${!tiles[i][j - 1].card ? 'flex justify-center items-center' : ''}  border-black
+           ${selectedCard ? (canAddCardToPosition(selectedCard, tiles[i][j - 1]) ? 'cursor-pointer  hover:border-green-400' : 'cursor-not-allowed hover:border-red-400') : ''}
            transition duration-300 ease-out`}
           onClick={() => handleCellClick(tiles[i][j - 1], i, j - 1)}
           key={`${i}-${j}`}
         >
-          <div className="text-5xl font-bold text-center">
-            {tiles[i][j - 1] &&
-              tiles[i][j - 1].playerOnePawns >= 0 &&
-              '♟'.repeat(tiles[i][j - 1].playerOnePawns)}
-            {tiles[i][j - 1] &&
-              tiles[i][j - 1].playerTwoPawns >= 0 &&
-              '♟'.repeat(tiles[i][j - 1].playerTwoPawns)}
-          </div>
+          {!tiles[i][j - 1].card ? (
+            <div className="text-5xl font-bold text-center">
+              {tiles[i][j - 1] &&
+                tiles[i][j - 1].playerOnePawns >= 0 &&
+                '♟'.repeat(tiles[i][j - 1].playerOnePawns)}
+              {tiles[i][j - 1] &&
+                tiles[i][j - 1].playerTwoPawns >= 0 &&
+                '♟'.repeat(tiles[i][j - 1].playerTwoPawns)}
+            </div>
+          ) : (
+            <Card card={tiles[i][j - 1].card} />
+          )}
         </div>
       )
     }
