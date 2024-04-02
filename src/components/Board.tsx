@@ -148,13 +148,19 @@ export default function Board() {
           key={`${i}-${j}`}
         >
           {!tiles[i][j - 1].card ? (
-            <div className="text-5xl font-bold text-center">
-              {tiles[i][j - 1] &&
-                tiles[i][j - 1].playerOnePawns >= 0 &&
-                '♟'.repeat(tiles[i][j - 1].playerOnePawns)}
-              {tiles[i][j - 1] &&
-                tiles[i][j - 1].playerTwoPawns >= 0 &&
-                '♟'.repeat(tiles[i][j - 1].playerTwoPawns)}
+            <div className="text-5xl font-bold text-center ">
+              {tiles[i][j - 1] && tiles[i][j - 1].playerOnePawns > 0 && (
+                <>
+                  <p>{'♟'.repeat(tiles[i][j - 1].playerOnePawns)}</p>
+                  <hr className="rounded mt-4 border-2 border-green-400" />
+                </>
+              )}
+              {tiles[i][j - 1] && tiles[i][j - 1].playerTwoPawns > 0 && (
+                <>
+                  <p>{'♟'.repeat(tiles[i][j - 1].playerTwoPawns)}</p>
+                  <hr className="rounded mt-4 border-2 border-red-400" />
+                </>
+              )}
             </div>
           ) : (
             <Card card={tiles[i][j - 1].card} />
