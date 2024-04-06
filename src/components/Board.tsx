@@ -235,20 +235,31 @@ export default function Board() {
       .reduce((acc, curr) => acc + curr, 0)
     tilesElements[i][0] = (
       <div
-        className={`bg-white h-60 w-full flex items-center justify-center border-solid border-2 border-black`}
+        className={` bg-gray-800  h-60 w-full flex items-center justify-center border-solid border-2 border-black`}
         key={`${i}-${0}`}
       >
-        <div className="h-28 w-28 border-solid border-4 text-3xl shadow-xl border-green-300 rounded-full flex justify-center items-center">
+        <div
+          className={`h-28 w-28 outline outline-offset-2 outline-yellow-400 text-5xl text-white ${playerOnePoints > playerTwoPoints ? 'bg-green-400  drop-shadow-glow' : 'bg-green-400 brightness-75 '} shadow-xl
+           rounded-full flex justify-center items-center`}
+        >
           {playerOnePoints}
         </div>
       </div>
     )
     tilesElements[i][cols - 1] = (
       <div
-        className={`bg-white h-60 w-full flex items-center justify-center border-solid border-2 border-black`}
+        className={`bg-gray-800  h-60 w-full flex items-center justify-center border-solid border-2 border-black`}
         key={`${i}-${cols - 1}`}
       >
-        <div className="h-28 w-28 border-solid border-4 text-3xl shadow-xl border-red-300 rounded-full flex justify-center items-center">
+        <div
+          className={`h-28 w-28 outline outline-offset-2 outline-yellow-400 
+          ${
+            playerTwoPoints > playerOnePoints
+              ? 'bg-red-400 drop-shadow-glow'
+              : 'bg-red-400 brightness-75 '
+          } text-5xl text-white shadow-xl rounded-full
+           flex justify-center items-center`}
+        >
           {playerTwoPoints}
         </div>
       </div>
@@ -257,7 +268,7 @@ export default function Board() {
 
   for (let i = 0; i < rows; i++) {
     for (let j = 1; j < cols - 1; j++) {
-      const color = (i + j) % 2 === 0 ? 'bg-white' : 'bg-black'
+      const color = (i + j) % 2 === 0 ? 'bg-white' : 'bg-gray-800'
       tilesElements[i][j] = (
         <div
           className={`${color} h-60 w-full border-solid border-4 hover:border-4 ${!tiles[i][j - 1].card ? 'flex justify-center items-center' : ''}  border-black
