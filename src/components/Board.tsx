@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Tile } from '../@types/Tile'
 import { CardInfo } from '../@types/Card'
 import useCardStore from '../store/CardStore'
@@ -14,9 +14,52 @@ export default function Board() {
     state.board,
     state.setBoard,
   ])
-
   const [isPlayerOneTurn, setIsPlayerOneTurn] = useState(true)
   const [playerSkipped, setPlayerSkipped] = useState(false)
+
+  const [position, setPosition] = useState(0)
+  const [speed, setSpeed] = useState(4) // Change the speed here
+  const [isSlowingDown, setIsSlowingDown] = useState(false)
+  const [showTurnAnimation, setShowTurnAnimation] = useState(true)
+
+  useEffect(() => {
+    if (showTurnAnimation) {
+      const animationFrame = requestAnimationFrame(() => {
+        const screenWidth = window.innerWidth
+        const boxWidth = 50 // Width of the box
+        const centerX = screenWidth / 2 - boxWidth / 2
+
+        // Check if the box is near the center
+        if (
+          position >= centerX - screenWidth * 0.2 &&
+          position <= centerX + screenWidth * 0.05
+        ) {
+          setIsSlowingDown(true)
+        } else {
+          setIsSlowingDown(false)
+        }
+
+        // Adjust speed based on slowing down or speeding up
+        if (isSlowingDown) {
+          setSpeed(
+            (50 * (screenWidth - Math.abs(centerX - position))) /
+              (screenWidth * 0.2 * 50),
+          ) // Variable speed for slowing down
+        } else {
+          setSpeed(30) // Base speed for speeding up
+        }
+
+        setPosition(position + speed)
+
+        if (position >= screenWidth) {
+          setPosition(0)
+          setShowTurnAnimation(false)
+        }
+      })
+
+      return () => cancelAnimationFrame(animationFrame)
+    }
+  }, [isSlowingDown, position, showTurnAnimation, speed])
 
   const rows = 3
   const cols = 7
@@ -74,7 +117,9 @@ export default function Board() {
           playerOnePawns:
             newTiles[newRow][newCol].playerOnePawns !== -1 &&
             newTiles[newRow][newCol].playerOnePawns < 3
-              ? newTiles[newRow][newCol].playerOnePawns + 1
+              ? newTiles[newRow][newCol].playerTwoPawns !== 0
+                ? newTiles[newRow][newCol].playerTwoPawns
+                : newTiles[newRow][newCol].playerOnePawns + 1
               : newTiles[newRow][newCol].playerOnePawns,
           playerTwoPawns: 0,
           card:
@@ -99,7 +144,9 @@ export default function Board() {
         playerTwoPawns:
           newTiles[newRow][newCol].playerTwoPawns !== -1 &&
           newTiles[newRow][newCol].playerTwoPawns < 3
-            ? newTiles[newRow][newCol].playerTwoPawns + 1
+            ? newTiles[newRow][newCol].playerOnePawns !== 0
+              ? newTiles[newRow][newCol].playerOnePawns
+              : newTiles[newRow][newCol].playerTwoPawns + 1
             : newTiles[newRow][newCol].playerTwoPawns,
         card:
           newTiles[newRow][newCol].playerOnePawns === -1
@@ -115,7 +162,10 @@ export default function Board() {
       playerTwoPoints: isPlayerOneTurn ? 0 : card.points,
       playerOnePawns: -1,
       playerTwoPawns: -1,
-      card,
+      card: {
+        ...card,
+        placedByPlayerOne: isPlayerOneTurn,
+      },
     }
 
     console.log(newTiles)
@@ -143,6 +193,7 @@ export default function Board() {
 
     setIsPlayerOneTurn(!isPlayerOneTurn)
     setPlayerSkipped(false)
+    setShowTurnAnimation(true)
   }
 
   function handleSkipTurn() {
@@ -172,6 +223,7 @@ export default function Board() {
     }
     setPlayerSkipped(true)
     setIsPlayerOneTurn(!isPlayerOneTurn)
+    setShowTurnAnimation(true)
   }
 
   for (let i = 0; i < rows; i++) {
@@ -186,7 +238,7 @@ export default function Board() {
         className={`bg-white h-60 w-full flex items-center justify-center border-solid border-2 border-black`}
         key={`${i}-${0}`}
       >
-        <div className="h-28 w-28 border-solid border-4 text-3xl border-green-300 rounded-full flex justify-center items-center">
+        <div className="h-28 w-28 border-solid border-4 text-3xl shadow-xl border-green-300 rounded-full flex justify-center items-center">
           {playerOnePoints}
         </div>
       </div>
@@ -196,7 +248,7 @@ export default function Board() {
         className={`bg-white h-60 w-full flex items-center justify-center border-solid border-2 border-black`}
         key={`${i}-${cols - 1}`}
       >
-        <div className="h-28 w-28 border-solid border-4 text-3xl border-red-300 rounded-full flex justify-center items-center">
+        <div className="h-28 w-28 border-solid border-4 text-3xl shadow-xl border-red-300 rounded-full flex justify-center items-center">
           {playerTwoPoints}
         </div>
       </div>
@@ -230,28 +282,46 @@ export default function Board() {
               )}
             </div>
           ) : (
-            <Card card={tiles[i][j - 1].card} />
+            <div className="flex h-full w-full p-2 justify-center items-center">
+              <Card placed={true} card={tiles[i][j - 1].card} />
+            </div>
           )}
         </div>
       )
     }
   }
   return (
-    <div className="flex flex-col items-center justify-center gap-4">
-      <div className="flex w-full items-center justify-center mt-10">
-        <div className="grid grid-cols-7 gap-1 w-10/12">
-          {isPlayerOneTurn ? tilesElements : transformMatrix(tilesElements)}
+    <>
+      <div className="flex flex-col items-center justify-center gap-4">
+        <div className="flex w-full items-center justify-center mt-10">
+          <div className="grid grid-cols-7 gap-1 w-10/12">
+            {isPlayerOneTurn ? tilesElements : transformMatrix(tilesElements)}
+          </div>
+        </div>
+        <div className="flex w-10/12 items-center justify-end p-2">
+          <h1
+            className="mr-8 text-4xl rounded-full bg-gray-50 hover:bg-gray-200 transition duration-200
+         shadow-xl cursor-pointer  text-black border-4 border-yellow-400 py-1 px-12"
+            onClick={() => handleSkipTurn()}
+          >
+            Skip turn
+          </h1>
         </div>
       </div>
-      <div className="flex w-10/12 items-center justify-end p-2">
-        <h1
-          className="mr-8 text-4xl rounded-full bg-gray-50 hover:bg-gray-200 transition duration-200
-         shadow-xl cursor-pointer  text-black border-4 border-yellow-400 py-1 px-12"
-          onClick={() => handleSkipTurn()}
+      {showTurnAnimation && (
+        <div
+          className={`absolute top-1/2 transform -translate-y-1/2 rounded w-96 px-6 h-24 flex items-center justify-center ${
+            isPlayerOneTurn ? 'bg-green-400' : 'bg-red-400'
+          } opacity-95 `}
+          style={{
+            left: `${position}px`,
+          }}
         >
-          Skip turn
-        </h1>
-      </div>
-    </div>
+          <h1 className="text-5xl text-white ">
+            {isPlayerOneTurn ? "Player 1's Turn" : "Player 2's Turn"}
+          </h1>
+        </div>
+      )}
+    </>
   )
 }

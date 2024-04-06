@@ -3,4 +3,5 @@ export type CardInfo = {
   pawnsPositions: number[][]
   points: number
   pawnsCost: number
+  placedByPlayerOne?: boolean
 }

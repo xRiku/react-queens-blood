@@ -2,9 +2,10 @@ import { CardInfo } from '../@types/Card'
 
 type CardProps = {
   card: CardInfo | null
+  placed?: boolean
 }
 
-export default function Card({ card }: CardProps) {
+export default function Card({ card, placed = false }: CardProps) {
   function fillMonsterPositions(points: number[][]) {
     const positions: number[] = new Array(25).fill(0)
     const startingNumber = 12
@@ -19,10 +20,12 @@ export default function Card({ card }: CardProps) {
   }
 
   return (
-    <div className="flex flex-col justify-between h-full bg-white rounded-lg">
+    <div
+      className={`flex flex-col justify-between  ${placed ? 'border border-gray-300' : ''} w-full h-full ${placed ? (card?.placedByPlayerOne ? 'bg-green-400' : 'bg-red-400') : ''}  rounded-lg`}
+    >
       <div className="flex justify-between items-center">
         <span className="p-2 text-3xl">{'♟'.repeat(card!.pawnsCost)}</span>
-        <span className="p-2 text-3xl flex items-center justify-center w-14 border border-solid border-yellow-400 rounded-full">
+        <span className="p-2 text-3xl flex items-center justify-center w-14 border border-solid bg-white border-yellow-400 rounded-full">
           {card!.points}
         </span>
       </div>
@@ -56,7 +59,9 @@ export default function Card({ card }: CardProps) {
           })}
         </div>
       </div>
-      <div className="flex items-center justify-center p-4">{card!.name}</div>
+      <div className="flex items-center justify-center rounded-bl-lg rounded-br-lg font-medium w-full bg-black border-t-2 border-t-yellow-400 text-yellow-400 text-2xl px-4 py-2">
+        {card!.name}
+      </div>
     </div>
   )
 }
