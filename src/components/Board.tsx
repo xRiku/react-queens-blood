@@ -4,6 +4,8 @@ import { CardInfo } from '../@types/Card'
 import useCardStore from '../store/CardStore'
 import useBoardStore from '../store/BoardStore'
 import Card from './Card'
+import useHandStore from '../store/HandStore'
+import useTurnStore from '../store/TurnStore'
 
 export default function Board() {
   const [selectedCard, resetSelectedCard] = useCardStore((state) => [
@@ -14,7 +16,13 @@ export default function Board() {
     state.board,
     state.setBoard,
   ])
-  const [isPlayerOneTurn, setIsPlayerOneTurn] = useState(true)
+
+  const [placeCard] = useHandStore((state) => [state.placeCard])
+
+  const [isPlayerOneTurn, toggleTurn] = useTurnStore((state) => [
+    state.isPlayerOneTurn,
+    state.toggleTurn,
+  ])
   const [playerSkipped, setPlayerSkipped] = useState(false)
 
   const [position, setPosition] = useState(0)
@@ -189,9 +197,10 @@ export default function Board() {
     const newTiles = mapPawns(selectedCard, rowIndex, colIndex)
 
     setTiles(newTiles)
+    placeCard(selectedCard, isPlayerOneTurn)
     resetSelectedCard()
 
-    setIsPlayerOneTurn(!isPlayerOneTurn)
+    toggleTurn()
     setPlayerSkipped(false)
     setShowTurnAnimation(true)
   }
@@ -222,7 +231,7 @@ export default function Board() {
       return
     }
     setPlayerSkipped(true)
-    setIsPlayerOneTurn(!isPlayerOneTurn)
+    toggleTurn()
     setShowTurnAnimation(true)
   }
 
@@ -239,7 +248,12 @@ export default function Board() {
         key={`${i}-${0}`}
       >
         <div
-          className={`h-28 w-28 outline outline-offset-2 outline-yellow-400 text-5xl text-white ${playerOnePoints > playerTwoPoints ? 'bg-green-400  drop-shadow-glow' : 'bg-green-400 brightness-75 '} shadow-xl
+          className={`h-28 w-28 outline outline-offset-2 outline-yellow-400 text-5xl font-medium
+           text-white ${
+             playerOnePoints > playerTwoPoints
+               ? 'bg-green-400  drop-shadow-glow'
+               : 'bg-green-400 brightness-75 '
+           } shadow-xl
            rounded-full flex justify-center items-center`}
         >
           {playerOnePoints}
@@ -257,7 +271,7 @@ export default function Board() {
             playerTwoPoints > playerOnePoints
               ? 'bg-red-400 drop-shadow-glow'
               : 'bg-red-400 brightness-75 '
-          } text-5xl text-white shadow-xl rounded-full
+          } text-5xl text-white font-medium shadow-xl rounded-full
            flex justify-center items-center`}
         >
           {playerTwoPoints}
@@ -304,9 +318,21 @@ export default function Board() {
   return (
     <>
       <div className="flex flex-col items-center justify-center gap-4">
-        <div className="flex w-full items-center justify-center mt-10">
-          <div className="grid grid-cols-7 gap-1 w-10/12">
+        <div className="flex w-full items-center justify-evenly mt-10">
+          <div className="flex flex-col items-center justify-center gap-3">
+            <h2 className={`text-8xl isPlayerOneTurn  scale-x-[-1] `}>🐉</h2>
+            <h1 className="text-5xl">
+              {isPlayerOneTurn ? 'Player 1' : 'Player 2'}
+            </h1>
+          </div>
+          <div className="grid grid-cols-7 gap-1 w-8/12">
             {isPlayerOneTurn ? tilesElements : transformMatrix(tilesElements)}
+          </div>
+          <div className="flex flex-col items-center justify-center gap-3">
+            <h2 className={`text-8xl`}>🐉</h2>
+            <h1 className="text-5xl">
+              {!isPlayerOneTurn ? 'Player 1' : 'Player 2'}
+            </h1>
           </div>
         </div>
         <div className="flex w-10/12 items-center justify-end p-2">

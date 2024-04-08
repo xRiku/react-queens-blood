@@ -25,7 +25,7 @@ export default function Card({ card, placed = false }: CardProps) {
     >
       <div className="flex justify-between items-center">
         <span className="p-2 text-3xl">{'♟'.repeat(card!.pawnsCost)}</span>
-        <span className="p-2 text-3xl flex items-center justify-center w-14 border border-solid bg-white border-yellow-400 rounded-full">
+        <span className="p-2 text-3xl flex items-center justify-center w-14 border font-semibold border-solid bg-white border-yellow-400 rounded-full">
           {card!.points}
         </span>
       </div>
