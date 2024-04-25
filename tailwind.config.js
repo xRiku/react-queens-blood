@@ -26,6 +26,9 @@ export default {
         '0 0px 65px rgba(250, 204, 21, 0.2)',
       ],
     },
+    boxShadow: {
+      'join-room-button': '0 5px 0 rgb(17 24 39)',
+    }
   },
   plugins: [],
 }

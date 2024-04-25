@@ -5,6 +5,7 @@ module.exports = {
     '@rocketseat/eslint-config/react',
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
+  disabled: ['react/no-unescaped-entities'],
   parser: '@typescript-eslint/parser',
   plugins: ['react-refresh'],
   rules: {
