@@ -4,6 +4,7 @@ import Hand from './components/Hand'
 import Home from './pages/Home'
 import JoinGame from './pages/JoinGame'
 import DefaultLayout from './layout/DefaultLayout'
+import CreateGame from './pages/CreateGame'
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <Route path="/" element={<DefaultLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/join" element={<JoinGame />} />
+        <Route path="/creating-game" element={<CreateGame />} />
       </Route>
     </Routes>
   )
