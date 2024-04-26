@@ -51,7 +51,7 @@ export default function Board() {
         if (isSlowingDown) {
           setSpeed(
             (50 * (screenWidth - Math.abs(centerX - position))) /
-              (screenWidth * 0.2 * 50),
+            (screenWidth * 0.2 * 50),
           ) // Variable speed for slowing down
         } else {
           setSpeed(30) // Base speed for speeding up
@@ -124,7 +124,7 @@ export default function Board() {
               : 0,
           playerOnePawns:
             newTiles[newRow][newCol].playerOnePawns !== -1 &&
-            newTiles[newRow][newCol].playerOnePawns < 3
+              newTiles[newRow][newCol].playerOnePawns < 3
               ? newTiles[newRow][newCol].playerTwoPawns !== 0
                 ? newTiles[newRow][newCol].playerTwoPawns
                 : newTiles[newRow][newCol].playerOnePawns + 1
@@ -151,7 +151,7 @@ export default function Board() {
         playerOnePawns: 0,
         playerTwoPawns:
           newTiles[newRow][newCol].playerTwoPawns !== -1 &&
-          newTiles[newRow][newCol].playerTwoPawns < 3
+            newTiles[newRow][newCol].playerTwoPawns < 3
             ? newTiles[newRow][newCol].playerOnePawns !== 0
               ? newTiles[newRow][newCol].playerOnePawns
               : newTiles[newRow][newCol].playerTwoPawns + 1
@@ -249,11 +249,10 @@ export default function Board() {
       >
         <div
           className={`h-28 w-28 outline outline-offset-2 outline-yellow-400 text-5xl font-medium
-           text-white ${
-             playerOnePoints > playerTwoPoints
-               ? 'bg-green-400  drop-shadow-glow'
-               : 'bg-green-400 brightness-75 '
-           } shadow-xl
+           text-white ${playerOnePoints > playerTwoPoints
+              ? 'bg-green-400  drop-shadow-glow'
+              : 'bg-green-400 brightness-75 '
+            } shadow-xl
            rounded-full flex justify-center items-center`}
         >
           {playerOnePoints}
@@ -267,11 +266,10 @@ export default function Board() {
       >
         <div
           className={`h-28 w-28 outline outline-offset-2 outline-yellow-400 
-          ${
-            playerTwoPoints > playerOnePoints
+          ${playerTwoPoints > playerOnePoints
               ? 'bg-red-400 drop-shadow-glow'
               : 'bg-red-400 brightness-75 '
-          } text-5xl text-white font-medium shadow-xl rounded-full
+            } text-5xl text-white font-medium shadow-xl rounded-full
            flex justify-center items-center`}
         >
           {playerTwoPoints}
@@ -318,7 +316,7 @@ export default function Board() {
   return (
     <>
       <div className="flex flex-col items-center justify-center gap-4">
-        <div className="flex w-full items-center justify-evenly mt-10">
+        <div className="flex w-full items-center justify-evenly mt-6">
           <div className="flex flex-col items-center justify-center gap-3">
             <h2 className={`text-8xl isPlayerOneTurn  scale-x-[-1] `}>🐉</h2>
             <h1 className="text-5xl">
@@ -347,9 +345,8 @@ export default function Board() {
       </div>
       {showTurnAnimation && (
         <div
-          className={`absolute top-1/2 transform -translate-y-1/2 rounded w-96 px-6 h-24 flex items-center justify-center ${
-            isPlayerOneTurn ? 'bg-green-400' : 'bg-red-400'
-          } opacity-95 `}
+          className={`absolute top-1/2 transform -translate-y-1/2 rounded w-96 px-6 h-24 flex items-center justify-center ${isPlayerOneTurn ? 'bg-green-400' : 'bg-red-400'
+            } opacity-95 `}
           style={{
             left: `${position}px`,
           }}

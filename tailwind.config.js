@@ -20,6 +20,9 @@ export default {
         slideIn: 'slideIn 1s ease forwards',
       },
     },
+    fontFamily: {
+      title: ['Canterbury Regular'],
+    },
     dropShadow: {
       glow: [
         '0 0px 20px rgba(250, 204, 21, 0.35)',
