@@ -14,8 +14,7 @@ export default function JoinGame() {
 
           <input className="text-2xl w-72 py-2 px-3 text-center border border-solid-1 border-gray-400 rounded-md" placeholder="Enter game code" />
           <button
-            className=" bg-gray-700 rounded-md w-72 px-4 py-2 shadow-join-room-button hover:shadow-transparent hover:translate-y-[5px]
-                " onClick={handleJoinGameClick}
+            className=" bg-gray-700 rounded-md w-72 px-4 py-2 shadow-join-room-button hover:shadow-transparent hover:translate-y-[5px]" onClick={handleJoinGameClick}
           >
             <span className="text-2xl font-semibold text-slate-50">Join game</span>
           </button>

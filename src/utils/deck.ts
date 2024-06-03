@@ -1,4 +1,4 @@
-export const Deck = [
+export const deckCards = [
   {
     name: 'Wolf',
     pawnsPositions: [
