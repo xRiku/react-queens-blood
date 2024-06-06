@@ -1,10 +1,6 @@
 import { CardInfo } from '../@types/Card'
 import useCardStore from '../store/CardStore'
 import Card from './Card'
-import useHandStore from '../store/HandStore'
-import useTurnStore from '../store/TurnStore'
-import { usePlayerStore } from '../store/PlayerStore'
-import TurnedCard from './TurnedCard'
 import useNeoHandStore from '../store/NeoHandStore'
 
 type Hand = {
@@ -24,11 +20,6 @@ export default function Hand({
     state.setSelectedCard,
   ])
 
-  // const [isClientPlayerOne] = usePlayerStore((state) => [state.isClientPlayerOne])
-
-  // const [isPlayerOneTurn] = useTurnStore((state) => [state.isPlayerOneTurn])
-
-  // console.log(isPlayerOneTurn)
   return (
     <div className="flex w-full items-center justify-center py-2">
       <div className="flex flex-row gap-3 w-9/12">
@@ -47,7 +38,7 @@ export default function Hand({
                   : () => setSelectedCard(card)
               }
             >
-              {isMyTurn ? <Card card={card} /> : <></>}
+              <Card card={card} />
             </div>
           ))
         }

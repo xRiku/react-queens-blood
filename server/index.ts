@@ -26,22 +26,18 @@ io.on('connection', (socket) => {
     io.emit('newTurn')
   })
 
-  socket.on('endTurn', () => {
+  socket.on('skip-turn', () => {
     if (playerSkippedTurn) {
-      // gameEnd()
       io.emit('gameEnd')
     }
     playerSkippedTurn = true
     io.emit('newTurn')
   })
 
-  // socket.on('place-card', (data) => {
-  //   history.push(data);
-  //   if (endGameData) {
-  //     io.emit('gameEnd', endGameData);
-  //   }
-  //   io.emit('newTurn', data)
-  // })
+  socket.on('place-card', (data) => {
+    history.push(data);
+    io.emit('newTurn', data)
+  })
 
   socket.on('history', () => {
     io.to(socket.id).emit('history', history)
