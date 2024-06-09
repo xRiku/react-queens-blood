@@ -6,6 +6,7 @@ import Card from './Card'
 import socket from '../socket'
 import { useGameStore } from '../store/GameStore'
 import { usePointStore } from '../store/PointsStore'
+import { useEffect, useState } from 'react'
 
 
 export default function Board({
@@ -26,6 +27,31 @@ export default function Board({
 
   const [gameOver] = useGameStore((state) => [state.gameOver])
   const [playerOnePointsArray, playerTwoPointsArray] = usePointStore(state => [state.playerOnePoints, state.playerTwoPoints])
+  const [sumOfPlayersPoints, setSumOfPlayersPoints] = useState<number[]>([0, 0])
+
+  useEffect(() => {
+    if (gameOver) {
+      const newSumOfPlayersPoints = [0, 0]
+      Array(3).fill(0).forEach((_, index) => {
+        if (amIP1) {
+          if (playerOnePointsArray[index] > playerTwoPointsArray[index]) {
+            newSumOfPlayersPoints[0] += playerOnePointsArray[index]
+          }
+          if (playerOnePointsArray[index] < playerTwoPointsArray[index]) {
+            newSumOfPlayersPoints[1] += playerTwoPointsArray[index]
+          }
+          return
+        }
+        if (playerOnePointsArray[index] > playerTwoPointsArray[index]) {
+          newSumOfPlayersPoints[1] += playerOnePointsArray[index]
+        }
+        if (playerOnePointsArray[index] < playerTwoPointsArray[index]) {
+          newSumOfPlayersPoints[0] += playerTwoPointsArray[index]
+        }
+      })
+      setSumOfPlayersPoints(newSumOfPlayersPoints)
+    }
+  }, [gameOver])
 
   const rows = 3
   const cols = 7
@@ -184,7 +210,6 @@ export default function Board({
   }
 
 
-
   for (let i = 0; i < rows; i++) {
     tilesElements[i][0] = (
       <div
@@ -267,7 +292,7 @@ export default function Board({
       <div className="flex flex-col items-center justify-center gap-4">
         <div className="flex w-full items-center justify-evenly">
           <div className="flex flex-col items-center justify-center gap-3">
-            <span className={`text-8xl ${gameOver ? 'visible' : 'invisible'}`}>01</span>
+            <span className={`text-8xl ${gameOver ? 'visible' : 'invisible'}`}>{sumOfPlayersPoints[0]}</span>
             <span className={`text-8xl scale-x-[-1] `}>🐉</span>
             <h1 className="text-5xl">
               {amIP1 ? 'Player 1' : 'Player 2'}
@@ -277,7 +302,7 @@ export default function Board({
             {amIP1 ? tilesElements : transformMatrix(tilesElements)}
           </div>
           <div className="flex flex-col items-center justify-center gap-3">
-            <span className={`text-8xl ${gameOver ? 'visible' : 'invisible'}`}>01</span>
+            <span className={`text-8xl ${gameOver ? 'visible' : 'invisible'}`}>{sumOfPlayersPoints[1]}</span>
             <span className={`text-8xl`}>🐉</span>
             <h1 className="text-5xl">
               {!amIP1 ? 'Player 1' : 'Player 2'}
