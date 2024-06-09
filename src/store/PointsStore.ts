@@ -1,32 +1,31 @@
 import { create } from 'zustand'
+import { Tile } from '../@types/Tile'
 
 type PointStore = {
   playerOnePoints: number[]
   playerTwoPoints: number[]
-  addPlayerOnePoints: (points: number, index: number) => void
-  addPlayerTwoPoints: (points: number, index: number) => void
+  setPoints: (data: Tile[][]) => void
 }
 
 export const usePointStore = create<PointStore>((set) => ({
   playerOnePoints: [0, 0, 0],
   playerTwoPoints: [0, 0, 0],
-  addPlayerOnePoints: (points, index) =>
-    set((state) => ({
-      playerOnePoints: state.playerOnePoints.map((point, i) => {
-        if (index === i) {
-          return points + point
-        }
-        return point
-      }),
-    })),
-  addPlayerTwoPoints(points, index) {
-    set((state) => ({
-      playerTwoPoints: state.playerTwoPoints.map((point, i) => {
-        if (index === i) {
-          return points + point
-        }
-        return point
-      }),
-    }))
-  },
+
+  setPoints: (data: Tile[][]) => {
+    let newPlayerOnePoints = [0, 0, 0]
+    let newPlayerTwoPoints = [0, 0, 0]
+    data.forEach((row, index) => {
+      newPlayerOnePoints[index] = data[index]
+      .map((tile) => tile.playerOnePoints)
+      .reduce((acc, curr) => acc + curr, 0)
+    newPlayerTwoPoints[index] = data[index]
+      .map((tile) => tile.playerTwoPoints)
+      .reduce((acc, curr) => acc + curr, 0)
+    })
+
+    set({
+      playerOnePoints: newPlayerOnePoints,
+      playerTwoPoints: newPlayerTwoPoints,
+    })
+  }
 }))

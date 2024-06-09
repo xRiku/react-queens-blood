@@ -1,4 +1,5 @@
 import { Outlet, useNavigate } from "react-router-dom";
+import socket from "../socket";
 
 
 
@@ -7,6 +8,7 @@ export default function DefaultLayout() {
   const navigate = useNavigate()
 
   const handleTitleClick = () => {
+    socket.disconnect()
     navigate('/')
   }
 

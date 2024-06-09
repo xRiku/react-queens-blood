@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
 import { Tile } from '../@types/Tile'
 import { CardInfo } from '../@types/Card'
 import useCardStore from '../store/CardStore'
 import useBoardStore from '../store/BoardStore'
 import Card from './Card'
 import socket from '../socket'
+import { useGameStore } from '../store/GameStore'
+import { usePointStore } from '../store/PointsStore'
 
 
 export default function Board({
@@ -14,7 +15,6 @@ export default function Board({
   amIP1: boolean
   isMyTurn: boolean
 }) {
-  const [numPlayers, setNumPlayers] = useState(0);
   const [selectedCard, resetSelectedCard] = useCardStore((state) => [
     state.selectedCard,
     state.resetSelectedCard,
@@ -23,6 +23,9 @@ export default function Board({
     state.board,
     state.setBoard,
   ])
+
+  const [gameOver] = useGameStore((state) => [state.gameOver])
+  const [playerOnePointsArray, playerTwoPointsArray] = usePointStore(state => [state.playerOnePoints, state.playerTwoPoints])
 
   const rows = 3
   const cols = 7
@@ -176,18 +179,13 @@ export default function Board({
   }
 
   function handleSkipTurn() {
-    socket.emit('skip-turn')
+    resetSelectedCard()
+    socket.emit('skip-turn', tiles)
   }
 
 
 
   for (let i = 0; i < rows; i++) {
-    const playerOnePoints = tiles[i]
-      .map((tile) => tile.playerOnePoints)
-      .reduce((acc, curr) => acc + curr, 0)
-    const playerTwoPoints = tiles[i]
-      .map((tile) => tile.playerTwoPoints)
-      .reduce((acc, curr) => acc + curr, 0)
     tilesElements[i][0] = (
       <div
         className={`bg-gray-800 h-48 w-full flex items-center justify-center border-solid border-2 border-black`}
@@ -195,15 +193,15 @@ export default function Board({
       >
         <div
           className={`h-24 w-24 outline outline-offset-2 outline-yellow-400 text-5xl font-medium
-             text-white ${amIP1 ? playerOnePoints > playerTwoPoints
+             text-white ${amIP1 ? playerOnePointsArray[i] > playerTwoPointsArray[i]
               ? 'bg-green-400  drop-shadow-glow'
               : 'bg-green-400 brightness-75 '
-              : playerOnePoints > playerTwoPoints
+              : playerOnePointsArray[i] > playerTwoPointsArray[i]
                 ? 'bg-red-400 drop-shadow-glow'
                 : 'bg-red-400 brightness-75 '} shadow-xl
              rounded-full flex justify-center items-center`}
         >
-          {playerOnePoints}
+          {playerOnePointsArray[i]}
         </div>
       </div>
     )
@@ -214,15 +212,15 @@ export default function Board({
       >
         <div
           className={`h-24 w-24 outline outline-offset-2 outline-yellow-400 
-            ${amIP1 ? playerTwoPoints > playerOnePoints
+            ${amIP1 ? playerTwoPointsArray[i] > playerOnePointsArray[i]
               ? 'bg-red-400 drop-shadow-glow'
-              : 'bg-red-400 brightness-75 ' : playerTwoPoints > playerOnePoints
+              : 'bg-red-400 brightness-75 ' : playerTwoPointsArray[i] > playerOnePointsArray[i]
               ? 'bg-green-400  drop-shadow-glow'
               : 'bg-green-400 brightness-75 '
             } text-5xl text-white font-medium shadow-xl rounded-full
              flex justify-center items-center`}
         >
-          {playerTwoPoints}
+          {playerTwoPointsArray[i]}
         </div>
       </div>
     )
@@ -269,7 +267,8 @@ export default function Board({
       <div className="flex flex-col items-center justify-center gap-4">
         <div className="flex w-full items-center justify-evenly">
           <div className="flex flex-col items-center justify-center gap-3">
-            <h2 className={`text-8xl scale-x-[-1] `}>🐉</h2>
+            <span className={`text-8xl ${gameOver ? 'visible' : 'invisible'}`}>01</span>
+            <span className={`text-8xl scale-x-[-1] `}>🐉</span>
             <h1 className="text-5xl">
               {amIP1 ? 'Player 1' : 'Player 2'}
             </h1>
@@ -278,20 +277,21 @@ export default function Board({
             {amIP1 ? tilesElements : transformMatrix(tilesElements)}
           </div>
           <div className="flex flex-col items-center justify-center gap-3">
-            <h2 className={`text-8xl`}>🐉</h2>
+            <span className={`text-8xl ${gameOver ? 'visible' : 'invisible'}`}>01</span>
+            <span className={`text-8xl`}>🐉</span>
             <h1 className="text-5xl">
               {!amIP1 ? 'Player 1' : 'Player 2'}
             </h1>
           </div>
         </div>
         <div className="flex w-10/12 items-center justify-end p-2">
-          <h1
-            className="mr-8 text-4xl rounded-full bg-gray-50 hover:bg-gray-200 transition duration-200
-         shadow-xl cursor-pointer  text-black border-4 border-yellow-400 py-1 px-12"
+          <span
+            className={`mr-8 text-4xl rounded-full bg-gray-50 hover:bg-gray-200 transition duration-200
+         shadow-xl cursor-pointer  text-black border-4 border-yellow-400 py-1 px-12 ${isMyTurn && !gameOver ? 'visible' : 'invisible'}`}
             onClick={handleSkipTurn}
           >
             Skip turn
-          </h1>
+          </span>
         </div>
       </div>
     </>
