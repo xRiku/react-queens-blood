@@ -18,13 +18,6 @@ io.on('connection', (socket) => {
   console.log('A Player with id', socket.id, 'connected')
   numPlayers++;
   io.to(socket.id).emit('playerConnected', {firstPlayer: numPlayers === 1} );
-  socket.on('cardPlaced', (card) => {
-    if (playerSkippedTurn) {
-      playerSkippedTurn = false
-    }
-    history.push({player: numPlayers === 1 ? 'playerOne' : 'playerTwo', card });
-    io.emit('newTurn')
-  })
 
   socket.on('skip-turn', (data) => {
     if (playerSkippedTurn) {

@@ -94,11 +94,12 @@ export default function Board({
     const newTiles = [...tiles]
     for (let i = 0; i < card.pawnsPositions.length; i++) {
       const newRow = -(transformedColIndex + card.pawnsPositions[i][1])
-      const newCol = transformedRowIndex + card.pawnsPositions[i][0]
+      const newCol = amIP1 ? transformedRowIndex + card.pawnsPositions[i][0] : Math.abs(-transformedRowIndex + card.pawnsPositions[i][0])
 
       if (newRow < 0 || newRow >= rows || newCol < 0 || newCol >= cols - 2) {
         continue
       }
+
 
       if (amIP1) {
         newTiles[newRow][newCol] = {
