@@ -205,10 +205,7 @@ export default function Board({
     socket.emit('place-card', newTiles)
   }
 
-  function handleSkipTurn() {
-    resetSelectedCard()
-    socket.emit('skip-turn', tiles)
-  }
+
 
 
   for (let i = 0; i < rows; i++) {
@@ -265,7 +262,7 @@ export default function Board({
           key={`${i}-${j}`}
         >
           {!tiles[i][j - 1].card ? (
-            <div className="text-5xl font-bold text-center ">
+            <div className="text-4xl font-bold text-center ">
               {tiles[i][j - 1] && tiles[i][j - 1].playerOnePawns > 0 && (
                 <>
                   <p>{'♟'.repeat(tiles[i][j - 1].playerOnePawns)}</p>
@@ -309,15 +306,6 @@ export default function Board({
               {!amIP1 ? 'Player 1' : 'Player 2'}
             </h1>
           </div>
-        </div>
-        <div className="flex w-10/12 items-center justify-end p-2">
-          <span
-            className={`mr-8 text-4xl rounded-full bg-gray-50 hover:bg-gray-200 transition duration-200
-         shadow-xl cursor-pointer  text-black border-4 border-yellow-400 py-1 px-12 ${isMyTurn && !gameOver ? 'visible' : 'invisible'}`}
-            onClick={handleSkipTurn}
-          >
-            Skip turn
-          </span>
         </div>
       </div>
     </>

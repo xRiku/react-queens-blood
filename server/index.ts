@@ -28,6 +28,7 @@ io.on('connection', (socket) => {
   })
 
   socket.on('place-card', (data) => {
+    playerSkippedTurn = false
     history.push(data);
     io.emit('newTurn', data)
   })
@@ -43,6 +44,7 @@ io.on('connection', (socket) => {
 
   if (numPlayers >= 2) {
     io.emit('gameStart');
+    playerSkippedTurn = false
   }
   
 });

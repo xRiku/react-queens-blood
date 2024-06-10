@@ -7,6 +7,7 @@ import { Tile } from "../../@types/Tile";
 import useBoardStore from "../../store/BoardStore";
 import { useGameStore } from "../../store/GameStore";
 import { usePointStore } from "../../store/PointsStore";
+import SkipTurn from "../../components/SkipTurn";
 
 
 
@@ -72,6 +73,7 @@ export default function Game() {
               </div>
             </div>
             <Board isMyTurn={myTurn} amIP1={amIP1} />
+            <SkipTurn isMyTurn={myTurn} />
             <Hand isMyTurn={myTurn} />
           </>
       }
