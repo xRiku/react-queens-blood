@@ -8,6 +8,7 @@ import useBoardStore from "../../store/BoardStore";
 import { useGameStore } from "../../store/GameStore";
 import { usePointStore } from "../../store/PointsStore";
 import SkipTurn from "../../components/SkipTurn";
+import useNeoHandStore from "../../store/NeoHandStore";
 
 
 
@@ -20,10 +21,14 @@ export default function Game() {
   const [setBoard] = useBoardStore((state) => [state.setBoard])
   const [gameOver, setGameOver] = useGameStore((state) => [state.gameOver, state.setGameOver])
   const [setPoints] = usePointStore((state) => [state.setPoints])
+  const [drawCard] = useNeoHandStore((state) => [state.drawCard])
 
 
 
   useEffect(() => {
+
+
+
     socket.on('playerConnected', (data: { firstPlayer: boolean }) => {
       setAmIP1(data.firstPlayer)
       console.log(data)
@@ -42,6 +47,7 @@ export default function Game() {
       setPoints(data)
       if (!myTurn) {
         setBoard(data)
+        drawCard()
       }
       setMyTurn(!myTurn)
     })
@@ -60,11 +66,10 @@ export default function Game() {
 
 
   return (
-    <div className="vh-100 vw-100 overflow-x-hidden w-full">
+    <div className="h-full overflow-x-hidden w-full">
       {
         loading ? <h1 className="text-center">Waiting for another player...</h1> :
-          // gameOver ? <h1 className="text-center">Game Over</h1> :
-          <>
+          <div className="h-full">
             <div className="flex w-full items-center justify-center py-2">
               <div className="flex flex-row gap-3 w-8/12 justify-end">
                 <TurnedCard />
@@ -74,8 +79,8 @@ export default function Game() {
             </div>
             <Board isMyTurn={myTurn} amIP1={amIP1} />
             <SkipTurn isMyTurn={myTurn} />
-            <Hand isMyTurn={myTurn} />
-          </>
+            <Hand />
+          </div>
       }
     </div>
   )

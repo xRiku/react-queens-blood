@@ -60,7 +60,7 @@ export default function Card({ card, placed = false, amIP1 }: CardProps) {
           })}
         </div>
       </div>
-      <div className={`flex items-center justify-center rounded-b-md font-medium w-full bg-black border-t-2 border-t-yellow-400 text-yellow-400 ${placed ? 'text-xl' : 'text-2xl'} px-4 py-2`}>
+      <div className={`flex items-center justify-center rounded-b-md font-medium w-full bg-black border-t-2 border-t-yellow-400 text-yellow-400 text-xl px-4 py-2`}>
         {card!.name}
       </div>
     </div>

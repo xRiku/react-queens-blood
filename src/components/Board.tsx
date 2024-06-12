@@ -7,6 +7,7 @@ import socket from '../socket'
 import { useGameStore } from '../store/GameStore'
 import { usePointStore } from '../store/PointsStore'
 import { useEffect, useState } from 'react'
+import useNeoHandStore from '../store/NeoHandStore'
 
 
 export default function Board({
@@ -28,6 +29,7 @@ export default function Board({
   const [gameOver] = useGameStore((state) => [state.gameOver])
   const [playerOnePointsArray, playerTwoPointsArray] = usePointStore(state => [state.playerOnePoints, state.playerTwoPoints])
   const [sumOfPlayersPoints, setSumOfPlayersPoints] = useState<number[]>([0, 0])
+  const [placeCard] = useNeoHandStore(state => [state.placeCard])
 
   useEffect(() => {
     if (gameOver) {
@@ -182,11 +184,11 @@ export default function Board({
 
     console.log(transformMatrix(newTiles))
 
-    return newTiles
+    return transformMatrix(newTiles)
   }
 
-  function transformMatrix(matrix) {
-    return matrix.map((row) => row.toReversed())
+  function transformMatrix(matrix: Array<Array<any>>): Array<Array<any>> {
+    return matrix.map((row: Array<any>) => row.reverse())
   }
 
   function handleCellClick(position: Tile, rowIndex: number, colIndex: number) {
@@ -200,6 +202,7 @@ export default function Board({
 
     const newTiles = mapPawns(selectedCard, rowIndex, colIndex)
 
+    placeCard(selectedCard)
     setTiles(newTiles)
     resetSelectedCard()
     socket.emit('place-card', newTiles)

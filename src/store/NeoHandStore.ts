@@ -7,12 +7,16 @@ const deck = deckCards
 
 console.log(deck)
 
-function drawInitialHand(initialDeck: CardInfo[]) {
-  const hand: CardInfo[] = []
+let index = 0
 
-  for (let i = 0; i < 5; i++) {
+type Hand = CardInfo & {id: number}
+
+function drawInitialHand(initialDeck: CardInfo[]) {
+  const hand: Hand[] = []
+
+  for (; index < 4; index++) {
     const randomIndex = Math.floor(Math.random() * initialDeck.length)
-    hand.push(initialDeck[randomIndex])
+    hand.push({...initialDeck[randomIndex], id: index})
     initialDeck.splice(randomIndex, 1)
   }
 
@@ -21,29 +25,25 @@ function drawInitialHand(initialDeck: CardInfo[]) {
 }
 
 type HandStore = {
-  playerCards: CardInfo[]
-  placeCard: (card: CardInfo, isMyTurn: boolean) => void
-  drawCard: (isPlayerOneTurn: boolean) => void
+  playerCards: Hand[]
+  placeCard: (card: Hand) => void
+  drawCard: () => void
 }
 
 const useNeoHandStore = create<HandStore>((set) => ({
   playerCards: drawInitialHand(deck),
-  placeCard: (card, isMyTurn) => {
-    if (isMyTurn) {
+  placeCard: (card) => {
       set((state) => ({
-        playerCards: state.playerCards.filter((c) => c !== card),
+        playerCards: state.playerCards.filter((c) => c.id !== card.id),
       }))
       return
-    }
   },
-  drawCard: (isMyTurn) => {
-    if (isMyTurn) {
-      const randomIndex = Math.floor(Math.random() * deck.length)
-      set((state) => ({
-        playerCards: [...state.playerCards, deck[randomIndex]],
-      }))
-      deck.splice(randomIndex, 1)
-    }
+  drawCard: () => {
+    const randomIndex = Math.floor(Math.random() * deck.length)
+    set((state) => ({
+      playerCards: [...state.playerCards, {...deck[randomIndex], id: index++}],
+    }))
+    deck.splice(randomIndex, 1)
   },
 }))
 
