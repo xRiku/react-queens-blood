@@ -18,7 +18,7 @@ export default function Hand() {
   ])
 
   return (
-    <ul className="flex flex-wrap flex-row h-auto items-start justify-start w-full py-2 px-[4rem] gap-3" >
+    <ul className="flex flex-wrap flex-row h-auto items-start justify-start w-full pt-2 pb-5 px-[4rem] gap-3" >
       <AnimatePresence initial={false}>
         {
           playerCards.map((card, index) => (

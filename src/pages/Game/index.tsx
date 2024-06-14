@@ -9,6 +9,8 @@ import { useGameStore } from "../../store/GameStore";
 import { usePointStore } from "../../store/PointsStore";
 import SkipTurn from "../../components/SkipTurn";
 import useNeoHandStore from "../../store/NeoHandStore";
+import { useModalStore } from "../../store/useModalStore";
+import { GameStartModal } from "../../components/Modals/GameStartModal";
 
 
 
@@ -24,11 +26,11 @@ export default function Game() {
   const [drawCard] = useNeoHandStore((state) => [state.drawCard])
 
 
+  const [gameStartModal, toggleGameStartModal] = useModalStore((state) => [state.gameStartModal, state.toggleGameStartModal])
+
+
 
   useEffect(() => {
-
-
-
     socket.on('playerConnected', (data: { firstPlayer: boolean }) => {
       setAmIP1(data.firstPlayer)
       console.log(data)
@@ -37,7 +39,7 @@ export default function Game() {
 
     socket.on('gameStart', () => {
       setLoading(false)
-      console.log('amIP1', amIP1)
+      toggleGameStartModal()
       if (amIP1) {
         setMyTurn(true)
       }
@@ -82,6 +84,7 @@ export default function Game() {
             <Hand />
           </div>
       }
+      {gameStartModal && <GameStartModal amIP1={amIP1} />}
     </div>
   )
 }

@@ -135,7 +135,7 @@ export const deckCards = [
     pawnsCost: 2,
   },
   {
-    name: 'Riot Trooper',
+    name: 'R. Trooper',
     pawnsPositions: [
       [0, 2],
       [0, 1],
@@ -147,7 +147,7 @@ export const deckCards = [
     pawnsCost: 2,
   },
   {
-    name: 'Riot Trooper',
+    name: 'R. Trooper',
     pawnsPositions: [
       [0, 2],
       [0, 1],
