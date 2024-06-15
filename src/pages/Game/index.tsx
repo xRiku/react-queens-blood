@@ -11,6 +11,7 @@ import SkipTurn from "../../components/SkipTurn";
 import useNeoHandStore from "../../store/NeoHandStore";
 import { useModalStore } from "../../store/useModalStore";
 import { GameStartModal } from "../../components/Modals/GameStartModal";
+import { TurnModal } from "../../components/Modals/TurnModal";
 
 
 
@@ -26,7 +27,7 @@ export default function Game() {
   const [drawCard] = useNeoHandStore((state) => [state.drawCard])
 
 
-  const [gameStartModal, toggleGameStartModal] = useModalStore((state) => [state.gameStartModal, state.toggleGameStartModal])
+  const [gameStartModal, toggleGameStartModal, turnModal, toggleTurnModal] = useModalStore((state) => [state.gameStartModal, state.toggleGameStartModal, state.turnModal, state.toggleTurnModal])
 
 
 
@@ -47,9 +48,9 @@ export default function Game() {
 
     socket.on('newTurn', (data: Tile[][]) => {
       setPoints(data)
+      toggleTurnModal()
       if (!myTurn) {
         setBoard(data)
-        drawCard()
       }
       setMyTurn(!myTurn)
     })
@@ -84,7 +85,8 @@ export default function Game() {
             <Hand />
           </div>
       }
-      {gameStartModal && <GameStartModal amIP1={amIP1} />}
+      {gameStartModal && <GameStartModal />}
+      {turnModal && <TurnModal isMyTurn={myTurn} />}
     </div>
   )
 }
