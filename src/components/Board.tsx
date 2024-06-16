@@ -8,14 +8,13 @@ import { useGameStore } from '../store/GameStore'
 import { usePointStore } from '../store/PointsStore'
 import { useEffect, useState } from 'react'
 import useNeoHandStore from '../store/NeoHandStore'
+import useTurnStore from '../store/TurnStore'
 
 
 export default function Board({
-  amIP1,
-  isMyTurn,
+  amIP1
 }: {
   amIP1: boolean
-  isMyTurn: boolean
 }) {
   const [selectedCard, resetSelectedCard] = useCardStore((state) => [
     state.selectedCard,
@@ -25,6 +24,8 @@ export default function Board({
     state.board,
     state.setBoard,
   ])
+
+  const [isMyTurn] = useTurnStore((state) => [state.toggleTurn])
 
   const [gameOver] = useGameStore((state) => [state.gameOver])
   const [playerOnePointsArray, playerTwoPointsArray] = usePointStore(state => [state.playerOnePoints, state.playerTwoPoints])
@@ -167,7 +168,6 @@ export default function Board({
           placedByPlayerOne: true,
         },
       }
-      console.log(newTiles)
       return newTiles
     }
 

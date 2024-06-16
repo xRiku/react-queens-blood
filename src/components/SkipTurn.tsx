@@ -3,17 +3,16 @@ import useBoardStore from "../store/BoardStore"
 import useCardStore from "../store/CardStore"
 import { useGameStore } from "../store/GameStore"
 import { AnimatePresence, motion } from 'framer-motion'
+import useTurnStore from "../store/TurnStore"
 
 
-export default function SkipTurn({
-  isMyTurn
-}: {
-  isMyTurn: boolean
-}) {
+export default function SkipTurn() {
   const [tiles, setTiles] = useBoardStore((state) => [
     state.board,
     state.setBoard,
   ])
+
+  const [isMyTurn] = useTurnStore((state) => [state.isMyTurn])
 
   const [selectedCard, resetSelectedCard] = useCardStore((state) => [
     state.selectedCard,

@@ -8,10 +8,10 @@ import useBoardStore from "../../store/BoardStore";
 import { useGameStore } from "../../store/GameStore";
 import { usePointStore } from "../../store/PointsStore";
 import SkipTurn from "../../components/SkipTurn";
-import useNeoHandStore from "../../store/NeoHandStore";
 import { useModalStore } from "../../store/useModalStore";
 import { GameStartModal } from "../../components/Modals/GameStartModal";
 import { TurnModal } from "../../components/Modals/TurnModal";
+import useTurnStore from "../../store/TurnStore";
 
 
 
@@ -20,11 +20,10 @@ export default function Game() {
   const [loading, setLoading] = useState(true)
 
   const [amIP1, setAmIP1] = useState<boolean>(false);
-  const [myTurn, setMyTurn] = useState<boolean>(false);
+  const [isMyTurn, toggleTurn] = useTurnStore((state) => [state.isMyTurn, state.toggleTurn])
   const [setBoard] = useBoardStore((state) => [state.setBoard])
   const [gameOver, setGameOver] = useGameStore((state) => [state.gameOver, state.setGameOver])
   const [setPoints] = usePointStore((state) => [state.setPoints])
-  const [drawCard] = useNeoHandStore((state) => [state.drawCard])
 
 
   const [gameStartModal, toggleGameStartModal, turnModal, toggleTurnModal] = useModalStore((state) => [state.gameStartModal, state.toggleGameStartModal, state.turnModal, state.toggleTurnModal])
@@ -42,17 +41,17 @@ export default function Game() {
       setLoading(false)
       toggleGameStartModal()
       if (amIP1) {
-        setMyTurn(true)
+        toggleTurn()
       }
     })
 
     socket.on('newTurn', (data: Tile[][]) => {
       setPoints(data)
       toggleTurnModal()
-      if (!myTurn) {
+      if (!isMyTurn) {
         setBoard(data)
       }
-      setMyTurn(!myTurn)
+      toggleTurn()
     })
 
     socket.on('game-end', () => {
@@ -65,7 +64,7 @@ export default function Game() {
       socket.off('newTurn');
       socket.off('game-end');
     }
-  }, [myTurn, amIP1]);
+  }, [isMyTurn, amIP1]);
 
 
   return (
@@ -80,13 +79,13 @@ export default function Game() {
                 <TurnedCard />
               </div>
             </div>
-            <Board isMyTurn={myTurn} amIP1={amIP1} />
-            <SkipTurn isMyTurn={myTurn} />
+            <Board amIP1={amIP1} />
+            <SkipTurn />
             <Hand />
           </div>
       }
-      {gameStartModal && <GameStartModal />}
-      {turnModal && <TurnModal isMyTurn={myTurn} />}
+      {gameStartModal && !gameOver && <GameStartModal />}
+      {turnModal && !gameOver && <TurnModal />}
     </div>
   )
 }

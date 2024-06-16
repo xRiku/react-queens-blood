@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { useModalStore } from "../../store/useModalStore";
-import useNeoHandStore from "../../store/NeoHandStore";
 
 export function GameStartModal() {
 

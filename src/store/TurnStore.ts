@@ -1,14 +1,14 @@
 import { create } from 'zustand'
 
 type useTurnStore = {
-  isPlayerOneTurn: boolean
+  isMyTurn: boolean
   toggleTurn: () => void
 }
 
 const useTurnStore = create<useTurnStore>((set) => ({
-  isPlayerOneTurn: true,
+  isMyTurn: false,
   toggleTurn: () =>
-    set((state) => ({ isPlayerOneTurn: !state.isPlayerOneTurn })),
+    set((state) => ({ isMyTurn: !state.isMyTurn })),
 }))
 
 export default useTurnStore
