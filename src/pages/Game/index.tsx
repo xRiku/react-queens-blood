@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Board from "../../components/Board";
 import Hand from "../../components/Hand";
 import socket from "../../socket";
@@ -12,6 +12,8 @@ import { useModalStore } from "../../store/useModalStore";
 import { GameStartModal } from "../../components/Modals/GameStartModal";
 import { TurnModal } from "../../components/Modals/TurnModal";
 import useTurnStore from "../../store/TurnStore";
+import { EndGameModal } from "../../components/Modals/EndGameModal";
+
 
 
 
@@ -22,11 +24,12 @@ export default function Game() {
   const [amIP1, setAmIP1] = useState<boolean>(false);
   const [isMyTurn, toggleTurn] = useTurnStore((state) => [state.isMyTurn, state.toggleTurn])
   const [setBoard] = useBoardStore((state) => [state.setBoard])
-  const [gameOver, setGameOver] = useGameStore((state) => [state.gameOver, state.setGameOver])
+  const [gameOver, setGameOver, setPlayerOneName, setPlayerTwoName] = useGameStore((state) => [state.gameOver, state.setGameOver, state.setPlayerOneName, state.setPlayerTwoName])
   const [setPoints] = usePointStore((state) => [state.setPoints])
 
 
   const [gameStartModal, toggleGameStartModal, turnModal, toggleTurnModal] = useModalStore((state) => [state.gameStartModal, state.toggleGameStartModal, state.turnModal, state.toggleTurnModal])
+
 
 
 
@@ -37,12 +40,15 @@ export default function Game() {
     })
 
 
-    socket.on('gameStart', () => {
+    socket.on('gameStart', (data) => {
+      console.log(data)
       setLoading(false)
       toggleGameStartModal()
       if (amIP1) {
         toggleTurn()
       }
+      setPlayerOneName(data[0])
+      setPlayerTwoName(data[1])
     })
 
     socket.on('newTurn', (data: Tile[][]) => {
@@ -86,6 +92,7 @@ export default function Game() {
       }
       {gameStartModal && !gameOver && <GameStartModal />}
       {turnModal && !gameOver && <TurnModal />}
+      {gameOver && <EndGameModal />}
     </div>
   )
 }

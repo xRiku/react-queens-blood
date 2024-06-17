@@ -5,3 +5,5 @@ export type CardInfo = {
   pawnsCost: number
   placedByPlayerOne?: boolean
 }
+
+export type CardUnity = CardInfo & {id: number}

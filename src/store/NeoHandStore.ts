@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { CardInfo } from '../@types/Card'
+import { CardInfo, CardUnity } from '../@types/Card'
 import { deckCards } from '../utils/deck'
 
 
@@ -9,10 +9,8 @@ console.log(deck)
 
 let index = 0
 
-type Hand = CardInfo & {id: number}
-
 function drawInitialHand(initialDeck: CardInfo[]) {
-  const hand: Hand[] = []
+  const hand: CardUnity[] = []
 
   for (; index < 4; index++) {
     const randomIndex = Math.floor(Math.random() * initialDeck.length)
@@ -25,8 +23,8 @@ function drawInitialHand(initialDeck: CardInfo[]) {
 }
 
 type HandStore = {
-  playerCards: Hand[]
-  placeCard: (card: Hand) => void
+  playerCards: CardUnity[]
+  placeCard: (card: CardUnity) => void
   drawCard: () => void
 }
 

@@ -4,7 +4,7 @@ import useCardStore from '../store/CardStore'
 import useBoardStore from '../store/BoardStore'
 import Card from './Card'
 import socket from '../socket'
-import { useGameStore } from '../store/GameStore'
+import { Result, useGameStore } from '../store/GameStore'
 import { usePointStore } from '../store/PointsStore'
 import { useEffect, useState } from 'react'
 import useNeoHandStore from '../store/NeoHandStore'
@@ -25,9 +25,10 @@ export default function Board({
     state.setBoard,
   ])
 
-  const [isMyTurn] = useTurnStore((state) => [state.toggleTurn])
 
-  const [gameOver] = useGameStore((state) => [state.gameOver])
+  const [isMyTurn] = useTurnStore((state) => [state.isMyTurn])
+
+  const [gameOver, setGameResult, playerOneName, playerTwoName] = useGameStore((state) => [state.gameOver, state.setGameResult, state.playerOneName, state.playerTwoName])
   const [playerOnePointsArray, playerTwoPointsArray] = usePointStore(state => [state.playerOnePoints, state.playerTwoPoints])
   const [sumOfPlayersPoints, setSumOfPlayersPoints] = useState<number[]>([0, 0])
   const [placeCard] = useNeoHandStore(state => [state.placeCard])
@@ -53,6 +54,15 @@ export default function Board({
         }
       })
       setSumOfPlayersPoints(newSumOfPlayersPoints)
+      if (newSumOfPlayersPoints[0] > newSumOfPlayersPoints[1]) {
+        setGameResult(Result.WIN)
+      }
+      if (newSumOfPlayersPoints[0] < newSumOfPlayersPoints[1]) {
+        setGameResult(Result.LOSE)
+      }
+      if (newSumOfPlayersPoints[0] === newSumOfPlayersPoints[1]) {
+        setGameResult(Result.DRAW)
+      }
     }
   }, [gameOver])
 
@@ -296,7 +306,7 @@ export default function Board({
             <span className={`text-8xl ${gameOver ? 'visible' : 'invisible'}`}>{sumOfPlayersPoints[0]}</span>
             <span className={`text-8xl scale-x-[-1] `}>🐉</span>
             <h1 className="text-5xl">
-              {amIP1 ? 'Player 1' : 'Player 2'}
+              {amIP1 ? playerOneName : playerTwoName}
             </h1>
           </div>
           <div className="grid grid-cols-7 gap-1 w-8/12">
@@ -306,7 +316,7 @@ export default function Board({
             <span className={`text-8xl ${gameOver ? 'visible' : 'invisible'}`}>{sumOfPlayersPoints[1]}</span>
             <span className={`text-8xl`}>🐉</span>
             <h1 className="text-5xl">
-              {!amIP1 ? 'Player 1' : 'Player 2'}
+              {amIP1 ? playerTwoName : playerOneName}
             </h1>
           </div>
         </div>

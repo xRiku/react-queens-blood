@@ -1,9 +1,9 @@
 import { create } from 'zustand'
-import { Card } from '../@types/Card'
+import { CardUnity } from '../@types/Card'
 
 type CardStore = {
-  selectedCard: Card | null
-  setSelectedCard: (card: Card | null) => void
+  selectedCard: CardUnity | null
+  setSelectedCard: (card: CardUnity | null) => void
   resetSelectedCard: () => void
 }
 

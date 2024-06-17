@@ -12,6 +12,7 @@ const io = new SocketIOServer(app.server, {
 
 let numPlayers = 0;
 let playerSkippedTurn = false
+let playerNames = [] as string[]
 const history = [] as {player: string, card: string}[];
 
 io.on('connection', (socket) => {
@@ -40,12 +41,15 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('A Player with id', socket.id, 'disconnected')
     numPlayers--;
+    playerNames.pop()
   })
 
-  if (numPlayers >= 2) {
-    io.emit('gameStart');
-    playerSkippedTurn = false
-  }
+  socket.on('player-name', (data) => {
+    playerNames.push(data)
+    if (playerNames.length === 2) {
+      io.emit('gameStart', playerNames);
+    }
+  })
   
 });
 
