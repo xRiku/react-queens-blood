@@ -26,6 +26,7 @@ type HandStore = {
   playerCards: CardUnity[]
   placeCard: (card: CardUnity) => void
   drawCard: () => void
+  resetStore: () => void
 }
 
 const useNeoHandStore = create<HandStore>((set) => ({
@@ -43,6 +44,7 @@ const useNeoHandStore = create<HandStore>((set) => ({
     }))
     deck.splice(randomIndex, 1)
   },
+  resetStore: () => set({ playerCards: drawInitialHand(deck) }),
 }))
 
 export default useNeoHandStore

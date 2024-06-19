@@ -28,13 +28,17 @@ export default function Board({
 
   const [isMyTurn] = useTurnStore((state) => [state.isMyTurn])
 
-  const [gameOver, setGameResult, playerOneName, playerTwoName] = useGameStore((state) => [state.gameOver, state.setGameResult, state.playerOneName, state.playerTwoName])
+  const [gameOver, setGameResult, playerOneName, playerTwoName, playerDisconnected] = useGameStore((state) => [state.gameOver, state.setGameResult, state.playerOneName, state.playerTwoName, state.playerDisconnected])
   const [playerOnePointsArray, playerTwoPointsArray] = usePointStore(state => [state.playerOnePoints, state.playerTwoPoints])
   const [sumOfPlayersPoints, setSumOfPlayersPoints] = useState<number[]>([0, 0])
   const [placeCard] = useNeoHandStore(state => [state.placeCard])
 
   useEffect(() => {
     if (gameOver) {
+      if (playerDisconnected) {
+        setGameResult(Result.WIN)
+        return
+      }
       const newSumOfPlayersPoints = [0, 0]
       Array(3).fill(0).forEach((_, index) => {
         if (amIP1) {

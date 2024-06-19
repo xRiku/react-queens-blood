@@ -9,6 +9,7 @@ type useModalStoreType = {
   toggleEndGameModal: () => void;
   turnModal: boolean;
   toggleTurnModal: () => void;
+  resetStore: () => void;
 }
 
 export const useModalStore = create<useModalStoreType>((set) => ({
@@ -18,4 +19,5 @@ export const useModalStore = create<useModalStoreType>((set) => ({
   toggleEndGameModal: () => set((state) => ({ endGameModal: !state.endGameModal })),
   turnModal: false,
   toggleTurnModal: () => set((state) => ({ turnModal: !state.turnModal })),
+  resetStore: () => set({ gameStartModal: false, endGameModal: false, turnModal: false })
 }));

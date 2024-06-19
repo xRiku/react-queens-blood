@@ -9,7 +9,7 @@ export function EndGameModal() {
   const [gameResult] = useGameStore((state) => [state.gameResult])
   const ref = useRef<FireworksHandlers>(null)
 
-  return <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-5">
+  return <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center backdrop-blur-[2px]">
     {gameResult === Result.WIN &&
       <>
         <div className="px-20 py-12 mb-96">
@@ -21,7 +21,7 @@ export function EndGameModal() {
               opacity: 1,
               translateY: 0,
             }}
-            className="text-8xl font-medium text-yellow-400 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]
+            className="text-8xl font-medium text-yellow-300 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]
           ">You Win!</motion.h2>
         </div>
         <Fireworks

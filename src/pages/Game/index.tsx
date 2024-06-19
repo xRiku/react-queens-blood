@@ -8,7 +8,7 @@ import useBoardStore from "../../store/BoardStore";
 import { useGameStore } from "../../store/GameStore";
 import { usePointStore } from "../../store/PointsStore";
 import SkipTurn from "../../components/SkipTurn";
-import { useModalStore } from "../../store/useModalStore";
+import { useModalStore } from "../../store/ModalStore";
 import { GameStartModal } from "../../components/Modals/GameStartModal";
 import { TurnModal } from "../../components/Modals/TurnModal";
 import useTurnStore from "../../store/TurnStore";
@@ -24,7 +24,7 @@ export default function Game() {
   const [amIP1, setAmIP1] = useState<boolean>(false);
   const [isMyTurn, toggleTurn] = useTurnStore((state) => [state.isMyTurn, state.toggleTurn])
   const [setBoard] = useBoardStore((state) => [state.setBoard])
-  const [gameOver, setGameOver, setPlayerOneName, setPlayerTwoName] = useGameStore((state) => [state.gameOver, state.setGameOver, state.setPlayerOneName, state.setPlayerTwoName])
+  const [gameOver, setGameOver, setPlayerOneName, setPlayerTwoName, setPlayerDisconnected] = useGameStore((state) => [state.gameOver, state.setGameOver, state.setPlayerOneName, state.setPlayerTwoName, state.setPlayerDisconnected])
   const [setPoints] = usePointStore((state) => [state.setPoints])
 
 
@@ -60,7 +60,10 @@ export default function Game() {
       toggleTurn()
     })
 
-    socket.on('game-end', () => {
+    socket.on('game-end', (data) => {
+      if (data.playerDisconnected) {
+        setPlayerDisconnected(true)
+      }
       setGameOver(true)
     })
 

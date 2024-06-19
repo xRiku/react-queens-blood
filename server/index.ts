@@ -42,6 +42,7 @@ io.on('connection', (socket) => {
     console.log('A Player with id', socket.id, 'disconnected')
     numPlayers--;
     playerNames.pop()
+    io.emit('game-end', {playerDisconnected: true})
   })
 
   socket.on('player-name', (data) => {

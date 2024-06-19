@@ -5,6 +5,7 @@ type PointStore = {
   playerOnePoints: number[]
   playerTwoPoints: number[]
   setPoints: (data: Tile[][]) => void
+  resetStore: () => void
 }
 
 export const usePointStore = create<PointStore>((set) => ({
@@ -27,5 +28,6 @@ export const usePointStore = create<PointStore>((set) => ({
       playerOnePoints: newPlayerOnePoints,
       playerTwoPoints: newPlayerTwoPoints,
     })
-  }
+  },
+  resetStore: () => set({ playerOnePoints: [0, 0, 0], playerTwoPoints: [0, 0, 0] }),
 }))

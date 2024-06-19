@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useModalStore } from "../../store/useModalStore";
+import { useModalStore } from "../../store/ModalStore";
 
 export function GameStartModal() {
 

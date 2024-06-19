@@ -15,6 +15,9 @@ type GameStore = {
   setPlayerOneName: (value: string) => void
   playerTwoName: string
   setPlayerTwoName: (value: string) => void
+  playerDisconnected: boolean
+  setPlayerDisconnected: (value: boolean) => void
+  resetStore: () => void
 }
 
 export const useGameStore = create<GameStore>((set) => ({
@@ -26,4 +29,7 @@ export const useGameStore = create<GameStore>((set) => ({
   setPlayerOneName: (value) => set({ playerOneName: value }),
   playerTwoName: '',
   setPlayerTwoName: (value) => set({ playerTwoName: value }),
+  playerDisconnected: false,
+  setPlayerDisconnected: (value) => set({ playerDisconnected: value }),
+  resetStore: () => set({ gameOver: false, gameResult: Result.DRAW, playerOneName: '', playerTwoName: '', playerDisconnected: false })
 }))
