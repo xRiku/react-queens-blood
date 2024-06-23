@@ -21,10 +21,9 @@ import { EndGameModal } from "../../components/Modals/EndGameModal";
 export default function Game() {
   const [loading, setLoading] = useState(true)
 
-  const [amIP1, setAmIP1] = useState<boolean>(false);
   const [isMyTurn, toggleTurn] = useTurnStore((state) => [state.isMyTurn, state.toggleTurn])
   const [setBoard] = useBoardStore((state) => [state.setBoard])
-  const [gameOver, setGameOver, setPlayerOneName, setPlayerTwoName, setPlayerDisconnected] = useGameStore((state) => [state.gameOver, state.setGameOver, state.setPlayerOneName, state.setPlayerTwoName, state.setPlayerDisconnected])
+  const [amIP1, setAmIP1, gameOver, setGameOver, setPlayerOneName, setPlayerTwoName, setPlayerDisconnected] = useGameStore((state) => [state.amIP1, state.setAmIP1, state.gameOver, state.setGameOver, state.setPlayerOneName, state.setPlayerTwoName, state.setPlayerDisconnected])
   const [setPoints] = usePointStore((state) => [state.setPoints])
 
 
@@ -34,14 +33,12 @@ export default function Game() {
 
 
   useEffect(() => {
-    socket.on('playerConnected', (data: { firstPlayer: boolean }) => {
+    socket.on('player-connected', (data: { firstPlayer: boolean }) => {
       setAmIP1(data.firstPlayer)
-      console.log(data)
     })
 
 
-    socket.on('gameStart', (data) => {
-      console.log(data)
+    socket.on('game-start', (data) => {
       setLoading(false)
       toggleGameStartModal()
       if (amIP1) {
@@ -51,7 +48,7 @@ export default function Game() {
       setPlayerTwoName(data[1])
     })
 
-    socket.on('newTurn', (data: Tile[][]) => {
+    socket.on('new-turn', (data: Tile[][]) => {
       setPoints(data)
       toggleTurnModal()
       if (!isMyTurn) {
@@ -61,16 +58,16 @@ export default function Game() {
     })
 
     socket.on('game-end', (data) => {
-      if (data.playerDisconnected) {
+      if (data?.playerDisconnected) {
         setPlayerDisconnected(true)
       }
       setGameOver(true)
     })
 
     return () => {
-      socket.off('playerConnected');
-      socket.off('gameStart');
-      socket.off('newTurn');
+      socket.off('player-connected');
+      socket.off('game-start');
+      socket.off('new-turn');
       socket.off('game-end');
     }
   }, [isMyTurn, amIP1]);

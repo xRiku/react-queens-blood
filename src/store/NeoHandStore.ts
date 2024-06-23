@@ -5,14 +5,12 @@ import { deckCards } from '../utils/deck'
 
 const deck = deckCards
 
-console.log(deck)
-
 let index = 0
 
 function drawInitialHand(initialDeck: CardInfo[]) {
   const hand: CardUnity[] = []
 
-  for (; index < 4; index++) {
+  for (; index < 5; index++) {
     const randomIndex = Math.floor(Math.random() * initialDeck.length)
     hand.push({...initialDeck[randomIndex], id: index})
     initialDeck.splice(randomIndex, 1)
@@ -26,11 +24,12 @@ type HandStore = {
   playerCards: CardUnity[]
   placeCard: (card: CardUnity) => void
   drawCard: () => void
+  drawInitialHand: () => void
   resetStore: () => void
 }
 
 const useNeoHandStore = create<HandStore>((set) => ({
-  playerCards: drawInitialHand(deck),
+  playerCards: [] as CardUnity[],
   placeCard: (card) => {
       set((state) => ({
         playerCards: state.playerCards.filter((c) => c.id !== card.id),
@@ -44,6 +43,7 @@ const useNeoHandStore = create<HandStore>((set) => ({
     }))
     deck.splice(randomIndex, 1)
   },
+  drawInitialHand: () => set({ playerCards: drawInitialHand(deck) }),
   resetStore: () => set({ playerCards: drawInitialHand(deck) }),
 }))
 

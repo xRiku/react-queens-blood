@@ -1,70 +1,66 @@
-import fastify from 'fastify';
-import { Server as SocketIOServer } from 'socket.io';
+import fastify from "fastify";
+import { Server as SocketIOServer } from "socket.io";
 
-const app = fastify()
+const app = fastify();
 
 const io = new SocketIOServer(app.server, {
   cors: {
     origin: "*",
-    methods: ["GET", "POST"]
+    methods: ["GET", "POST"],
   },
 });
 
 let numPlayers = 0;
-let playerSkippedTurn = false
-let playerNames = [] as string[]
-const history = [] as {player: string, card: string}[];
+let playerSkippedTurn = false;
+let playerNames = [] as string[];
+const history = [] as { player: string; card: string }[];
 
-io.on('connection', (socket) => {
-  console.log('A Player with id', socket.id, 'connected')
+io.on("connection", (socket) => {
+  console.log("A Player with id", socket.id, "connected");
   numPlayers++;
-  io.to(socket.id).emit('playerConnected', {firstPlayer: numPlayers === 1} );
+  io.to(socket.id).emit("player-connected", { firstPlayer: numPlayers === 1 });
 
-  socket.on('skip-turn', (data) => {
+  socket.on("skip-turn", (data) => {
     if (playerSkippedTurn) {
-      io.emit('game-end')
+      io.emit("game-end");
     }
-    playerSkippedTurn = true
-    io.emit('newTurn', data)
-  })
+    playerSkippedTurn = true;
+    io.emit("new-turn", data);
+  });
 
-  socket.on('place-card', (data) => {
-    playerSkippedTurn = false
+  socket.on("place-card", (data) => {
+    playerSkippedTurn = false;
     history.push(data);
-    io.emit('newTurn', data)
-  })
+    io.emit("new-turn", data);
+  });
 
-  socket.on('history', () => {
-    io.to(socket.id).emit('history', history)
-  })
+  socket.on("history", () => {
+    io.to(socket.id).emit("history", history);
+  });
 
-  socket.on('disconnect', () => {
-    console.log('A Player with id', socket.id, 'disconnected')
+  socket.on("disconnect", () => {
+    console.log("A Player with id", socket.id, "disconnected");
     numPlayers--;
-    playerNames.pop()
-    io.emit('game-end', {playerDisconnected: true})
-  })
+    playerNames.pop();
+    io.emit("game-end", { playerDisconnected: true });
+  });
 
-  socket.on('player-name', (data) => {
-    playerNames.push(data)
+  socket.on("player-name", (data) => {
+    playerNames.push(data);
     if (playerNames.length === 2) {
-      io.emit('gameStart', playerNames);
+      io.emit("game-start", playerNames);
     }
-  })
-  
+  });
 });
 
+app.get("/", async () => {
+  return { hello: "world" };
+});
 
-io.listen(4000)
-
-app.get('/', async () => {
-  return { hello: 'world' }
-})
-
-app.listen({port: 3000, host: '0.0.0.0'}, (err, address) => {
+app.listen({ port: 4000, host: "0.0.0.0" }, (err, address) => {
   if (err) {
-    console.error(err)
-    process.exit(1)
+    console.error(err);
+    process.exit(1);
   }
-  console.log(`Server listening at ${address}`)
-})
+  console.log(`Server listening at ${address}`);
+});

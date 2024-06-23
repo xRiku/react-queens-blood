@@ -7,6 +7,8 @@ export enum Result {
 }
 
 type GameStore = {
+  amIP1: boolean
+  setAmIP1: (value: boolean) => void
   gameOver: boolean
   setGameOver: (value: boolean) => void
   gameResult: Result
@@ -21,6 +23,8 @@ type GameStore = {
 }
 
 export const useGameStore = create<GameStore>((set) => ({
+  amIP1: false,
+  setAmIP1: (value) => set({ amIP1: value }),
   gameOver: false,
   setGameOver: (value) => set({ gameOver: value }),
   gameResult: Result.DRAW,
