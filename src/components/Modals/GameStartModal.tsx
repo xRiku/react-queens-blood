@@ -5,14 +5,11 @@ export function GameStartModal() {
 
   const [toggleGameStartModal, toggleTurnModal] = useModalStore((state) => [state.toggleGameStartModal, state.toggleTurnModal]);
 
-  return <div className="fixed mt-[480px] top-0 left-0 w-full h-full flex items-start justify-center">
-    {/* <div className="absolute w-full h-full bg-gray-900 opacity-50"></div> */}
+  return <div className="fixed mt-[320px] top-0 left-0 w-full h-full flex items-start justify-center">
     <motion.div
       animate={{ opacity: [0, 1, 1, 0] }}
       key="game-start-modal"
       transition={{ duration: 3, times: [0.0, 0.1, 0.9, 1.0] }}
-      // animate={{ x: [-540, 0, 540], opacity: [0, 1, 1, 0] }}
-      // transition={{ duration: 3, times: [0.0, 0.3, 0.8, 1.0] }}
       onAnimationComplete={() => {
         toggleGameStartModal()
         setTimeout(() => {

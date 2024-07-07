@@ -22,7 +22,11 @@ export default function Card({ card, placed = false, amIP1 }: CardProps) {
 
   return (
     <div
-      className={`flex flex-col justify-between ${placed ? 'border border-gray-400' : 'bg-white'} w-full h-full ${amIP1 ? placed ? (card?.placedByPlayerOne ? 'bg-green-400' : 'bg-red-400') : '' : placed ? (card?.placedByPlayerOne ? 'bg-red-400' : 'bg-green-400') : ''} rounded-lg`}
+      className={`flex flex-col justify-between ${placed ? 'border border-gray-400' : 'bg-white'}
+      w-full h-full ${amIP1 ? placed ? (card?.placedByPlayerOne ? 'bg-green-400' : 'bg-red-400') : '' :
+          placed ? (card?.placedByPlayerOne ? 'bg-red-400' : 'bg-green-400') : ''} 
+         rounded-lg`
+      }
     >
       <div className="flex justify-between items-center">
         <span className={`p-2 ${placed ? 'text-xl' : 'text-3xl'}`}>{'♟'.repeat(card!.pawnsCost)}</span>

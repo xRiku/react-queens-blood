@@ -78,13 +78,13 @@ export default function Game() {
       {
         loading ? <h1 className="text-center">Waiting for another player...</h1> :
           <div className="h-full">
-            <div className="flex w-full items-center justify-center py-2">
+            {/* <div className="flex w-full items-center justify-center py-2">
               <div className="flex flex-row gap-3 w-8/12 justify-end">
                 <TurnedCard />
                 <TurnedCard />
                 <TurnedCard />
               </div>
-            </div>
+            </div> */}
             <Board amIP1={amIP1} />
             <SkipTurn />
             <Hand />

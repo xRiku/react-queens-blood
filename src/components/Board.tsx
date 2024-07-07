@@ -228,7 +228,7 @@ export default function Board({
   for (let i = 0; i < rows; i++) {
     tilesElements[i][0] = (
       <div
-        className={`bg-gray-800 h-48 w-full flex items-center justify-center border-solid border-2 border-black`}
+        className={`bg-gray-800 h-44 w-full flex items-center justify-center border-solid border-2 border-black`}
         key={`${i}-${0}`}
       >
         <div
@@ -247,7 +247,7 @@ export default function Board({
     )
     tilesElements[i][cols - 1] = (
       <div
-        className={`bg-gray-800 h-48 w-full flex items-center justify-center border-solid border-2 border-black`}
+        className={`bg-gray-800 h-44 w-full flex items-center justify-center border-solid border-2 border-black`}
         key={`${i}-${cols - 1}`}
       >
         <div
@@ -272,7 +272,7 @@ export default function Board({
       const color = (i + j) % 2 === 0 ? 'bg-white' : 'bg-gray-800'
       tilesElements[i][j] = (
         <div
-          className={`${color} h-48 w-full border-solid border-4 hover:border-4 ${!tiles[i][j - 1].card ? 'flex justify-center items-center' : ''}  border-black
+          className={`${color} h-44 w-full border-solid border-4 hover:border-4 ${!tiles[i][j - 1].card ? 'flex justify-center items-center' : ''}  border-black
            ${selectedCard ? (canAddCardToPosition(selectedCard, tiles[i][j - 1]) ? 'cursor-pointer  hover:border-green-400' : 'cursor-not-allowed hover:border-red-400') : ''}
            transition duration-300 ease-out`}
           onClick={() => handleCellClick(tiles[i][j - 1], i, j - 1)}
@@ -306,20 +306,20 @@ export default function Board({
     <>
       <div className="flex flex-col items-center justify-center gap-4">
         <div className="flex w-full items-center justify-evenly">
-          <div className="flex flex-col items-center justify-center gap-3">
+          <div className="flex flex-col items-center justify-center gap-3 w-32">
             <span className={`text-8xl ${gameOver ? 'visible' : 'invisible'}`}>{sumOfPlayersPoints[0]}</span>
             <span className={`text-8xl scale-x-[-1] `}>🐉</span>
-            <h1 className="text-5xl">
+            <h1 className="text-4xl">
               {amIP1 ? playerOneName : playerTwoName}
             </h1>
           </div>
           <div className="grid grid-cols-7 gap-1 w-8/12">
             {amIP1 ? tilesElements : transformMatrix(tilesElements)}
           </div>
-          <div className="flex flex-col items-center justify-center gap-3">
+          <div className="flex flex-col items-center justify-center gap-3 w-32">
             <span className={`text-8xl ${gameOver ? 'visible' : 'invisible'}`}>{sumOfPlayersPoints[1]}</span>
             <span className={`text-8xl`}>🐉</span>
-            <h1 className="text-5xl">
+            <h1 className="text-4xl">
               {amIP1 ? playerTwoName : playerOneName}
             </h1>
           </div>
