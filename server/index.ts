@@ -23,6 +23,7 @@ io.on("connection", (socket) => {
   socket.on("skip-turn", (data) => {
     if (playerSkippedTurn) {
       io.emit("game-end");
+      return;
     }
     playerSkippedTurn = true;
     io.emit("new-turn", data);
