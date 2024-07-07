@@ -1,12 +1,18 @@
-import { CardInfo } from '../@types/Card'
+import { CardInfo, CardUnity } from '../@types/Card'
 import useCardStore from '../store/CardStore'
 import Card from './Card'
 import useNeoHandStore from '../store/NeoHandStore'
 import { AnimatePresence, motion } from 'framer-motion'
+import hoverSound from '../assets/sounds/hover.wav'
+import flickSound from '../assets/sounds/cardflick.mp3'
 
 type Hand = {
-  cards: CardInfo[]
+  cards: CardUnity[]
 }
+
+const flickAudio = new Audio(flickSound)
+const hoverAudio = new Audio(hoverSound)
+
 
 export default function Hand() {
   const [playerCards] = useNeoHandStore((state) => [
@@ -17,9 +23,34 @@ export default function Hand() {
     state.setSelectedCard,
   ])
 
+
+  const handleCardClick = (card: CardUnity) => {
+    if (selectedCard?.id === card.id) {
+      setSelectedCard(null)
+      return;
+    }
+
+    setSelectedCard(card)
+    flickAudio.pause()
+    flickAudio.currentTime = 0
+    flickAudio.volume = 0.4
+    flickAudio.play()
+  }
+
+  const handleHoverStart = (card: CardUnity) => {
+    if (selectedCard?.id !== card.id) {
+      hoverAudio.pause()
+      hoverAudio.currentTime = 0
+      hoverAudio.volume = 0.2
+      hoverAudio.play()
+
+    }
+  }
+
+
   return (
-    <ul className="flex flex-wrap flex-row h-auto items-start justify-start w-full pt-2 pb-5 px-[4rem] gap-3" >
-      <AnimatePresence initial={false}>
+    <motion.ul className="flex flex-wrap flex-row h-auto items-start justify-start w-full pt-2 pb-5 px-[4rem] gap-3" animate={{ transition: { staggerChildren: 0.5 } }}>
+      <AnimatePresence>
         {
           playerCards.map((card, index) => (
             <motion.li
@@ -29,13 +60,12 @@ export default function Hand() {
               exit={{ opacity: 0, transition: { duration: 1 } }}
               className={`border-2 border-solid shadow-lg rounded-lg cursor-pointer ${selectedCard?.id === card?.id
                 ? 'border-green-400 -translate-y-8 transform '
-                : 'border-black'
+                : 'border-black hover:scale-105 hover:duration-100 hover:border-blue-500'
                 } h-60 w-52
                   transition duration-300 ease-in-out hover:-translate-y-8 hover:transform`}
+              onHoverStart={() => handleHoverStart(card)}
               onClick={
-                selectedCard?.name === card?.name
-                  ? () => setSelectedCard(null)
-                  : () => setSelectedCard(card)
+                () => handleCardClick(card)
               }
             >
               <Card card={card} />
@@ -43,6 +73,6 @@ export default function Hand() {
           ))
         }
       </AnimatePresence>
-    </ul>
+    </motion.ul>
   )
 }
