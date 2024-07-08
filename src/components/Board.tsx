@@ -9,6 +9,7 @@ import { usePointStore } from '../store/PointsStore'
 import { useEffect, useState } from 'react'
 import useNeoHandStore from '../store/NeoHandStore'
 import useTurnStore from '../store/TurnStore'
+import transformMatrix from '../utils/transformMatrix'
 
 
 export default function Board({
@@ -196,11 +197,7 @@ export default function Board({
       },
     }
 
-    return transformMatrix(newTiles)
-  }
-
-  function transformMatrix(matrix: Array<Array<any>>): Array<Array<any>> {
-    return matrix.map((row: Array<any>) => row.reverse())
+    return newTiles
   }
 
   function handleCellClick(position: Tile, rowIndex: number, colIndex: number) {
@@ -308,8 +305,11 @@ export default function Board({
             <span className={`text-8xl ${gameOver ? 'visible' : 'invisible'}`}>{sumOfPlayersPoints[0]}</span>
             <span className={`text-8xl scale-x-[-1] `}>🐉</span>
             <h1 className="text-4xl">
-              {amIP1 ? playerOneName : playerTwoName}
+              {amIP1 ? playerOneName : playerTwoName} {' '}
             </h1>
+            <h2 className='text-2xl'>
+              {amIP1 ? '(Player 1)' : '(Player 2)'}
+            </h2>
           </div>
           <div className="grid grid-cols-7 gap-1 w-8/12">
             {amIP1 ? tilesElements : transformMatrix(tilesElements)}
@@ -318,8 +318,11 @@ export default function Board({
             <span className={`text-8xl ${gameOver ? 'visible' : 'invisible'}`}>{sumOfPlayersPoints[1]}</span>
             <span className={`text-8xl`}>🐉</span>
             <h1 className="text-4xl">
-              {amIP1 ? playerTwoName : playerOneName}
+              {amIP1 ? playerTwoName : playerOneName} {' '}
             </h1>
+            <h2 className='text-2xl'>
+              {amIP1 ? '(Player 2)' : '(Player 1)'}
+            </h2>
           </div>
         </div>
       </div>

@@ -21,7 +21,7 @@ import { EndGameModal } from "../../components/Modals/EndGameModal";
 export default function Game() {
   const [loading, setLoading] = useState(true)
 
-  const [isMyTurn, toggleTurn, togglePlayerSkippedTurn] = useTurnStore((state) => [state.isMyTurn, state.toggleTurn, state.togglePlayerSkippedTurn])
+  const [isMyTurn, toggleTurn, setPlayerSkippedTurn] = useTurnStore((state) => [state.isMyTurn, state.toggleTurn, state.setPlayerSkippedTurn])
   const [setBoard] = useBoardStore((state) => [state.setBoard])
   const [amIP1, setAmIP1, gameOver, setGameOver, setPlayerOneName, setPlayerTwoName, setPlayerDisconnected] = useGameStore((state) => [state.amIP1, state.setAmIP1, state.gameOver, state.setGameOver, state.setPlayerOneName, state.setPlayerTwoName, state.setPlayerDisconnected])
   const [setPoints] = usePointStore((state) => [state.setPoints])
@@ -49,9 +49,7 @@ export default function Game() {
     })
 
     socket.on('new-turn', (data: { tiles: Tile[][], playerSkippedTurn: boolean }) => {
-      if (data.playerSkippedTurn) {
-        togglePlayerSkippedTurn()
-      }
+      setPlayerSkippedTurn(data.playerSkippedTurn)
       setPoints(data.tiles)
       toggleTurnModal()
       if (!isMyTurn) {

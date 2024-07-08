@@ -6,7 +6,7 @@ type useTurnStore = {
   toggleTurn: () => void;
   setIsMyFirstTurn: (value: boolean) => void;
   playerSkippedTurn: boolean;
-  togglePlayerSkippedTurn: () => void;
+  setPlayerSkippedTurn: (playerSkippedTurn: boolean) => void;
   resetStore: () => void;
 };
 
@@ -16,8 +16,8 @@ const useTurnStore = create<useTurnStore>((set) => ({
   toggleTurn: () => set((state) => ({ isMyTurn: !state.isMyTurn })),
   setIsMyFirstTurn: (value) => set({ isMyFirstTurn: value }),
   playerSkippedTurn: false,
-  togglePlayerSkippedTurn: () =>
-    set((state) => ({ playerSkippedTurn: !state.playerSkippedTurn })),
+  setPlayerSkippedTurn: (playerSkippedTurn: boolean) =>
+    set((state) => ({ playerSkippedTurn: playerSkippedTurn })),
   resetStore: () => set({ isMyTurn: false, isMyFirstTurn: true }),
 }));
 

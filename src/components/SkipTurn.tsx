@@ -7,19 +7,17 @@ import useTurnStore from "../store/TurnStore"
 
 
 export default function SkipTurn() {
-  const [tiles, setTiles] = useBoardStore((state) => [
+  const [tiles] = useBoardStore((state) => [
     state.board,
-    state.setBoard,
   ])
 
   const [isMyTurn, playerSkippedTurn] = useTurnStore((state) => [state.isMyTurn, state.playerSkippedTurn])
 
-  const [selectedCard, resetSelectedCard] = useCardStore((state) => [
-    state.selectedCard,
+  const [resetSelectedCard] = useCardStore((state) => [
     state.resetSelectedCard,
   ])
 
-  const [gameOver] = useGameStore((state) => [state.gameOver])
+  const [gameOver] = useGameStore((state) => [state.gameOver, state.amIP1])
 
 
   function handleSkipTurn() {
