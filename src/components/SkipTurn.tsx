@@ -12,7 +12,7 @@ export default function SkipTurn() {
     state.setBoard,
   ])
 
-  const [isMyTurn] = useTurnStore((state) => [state.isMyTurn])
+  const [isMyTurn, playerSkippedTurn] = useTurnStore((state) => [state.isMyTurn, state.playerSkippedTurn])
 
   const [selectedCard, resetSelectedCard] = useCardStore((state) => [
     state.selectedCard,
@@ -39,7 +39,7 @@ export default function SkipTurn() {
         shadow-xl cursor-pointer  text-black border-4 border-yellow-400 py-1 px-12`}
             onClick={handleSkipTurn}
           >
-            Skip turn
+            {playerSkippedTurn ? 'End game' : 'Skip turn'}
           </motion.span>
         )
         }

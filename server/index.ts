@@ -20,19 +20,19 @@ io.on("connection", (socket) => {
   numPlayers++;
   io.to(socket.id).emit("player-connected", { firstPlayer: numPlayers === 1 });
 
-  socket.on("skip-turn", (data) => {
+  socket.on("skip-turn", (tiles) => {
     if (playerSkippedTurn) {
       io.emit("game-end");
       return;
     }
     playerSkippedTurn = true;
-    io.emit("new-turn", data);
+    io.emit("new-turn", { tiles, playerSkippedTurn });
   });
 
-  socket.on("place-card", (data) => {
+  socket.on("place-card", (tiles) => {
     playerSkippedTurn = false;
-    history.push(data);
-    io.emit("new-turn", data);
+    history.push(tiles);
+    io.emit("new-turn", { tiles, playerSkippedTurn });
   });
 
   socket.on("history", () => {

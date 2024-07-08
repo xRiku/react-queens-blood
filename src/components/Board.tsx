@@ -196,8 +196,6 @@ export default function Board({
       },
     }
 
-    console.log(transformMatrix(newTiles))
-
     return transformMatrix(newTiles)
   }
 
