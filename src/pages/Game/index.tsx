@@ -20,6 +20,7 @@ import { EndGameModal } from "../../components/Modals/EndGameModal";
 
 export default function Game() {
   const [loading, setLoading] = useState(true)
+  const [gameBusy, setGameBusy] = useState(false)
 
   const [isMyTurn, toggleTurn, setPlayerSkippedTurn] = useTurnStore((state) => [state.isMyTurn, state.toggleTurn, state.setPlayerSkippedTurn])
   const [setBoard] = useBoardStore((state) => [state.setBoard])
@@ -65,31 +66,36 @@ export default function Game() {
       setGameOver(true)
     })
 
+    socket.on('game-busy', () => {
+      setLoading(false)
+      setGameBusy(true)
+    })
+
     return () => {
       socket.off('player-connected');
       socket.off('game-start');
       socket.off('new-turn');
       socket.off('game-end');
+      socket.off('game-busy');
     }
   }, [isMyTurn, amIP1]);
 
+  const shouldShowBoard = !loading && !gameBusy
 
   return (
     <div className="h-full overflow-x-hidden w-full">
       {
-        loading ? <h1 className="text-center">Waiting for another player...</h1> :
-          <div className="h-full">
-            {/* <div className="flex w-full items-center justify-center py-2">
-              <div className="flex flex-row gap-3 w-8/12 justify-end">
-                <TurnedCard />
-                <TurnedCard />
-                <TurnedCard />
-              </div>
-            </div> */}
-            <Board amIP1={amIP1} />
-            <SkipTurn />
-            <Hand />
-          </div>
+        loading && <h1 className="text-center">Waiting for another player...</h1>
+      }
+      {
+        shouldShowBoard && <div className="h-full">
+          <Board amIP1={amIP1} />
+          <SkipTurn />
+          <Hand />
+        </div>
+      }
+      {
+        gameBusy && <h1 className="text-center">Game is busy. Please try again later.</h1>
       }
       {gameStartModal && !gameOver && <GameStartModal />}
       {turnModal && !gameOver && <TurnModal />}
