@@ -19,12 +19,10 @@ export default function Home() {
       setErrorMessage('Game not found')
     })
 
-    socket.on('game-found', () => {
-      socket.emit('join-game', {
-        playerName,
-        gameId
-      })
-      navigate('/game')
+    socket.on('game-found', (data: {
+      gameIdFound: string
+    }) => {
+      navigate(`/waiting-room/${data.gameIdFound}`)
     })
 
     return () => {
@@ -35,18 +33,19 @@ export default function Home() {
   }, [])
 
   const handleStartGame = () => {
-    navigate('/game')
+    const randomGameId = window.crypto.randomUUID()
+    navigate(`/game/${randomGameId}`)
     socket.connect()
     socket.emit('start-game-info', {
       playerName,
-      gameId: window.crypto.randomUUID()
+      gameId: randomGameId
     })
   }
 
   const handleJoinGame = () => {
     setLoading(true)
     socket.connect()
-    socket.emit('try-to-join-game', {
+    socket.emit('attempt-to-join-game', {
       gameId
     })
   }
@@ -67,13 +66,13 @@ export default function Home() {
         <div className="flex flex-col items-center justify-center gap-6 p-10">
           <input value={gameId} onChange={handleChangeGameIdInput} className="text-sm w-72 py-2 px-1 text-center border border-solid-1 border-gray-400 rounded-md" placeholder="Game ID" />
           <button
-            onClick={handleStartGame}
+            onClick={handleJoinGame}
             className="rounded-md w-72 px-4 py-2 border text-black border-black hover:bg-gray-700 hover:border-gray-700 group active:translate-y-2"
           >
             <span className="text-2xl font-medium text-black group-hover:text-white">Join Game {true}</span>
           </button>
           {!!errorMessage && <span className='text-red-500'>
-            errorMessage
+            {errorMessage}
           </span>
           }
         </div>
@@ -82,7 +81,7 @@ export default function Home() {
         <div className="flex flex-col items-center justify-center gap-6 p-10">
           <input value={playerName} onChange={handleChangePlayerNameInput} className="text-sm w-72 py-2 px-1 text-center border border-solid-1 border-gray-400 rounded-md" placeholder="Your name" />
           <button
-            onClick={handleJoinGame}
+            onClick={handleStartGame}
             className="rounded-md w-72 px-4 py-2 border text-black border-black hover:bg-gray-700 hover:border-gray-700 group active:translate-y-2"
           >
             <span className="text-2xl font-medium text-black group-hover:text-white">Start Game</span>

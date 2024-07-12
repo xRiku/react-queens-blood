@@ -87,35 +87,44 @@ io.on("connection", (socket) => {
         playerIds: [socket.id],
         playerNames: [data.playerName],
       };
+      io.to(socket.id).emit("player-connected", {
+        firstPlayer: currentGames[data.gameId].playerNames.length === 1,
+      });
     }
   );
 
   socket.on("join-game", (data: { playerName: string; gameId: string }) => {
-    currentGames[data.gameId].playerIds.push(socket.id);
-    currentGames[data.gameId].playerNames.push(data.playerName);
-    io.to(currentGames[data.gameId].playerIds).emit(
-      "game-start",
-      currentGames[data.gameId].playerNames
-    );
-    isGameBusy = true;
+    if (currentGames[data.gameId]["playerIds"].includes(socket.id)) {
+      currentGames[data.gameId].playerNames.push(data.playerName);
+      io.to(socket.id).emit("player-connected", {
+        firstPlayer: currentGames[data.gameId].playerNames.length === 1,
+      });
+      io.to(currentGames[data.gameId].playerIds).emit(
+        "game-start",
+        currentGames[data.gameId].playerNames
+      );
+      isGameBusy = true;
+      return;
+    }
+    io.to(socket.id).emit("game-busy");
   });
 
   socket.on("attempt-to-join-game", (data: { gameId: string }) => {
-    if (currentGames[data.gameId].playerIds.length >= 2) {
+    console.log(currentGames);
+    if (currentGames[data.gameId]?.playerIds.length >= 2) {
       io.to(socket.id).emit("game-busy");
       return;
     }
 
     if (currentGames[data.gameId]) {
-      io.to(socket.id).emit("game-found");
+      io.to(socket.id).emit("game-found", {
+        gameIdFound: data.gameId,
+      });
+      currentGames[data.gameId]["playerIds"].push(socket.id);
       return;
     }
     io.to(socket.id).emit("game-not-found");
   });
-});
-
-app.get("/", async () => {
-  return { hello: "world" };
 });
 
 app.listen({ port: 4000, host: "0.0.0.0" }, (err, address) => {
