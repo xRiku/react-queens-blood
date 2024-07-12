@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 import useNeoHandStore from '../store/NeoHandStore'
 import useTurnStore from '../store/TurnStore'
 import transformMatrix from '../utils/transformMatrix'
+import { useParams } from 'react-router-dom'
 
 
 export default function Board({
@@ -33,6 +34,8 @@ export default function Board({
   const [playerOnePointsArray, playerTwoPointsArray] = usePointStore(state => [state.playerOnePoints, state.playerTwoPoints])
   const [sumOfPlayersPoints, setSumOfPlayersPoints] = useState<number[]>([0, 0])
   const [placeCard] = useNeoHandStore(state => [state.placeCard])
+
+  const { id: gameId } = useParams<{ id: string }>()
 
   useEffect(() => {
     if (gameOver) {
@@ -214,7 +217,7 @@ export default function Board({
     placeCard(selectedCard)
     setTiles(newTiles)
     resetSelectedCard()
-    socket.emit('place-card', newTiles)
+    socket.emit('place-card', { tiles: newTiles, gameId })
   }
 
 

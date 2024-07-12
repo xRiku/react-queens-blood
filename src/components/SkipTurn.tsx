@@ -4,6 +4,7 @@ import useCardStore from "../store/CardStore"
 import { useGameStore } from "../store/GameStore"
 import { AnimatePresence, motion } from 'framer-motion'
 import useTurnStore from "../store/TurnStore"
+import { useParams } from "react-router-dom"
 
 
 export default function SkipTurn() {
@@ -19,10 +20,12 @@ export default function SkipTurn() {
 
   const [gameOver] = useGameStore((state) => [state.gameOver, state.amIP1])
 
+  const { id: gameId } = useParams<{ id: string }>()
+
 
   function handleSkipTurn() {
     resetSelectedCard()
-    socket.emit('skip-turn', tiles)
+    socket.emit('skip-turn', { tiles, gameId })
   }
 
   return (
