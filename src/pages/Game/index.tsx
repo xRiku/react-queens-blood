@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import Board from "../../components/Board";
 import Hand from "../../components/Hand";
 import socket from "../../socket";
-import TurnedCard from "../../components/TurnedCard";
 import { Tile } from "../../@types/Tile";
 import useBoardStore from "../../store/BoardStore";
 import { useGameStore } from "../../store/GameStore";
@@ -13,6 +12,7 @@ import { GameStartModal } from "../../components/Modals/GameStartModal";
 import { TurnModal } from "../../components/Modals/TurnModal";
 import useTurnStore from "../../store/TurnStore";
 import { EndGameModal } from "../../components/Modals/EndGameModal";
+import { useParams } from "react-router-dom";
 
 
 
@@ -27,6 +27,7 @@ export default function Game() {
   const [amIP1, setAmIP1, gameOver, setGameOver, setPlayerOneName, setPlayerTwoName, setPlayerDisconnected] = useGameStore((state) => [state.amIP1, state.setAmIP1, state.gameOver, state.setGameOver, state.setPlayerOneName, state.setPlayerTwoName, state.setPlayerDisconnected])
   const [setPoints] = usePointStore((state) => [state.setPoints])
 
+  const { id: gameId } = useParams<{ id: string }>()
 
   const [gameStartModal, toggleGameStartModal, turnModal, toggleTurnModal] = useModalStore((state) => [state.gameStartModal, state.toggleGameStartModal, state.turnModal, state.toggleTurnModal])
 
@@ -85,7 +86,8 @@ export default function Game() {
   return (
     <div className="h-full overflow-x-hidden w-full">
       {
-        loading && <h1 className="text-center">Waiting for another player...</h1>
+        loading && <div className="flex flex-col items-center gap-10"><p className="text-center">Waiting for another player...</p>
+          <h1 className="text-9xl">{gameId}</h1></div>
       }
       {
         shouldShowBoard && <div className="h-full">
