@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Board from "../../components/Board";
 import Hand from "../../components/Hand";
 import socket from "../../socket";

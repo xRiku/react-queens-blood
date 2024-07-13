@@ -1,4 +1,4 @@
-import { CardInfo, CardUnity } from '../@types/Card'
+import { CardUnity } from '../@types/Card'
 import useCardStore from '../store/CardStore'
 import Card from './Card'
 import useNeoHandStore from '../store/NeoHandStore'
@@ -52,7 +52,7 @@ export default function Hand() {
     <motion.ul className="flex flex-wrap flex-row h-auto items-start justify-start w-full pt-2 pb-5 px-[4rem] gap-3" animate={{ transition: { staggerChildren: 0.5 } }}>
       <AnimatePresence>
         {
-          playerCards.map((card, index) => (
+          playerCards.map((card) => (
             <motion.li
               key={card.id}
               initial={{ opacity: 0, x: -200, y: 0 }}

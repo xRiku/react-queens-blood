@@ -5,17 +5,14 @@ export default function Home() {
   const navigate = useNavigate()
   const [playerName, setPlayerName] = useState<string>('')
   const [gameId, setGameId] = useState<string>('')
-  const [loading, setLoading] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
 
   useEffect(() => {
     socket.on('game-busy', () => {
-      setLoading(false)
       setErrorMessage('Game is busy')
     })
 
     socket.on('game-not-found', () => {
-      setLoading(false)
       setErrorMessage('Game not found')
     })
 
@@ -43,7 +40,6 @@ export default function Home() {
   }
 
   const handleJoinGame = () => {
-    setLoading(true)
     socket.connect()
     socket.emit('attempt-to-join-game', {
       gameId

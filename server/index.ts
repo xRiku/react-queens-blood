@@ -7,6 +7,7 @@ const app = fastify();
 const io = new SocketIOServer(app.server, {
   cors: {
     origin: "*",
+
     methods: ["GET", "POST"],
   },
 });
@@ -17,7 +18,6 @@ let currentGames = {} as {
     playerSkippedTurn: boolean;
   };
 };
-const history = [] as { player: string; card: string }[];
 
 io.on("connection", (socket) => {
   console.log("A Player with id", socket.id, "connected");

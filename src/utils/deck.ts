@@ -1,15 +1,6 @@
 export const deckCards = [
   {
-    name: 'Wolf',
-    pawnsPositions: [
-      [1, 0],
-      [0, 1],
-    ],
-    points: 2,
-    pawnsCost: 1,
-  },
-   {
-    name: 'Wolf',
+    name: "Wolf",
     pawnsPositions: [
       [1, 0],
       [0, 1],
@@ -18,7 +9,16 @@ export const deckCards = [
     pawnsCost: 1,
   },
   {
-    name: 'Soldier',
+    name: "Wolf",
+    pawnsPositions: [
+      [1, 0],
+      [0, 1],
+    ],
+    points: 2,
+    pawnsCost: 1,
+  },
+  {
+    name: "Soldier",
     pawnsPositions: [
       [0, 1],
       [1, 0],
@@ -29,7 +29,7 @@ export const deckCards = [
     pawnsCost: 1,
   },
   {
-    name: 'Soldier',
+    name: "Soldier",
     pawnsPositions: [
       [0, 1],
       [1, 0],
@@ -40,7 +40,7 @@ export const deckCards = [
     pawnsCost: 1,
   },
   {
-    name: 'Bee',
+    name: "Bee",
     pawnsPositions: [
       [0, 2],
       [0, -2],
@@ -49,7 +49,7 @@ export const deckCards = [
     pawnsCost: 1,
   },
   {
-    name: 'Bee',
+    name: "Bee",
     pawnsPositions: [
       [0, 2],
       [0, -2],
@@ -58,7 +58,7 @@ export const deckCards = [
     pawnsCost: 1,
   },
   {
-    name: 'Ostrich',
+    name: "Ostrich",
     pawnsPositions: [
       [1, 0],
       [0, -1],
@@ -67,7 +67,7 @@ export const deckCards = [
     pawnsCost: 1,
   },
   {
-    name: 'Crab',
+    name: "Crab",
     pawnsPositions: [
       [1, 0],
       [-1, 0],
@@ -77,7 +77,7 @@ export const deckCards = [
     pawnsCost: 1,
   },
   {
-    name: 'Crab',
+    name: "Crab",
     pawnsPositions: [
       [1, 0],
       [-1, 0],
@@ -87,7 +87,7 @@ export const deckCards = [
     pawnsCost: 1,
   },
   {
-    name: 'Quetzalcoatl',
+    name: "Quetzalcoatl",
     pawnsPositions: [
       [0, 2],
       [1, 1],
@@ -98,7 +98,7 @@ export const deckCards = [
     pawnsCost: 2,
   },
   {
-    name: 'Screamer',
+    name: "Screamer",
     pawnsPositions: [
       [0, 1],
       [-1, 1],
@@ -113,7 +113,7 @@ export const deckCards = [
     pawnsCost: 3,
   },
   {
-    name: 'Ogre',
+    name: "Ogre",
     pawnsPositions: [
       [0, 2],
       [1, 2],
@@ -124,7 +124,7 @@ export const deckCards = [
     pawnsCost: 2,
   },
   {
-    name: 'Ogre',
+    name: "Ogre",
     pawnsPositions: [
       [0, 2],
       [1, 2],
@@ -135,7 +135,7 @@ export const deckCards = [
     pawnsCost: 2,
   },
   {
-    name: 'R. Trooper',
+    name: "R. Trooper",
     pawnsPositions: [
       [0, 2],
       [0, 1],
@@ -147,7 +147,7 @@ export const deckCards = [
     pawnsCost: 2,
   },
   {
-    name: 'R. Trooper',
+    name: "R. Trooper",
     pawnsPositions: [
       [0, 2],
       [0, 1],
@@ -158,4 +158,4 @@ export const deckCards = [
     points: 3,
     pawnsCost: 2,
   },
-]
+];

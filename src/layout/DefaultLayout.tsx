@@ -5,6 +5,7 @@ import { useGameStore } from "../store/GameStore";
 import { useModalStore } from "../store/ModalStore";
 import { usePointStore } from "../store/PointsStore";
 import useTurnStore from "../store/TurnStore";
+import useNeoHandStore from "../store/NeoHandStore";
 
 
 
@@ -16,6 +17,7 @@ export default function DefaultLayout() {
   const [resetPointsStore] = usePointStore((state) => [state.resetStore])
   const [resetTurnStore] = useTurnStore((state) => [state.resetStore])
   const [resetModalStore] = useModalStore((state) => [state.resetStore])
+  const [resetNeoHandStore] = useNeoHandStore((state) => [state.resetStore])
 
 
   const resetAllStores = () => {
@@ -24,6 +26,7 @@ export default function DefaultLayout() {
     resetPointsStore()
     resetTurnStore()
     resetModalStore()
+    resetNeoHandStore()
   }
 
 

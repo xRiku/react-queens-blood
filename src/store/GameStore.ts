@@ -1,26 +1,26 @@
-import { create } from "zustand"
+import { create } from "zustand";
 
 export enum Result {
-  WIN = 'win',
-  LOSE = 'lose',
-  DRAW = 'draw'
+  WIN = "win",
+  LOSE = "lose",
+  DRAW = "draw",
 }
 
 type GameStore = {
-  amIP1: boolean
-  setAmIP1: (value: boolean) => void
-  gameOver: boolean
-  setGameOver: (value: boolean) => void
-  gameResult: Result
-  setGameResult: (value: Result) => void
-  playerOneName: string
-  setPlayerOneName: (value: string) => void
-  playerTwoName: string
-  setPlayerTwoName: (value: string) => void
-  playerDisconnected: boolean
-  setPlayerDisconnected: (value: boolean) => void
-  resetStore: () => void
-}
+  amIP1: boolean;
+  setAmIP1: (value: boolean) => void;
+  gameOver: boolean;
+  setGameOver: (value: boolean) => void;
+  gameResult: Result;
+  setGameResult: (value: Result) => void;
+  playerOneName: string;
+  setPlayerOneName: (value: string) => void;
+  playerTwoName: string;
+  setPlayerTwoName: (value: string) => void;
+  playerDisconnected: boolean;
+  setPlayerDisconnected: (value: boolean) => void;
+  resetStore: () => void;
+};
 
 export const useGameStore = create<GameStore>((set) => ({
   amIP1: false,
@@ -29,11 +29,19 @@ export const useGameStore = create<GameStore>((set) => ({
   setGameOver: (value) => set({ gameOver: value }),
   gameResult: Result.DRAW,
   setGameResult: (value) => set({ gameResult: value }),
-  playerOneName: '',
+  playerOneName: "",
   setPlayerOneName: (value) => set({ playerOneName: value }),
-  playerTwoName: '',
+  playerTwoName: "",
   setPlayerTwoName: (value) => set({ playerTwoName: value }),
   playerDisconnected: false,
   setPlayerDisconnected: (value) => set({ playerDisconnected: value }),
-  resetStore: () => set({ gameOver: false, gameResult: Result.DRAW, playerOneName: '', playerTwoName: '', playerDisconnected: false })
-}))
+  resetStore: () =>
+    set({
+      gameOver: false,
+      amIP1: false,
+      gameResult: Result.DRAW,
+      playerOneName: "",
+      playerTwoName: "",
+      playerDisconnected: false,
+    }),
+}));
