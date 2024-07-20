@@ -7,16 +7,35 @@ type CardProps = {
 }
 
 export default function Card({ card, placed = false, amIP1 }: CardProps) {
-  function fillMonsterPositions(points: number[][]) {
-    const positions: number[] = new Array(25).fill(0)
+  function fillMonsterPositionsAndEffects(card: CardInfo): { hasPawn: boolean, hasEffect: boolean }[] {
+    const points = card?.pawnsPositions
+    const effectPoints = card?.affectedPositions
+
+    const positions: { hasPawn: boolean, hasEffect: boolean }[] = new Array(25).fill({
+      hasPawn: false,
+      hasEffect: false,
+    })
     const startingNumber = 12
 
     for (const i in points) {
       const x: number = Number(points[i][0])
       const y: number = Number(points[i][1])
-      positions[startingNumber + x + -y * 5] = 1
+      positions[startingNumber + x + -y * 5] = {
+        ...positions[startingNumber + x + -y * 5],
+        hasPawn: true,
+      }
     }
+    if (!effectPoints) return positions
 
+    for (const j in effectPoints) {
+      const x: number = Number(effectPoints[j][0])
+      const y: number = Number(effectPoints[j][1])
+      positions[startingNumber + x + -y * 5] = {
+        ...positions[startingNumber + x + -y * 5],
+        hasEffect: true,
+      }
+    }
+    console.log(positions)
     return positions
   }
 
@@ -36,7 +55,7 @@ export default function Card({ card, placed = false, amIP1 }: CardProps) {
       </div>
       <div className="flex justify-center items-center">
         <div className="grid grid-cols-5 border-black border">
-          {fillMonsterPositions(card!.pawnsPositions).map((pawn, index) => {
+          {card && fillMonsterPositionsAndEffects(card).map((cardTile, index) => {
             if (index === 12) {
               return (
                 <div
@@ -46,12 +65,27 @@ export default function Card({ card, placed = false, amIP1 }: CardProps) {
               )
             }
 
-            if (pawn === 1) {
+            if (cardTile.hasPawn === true) {
               return (
                 <div
                   key={index}
-                  className={`${placed ? 'h-3 w-3' : 'h-4 w-4'} border-solid border-2 border-black bg-yellow-400`}
-                ></div>
+                  className={`${placed ? 'h-3 w-3' : 'h-4 w-4'}  border-black ${cardTile.hasEffect ? 'border-[1.5px]' : 'border-2'}`}>
+                  <div
+                    className={`w-full h-full border-solid bg-yellow-400 ${cardTile.hasEffect ? 'border-red-400 border-[3px]' : ''}`}
+                  ></div>
+                </div>
+              )
+            }
+
+            if (cardTile.hasEffect === true) {
+              return (
+                <div
+                  key={index}
+                  className={`${placed ? 'h-3 w-3' : 'h-4 w-4'}  border-black ${cardTile.hasEffect ? 'border-[1.5px]' : 'border-2'}`}>
+                  <div
+                    className={`w-full h-full border-solid bg-gray-400 ${cardTile.hasEffect ? 'border-red-400 border-[3px]' : ''}`}
+                  ></div>
+                </div>
               )
             }
 

@@ -85,6 +85,8 @@ export const deckCards = [
     ],
     points: 1,
     pawnsCost: 1,
+    affectedPositions: [[0, 1]],
+    affectedAllyEffectValue: 2,
   },
   {
     name: "Quetzalcoatl",

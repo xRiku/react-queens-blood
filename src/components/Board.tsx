@@ -175,6 +175,37 @@ export default function Board({
       }
     }
 
+    if (card.affectedPositions) {
+      for (let i = 0; i < card.affectedPositions.length; i++) {
+        const newRow = -(transformedColIndex + card.affectedPositions[i][1])
+        const newCol = amIP1 ? transformedRowIndex + card.affectedPositions[i][0] : Math.abs(-transformedRowIndex + card.pawnsPositions[i][0])
+
+        if (newRow < 0 || newRow >= rows || newCol < 0 || newCol >= cols - 2) {
+          continue
+        }
+
+
+        if (amIP1) {
+          newTiles[newRow][newCol] = {
+            ...newTiles[newRow][newCol],
+            playerOnePoints:
+              card.affectedAllyEffectValue ? newTiles[newRow][newCol].playerOnePoints + card.affectedAllyEffectValue : newTiles[newRow][newCol].playerOnePoints,
+            playerTwoPoints:
+              card.affectedEnemyEffectValue ? newTiles[newRow][newCol].playerTwoPoints + card.affectedEnemyEffectValue : newTiles[newRow][newCol].playerTwoPoints,
+          }
+          continue
+        }
+
+        newTiles[newRow][newCol] = {
+          ...newTiles[newRow][newCol],
+          playerOnePoints:
+            card.affectedEnemyEffectValue ? newTiles[newRow][newCol].playerOnePoints + card.affectedEnemyEffectValue : newTiles[newRow][newCol].playerOnePoints,
+          playerTwoPoints:
+            card.affectedAllyEffectValue ? newTiles[newRow][newCol].playerTwoPoints + card.affectedAllyEffectValue : newTiles[newRow][newCol].playerTwoPoints,
+        }
+      }
+    }
+
     if (amIP1) {
       newTiles[rowIndex][correctColIndex] = {
         playerOnePoints: card.points,
