@@ -42,7 +42,7 @@ To set up the **server** you just have to run
 
 After setting up everything, the application is accesible at `localhost:5173` and you're ready to play.
 
-### Optimal way to play
+### 🌟 Optimal way to play
 
 Part of the fun in a Queen's Blood game is not having access to the opponent's hand. So the optimal way to play is setting up the server and playing on two different devices in the same network. This requires that the 5173 port of the device running the app is exposed to the LAN.
 
@@ -70,7 +70,7 @@ On Windows, the IP is located after `IPv4 Address`.
 
 ### ➡️ Entering the game
 
-You can either create a game room or join a game where each room has its own game ID and you can only have two players per room.
+You can either create a game room or join a game. Each room has its own game ID and you can only have two players per room.
 
 <img src=".github/home_screen.png">
 
@@ -78,7 +78,7 @@ To start a new game, type your name and click the `Start Game` button. A random 
 
 <img src=".github/game_ID.png">
 
-This game ID is meant to be used when joining a new game. In order to join a game, input the ID in the join game input field and click `Join Game`. After that the joining player will be prompted to type a name.
+This game ID is meant to be used when joining a new game. In order to join a game, input the ID in the join game input field and click `Join Game`. After that, the joining player will be prompted to type a name.
 
 <img src=".github/join_game.png">
 
@@ -98,7 +98,7 @@ The card is built of 4 key informations. The text on the bottom represents the c
 
 Lastly, each card has a 5x5 board in the middle that informs how the card interacts with the game board. When placing a card in React Queen's Blood it has the ability to also place pawns for you to increase board presence. This inner board in the card is composed of tiles of three different colors. The **White** tile is the position in the game board where the card is placed. The **Yellow** tiles are the location of the pawns placed relative to the white tile after the card is placed in the game board. The **Gray** tiles do not have any effect and are just the rest of the tile postions.
 
-In the first round of the game each player receives 5 cards. To pass a turn, there are two options: one is to place a card and the other is to skip the turn. When placing a card in a row, the score of the card is summed into the row score for that player. The game ends when the two players skip the turn consecutively. When the game ends, for each row, if the player's score for that row is greater than the opponent's, the score for that row is summed to the total score. If you either lose in that row or get a draw, you sum 0 to the total score. Wins whoever has the highest total score in the end.
+In the first round of the game each player receives 5 cards. To pass a turn, there are two options: one is to place a card and the other is to skip the turn. When placing a card in a row, the score of the card is summed into the row score for that player. In each but the first turn, you draw a random card from the deck. The game ends when the two players skip the turn consecutively. When the game ends, for each row, if the player's score for that row is greater than the opponent's, the score for that row is summed to the total score. If you either lose in that row or get a draw, you sum 0 to the total score. Wins whoever has the highest total score in the end.
 
 ## 🚧 Room for improvement
 
