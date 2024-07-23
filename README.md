@@ -6,7 +6,7 @@ React Queen's Blood is a multiplayer web version of the card game _Queen's Blood
 
 <img src=".github/game.png"/>
 
-Disclaimer: The game is currently designed specifically for 1080p monitors.
+Disclaimer: The game is currently designed specifically for 1080p monitors. I do not own the Intellectual Property of Queen's Blood. I only implemented a simplistic version of the game.
 
 ## 🖥️ Technologies used
 
@@ -82,7 +82,7 @@ This game ID is meant to be used when joining a new game. In order to join a gam
 
 <img src=".github/join_game.png">
 
-After clicking the `Join Game` button, the game will start. The player that creates the room will always be Player 1.
+After clicking on the `Join Game` button, the game will start. The player that creates the room will always be Player 1.
 
 ### 📜 Rules
 
@@ -92,28 +92,38 @@ The game is composed of a board and a deck of 15 cards. The board contains three
 
 The user playing is always displayed in green, on the left side, and the opponent in red, on the right side. The first and last column of the board represents the total score for that row in each player's respective color. You may also note that there are pawns in each row and each side of the board. In React Queen's Blood, you can only place a card in a tile with a pawn in it and if it is from your color, which is green. The tile can contain 1-3 pawns, which represent the cost of the card (to be explained).
 
-The card is built of 4 key informations. The text on the bottom represents the card name. Each deck can only contain 2 cards of the same name. The pawn piece on the top left indicates the cost to play that card on the board. It varies from 1-3. The number at the top right indicates the score of that card.
+The card is built of 4 key informations. The text on the bottom represents the card name. Each deck can only contain 2 cards of the same name. The pawn piece on the top left indicates the cost to play that card on the board. It varies from 1-3. The number on the top right indicates the score of that card.
 
 <img src=".github/card.png">
 
-Lastly, each card has a 5x5 board in the middle that informs how the card interacts with the game board. When placing a card in React Queen's Blood it has the ability to also place pawns for you to increase board presence. This inner board in the card is composed of tiles of three different colors. The **White** tile is the position in the game board where the card is placed. The **Yellow** tiles are the location of the pawns placed relative to the white tile after the card is placed in the game board. The **Gray** tiles do not have any effect and are just the rest of the tile postions.
+Lastly, each card has a 5x5 board in the middle that informs how the card interacts with the game board. When placing a card in React Queen's Blood it has the ability to also place pawns for you to increase the number of tiles you have access to. The inner board in the card is composed of tiles of three different colors. The **Gray** tiles do not have any effect and are just the rest of the tile postions. The **White** tile is the position in the game board where the card is placed. The **Yellow** tiles are the location of the pawns placed relative to the placed card in the game board.
 
-In the first round of the game each player receives 5 cards. To pass a turn, there are two options: one is to place a card and the other is to skip the turn. When placing a card in a row, the score of the card is summed into the row score for that player. In each but the first turn, you draw a random card from the deck. The game ends when the two players skip the turn consecutively. When the game ends, for each row, if the player's score for that row is greater than the opponent's, the score for that row is summed to the total score. If you either lose in that row or get a draw, you sum 0 to the total score. Wins whoever has the highest total score in the end.
+<img src=".github/yellow_tile_example.png">
+
+:warning: When placing a card on the board and the yellow tile's position already contains a pawn of your color, the pawn is added to the tile. If it's an opponent's pawn, all of the pawns in the tile are converted to your color.
+
+<img src=".github/pawn_converted_example.gif">
+
+The game starts with Player 1. For each player's first turn, they receive 5 cards each. For the following turns, each player draws 1 random card from the deck at the start, before executing their action. Each turn requires that the player executes one of the following actions: place a card on the board or skip their turn by clicking the `Skip Turn` button. When placing a card in a row, the score of the card is summed into the row score for that player. The game ends when the two players skip their turn consecutively. When the game ends, for each row, if the player's score for that row is greater than the opponent's, the score for that row is summed to the total score. If you either lose in that row or get a draw, you sum 0 to the total score. Wins whoever has the highest total score in the end.
+
+<img src=".github/end_game_example.png">
 
 ## 🚧 Room for improvement
 
-List of ideas already planned out to be implemented:
+List of ideas already planned out to be implemented (in no specific order):
 
 - [ ] Add buffs and debuffs
 - [ ] Improve code legibility
 - [ ] Improve animations and timings (such as the initial draw of the card or when the card is used)
 - [ ] Add a pawn preview for the selected card
-- [ ] Add a tile highlight for
+- [ ] Add a tile highlight for available tiles to place the card
 - [ ] Add a mulligan phase to prevent cards with high cost in the first hand
-- [ ] Add more balanced cards
+- [ ] Add more cards
 - [ ] Improve SFX
 - [ ] Add docker support
 - [ ] Add responsive design
+- [ ] Improve card's visual design
+- [ ] Add a rematch button
 
 ## 👥 Contributing
 
