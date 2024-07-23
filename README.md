@@ -2,7 +2,7 @@
  👑 React Queen's Blood 👑
 </h1>
 
-React Queen's Blood is a multiplayer web version of the card game _Queen's Blood_ in _Final Fantasy VII Rebirth_, made using React.
+React Queen's Blood is a simplified multiplayer web version of the card game _Queen's Blood_ from _Final Fantasy VII Rebirth_, made using React.
 
 <img src=".github/game.png"/>
 
