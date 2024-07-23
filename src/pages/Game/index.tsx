@@ -13,6 +13,8 @@ import { TurnModal } from "../../components/Modals/TurnModal";
 import useTurnStore from "../../store/TurnStore";
 import { EndGameModal } from "../../components/Modals/EndGameModal";
 import { useParams } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCopy } from "@fortawesome/free-regular-svg-icons";
 
 
 
@@ -21,6 +23,7 @@ import { useParams } from "react-router-dom";
 export default function Game() {
   const [loading, setLoading] = useState(true)
   const [gameBusy, setGameBusy] = useState(false)
+  const [isCopied, setIsCopied] = useState(false);
 
   const [isMyTurn, toggleTurn, setPlayerSkippedTurn] = useTurnStore((state) => [state.isMyTurn, state.toggleTurn, state.setPlayerSkippedTurn])
   const [setBoard] = useBoardStore((state) => [state.setBoard])
@@ -81,13 +84,28 @@ export default function Game() {
     }
   }, [isMyTurn, amIP1]);
 
+  const handleGameIdClick = async (gameId?: string) => {
+    try {
+      if (!gameId) return;
+      await navigator.clipboard.writeText(gameId);
+      setIsCopied(true);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  }
+
   const shouldShowBoard = !loading && !gameBusy
 
   return (
     <div className="h-full overflow-x-hidden w-full">
       {
-        loading && <div className="flex flex-col items-center gap-10"><p className="text-center">Waiting for another player...</p>
-          <h1 className="text-9xl">{gameId}</h1></div>
+        loading && <div className="flex flex-col items-center gap-10">
+          <p className="text-center">Waiting for another player...</p>
+          <div className="flex gap-6" title={`${isCopied ? 'Copied!' : 'Copy'}`}>
+            <h1 className="text-5xl " >{gameId}</h1>
+            <button className="cursor-pointer" onClick={() => handleGameIdClick(gameId)}><FontAwesomeIcon icon={faCopy} size={"xl"} /></button>
+          </div>
+        </div>
       }
       {
         shouldShowBoard && <div className="h-full">
