@@ -67,23 +67,22 @@ export const deckCards = [
     pawnsCost: 1,
   },
   {
-    name: "Crab",
+    name: "Flan",
     pawnsPositions: [
-      [1, 0],
+      [-1, 1],
       [-1, 0],
-      [0, 1],
+      [-1, -1],
     ],
     points: 2,
     pawnsCost: 1,
   },
   {
-    name: "Crab",
+    name: "Ostrich",
     pawnsPositions: [
       [1, 0],
-      [-1, 0],
-      [0, 1],
+      [0, -1],
     ],
-    points: 1,
+    points: 2,
     pawnsCost: 1,
   },
   {
@@ -113,15 +112,14 @@ export const deckCards = [
     pawnsCost: 3,
   },
   {
-    name: "Ogre",
+    name: "Crab",
     pawnsPositions: [
-      [0, 2],
-      [1, 2],
-      [0, -2],
-      [1, -2],
+      [-1, 0],
+      [0, 1],
+      [1, 0],
     ],
-    points: 5,
-    pawnsCost: 2,
+    points: 1,
+    pawnsCost: 1,
   },
   {
     name: "Ogre",
