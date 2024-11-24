@@ -120,10 +120,13 @@ List of ideas already planned out to be implemented (in no specific order):
 - [ ] Add a mulligan phase to prevent cards with high cost in the first hand
 - [ ] Add more cards
 - [ ] Improve SFX
-- [ ] Add docker support
 - [ ] Add responsive design
 - [ ] Improve card's visual design
 - [ ] Add a rematch button
+- [ ] Create database to store data such as user account and match info
+- [ ] Deploy application
+- [ ] Add chat between players
+- [ ] Add turn timer to prevent endless matches
 
 ## 👥 Contributing
 
