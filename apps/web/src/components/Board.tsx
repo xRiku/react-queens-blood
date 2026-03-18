@@ -90,12 +90,20 @@ export default function Board({
     }
 
     const correctColIndex = isMyTurn ? colIndex : Math.abs(colIndex - 4)
-    const newTiles = mapPawns(tiles, selectedCard, rowIndex, correctColIndex, amIP1)
 
+    // Optimistic update — apply locally for instant feedback
+    const newTiles = mapPawns(tiles, selectedCard, rowIndex, correctColIndex, amIP1)
     placeCard(selectedCard)
     setTiles(newTiles)
     resetSelectedCard()
-    socket.emit('place-card', { tiles: newTiles, gameId })
+
+    // Send action to server for validation
+    socket.emit('place-card', {
+      cardId: selectedCard.id,
+      row: rowIndex,
+      col: correctColIndex,
+      gameId,
+    })
   }
 
 

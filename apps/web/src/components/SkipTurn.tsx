@@ -1,5 +1,4 @@
 import socket from "../socket"
-import useBoardStore from "../store/BoardStore"
 import useCardStore from "../store/CardStore"
 import { useGameStore } from "../store/GameStore"
 import { AnimatePresence, motion } from 'framer-motion'
@@ -8,10 +7,6 @@ import { useParams } from "react-router-dom"
 
 
 export default function SkipTurn() {
-  const [tiles] = useBoardStore((state) => [
-    state.board,
-  ])
-
   const [isMyTurn, playerSkippedTurn] = useTurnStore((state) => [state.isMyTurn, state.playerSkippedTurn])
 
   const [resetSelectedCard] = useCardStore((state) => [
@@ -25,7 +20,7 @@ export default function SkipTurn() {
 
   function handleSkipTurn() {
     resetSelectedCard()
-    socket.emit('skip-turn', { tiles, gameId })
+    socket.emit('skip-turn', { gameId })
   }
 
   return (

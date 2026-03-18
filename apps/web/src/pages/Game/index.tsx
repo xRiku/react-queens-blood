@@ -3,6 +3,7 @@ import Board from "../../components/Board";
 import Hand from "../../components/Hand";
 import socket from "../../socket";
 import { Tile } from "../../@types/Tile";
+import { CardUnity } from "../../@types/Card";
 import useBoardStore from "../../store/BoardStore";
 import { useGameStore } from "../../store/GameStore";
 import { usePointStore } from "../../store/PointsStore";
@@ -12,12 +13,10 @@ import { GameStartModal } from "../../components/Modals/GameStartModal";
 import { TurnModal } from "../../components/Modals/TurnModal";
 import useTurnStore from "../../store/TurnStore";
 import { EndGameModal } from "../../components/Modals/EndGameModal";
+import useNeoHandStore from "../../store/NeoHandStore";
 import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
-
-
-
 
 
 export default function Game() {
@@ -29,38 +28,57 @@ export default function Game() {
   const [setBoard] = useBoardStore((state) => [state.setBoard])
   const [amIP1, setAmIP1, gameOver, setGameOver, setPlayerOneName, setPlayerTwoName, setPlayerDisconnected] = useGameStore((state) => [state.amIP1, state.setAmIP1, state.gameOver, state.setGameOver, state.setPlayerOneName, state.setPlayerTwoName, state.setPlayerDisconnected])
   const [setPoints] = usePointStore((state) => [state.setPoints])
+  const [setHand, addCard] = useNeoHandStore((state) => [state.setHand, state.addCard])
 
   const { id: gameId } = useParams<{ id: string }>()
 
   const [gameStartModal, toggleGameStartModal, turnModal, toggleTurnModal] = useModalStore((state) => [state.gameStartModal, state.toggleGameStartModal, state.turnModal, state.toggleTurnModal])
-
-
-
 
   useEffect(() => {
     socket.on('player-connected', (data: { firstPlayer: boolean }) => {
       setAmIP1(data.firstPlayer)
     })
 
-
-    socket.on('game-start', (data) => {
+    socket.on('game-start', (data: {
+      playerNames: string[];
+      initialHand: CardUnity[];
+      isPlayerOne: boolean;
+    }) => {
       setLoading(false)
+      setAmIP1(data.isPlayerOne)
+      setHand(data.initialHand)
       toggleGameStartModal()
-      if (amIP1) {
+      if (data.isPlayerOne) {
         toggleTurn()
       }
-      setPlayerOneName(data[0])
-      setPlayerTwoName(data[1])
+      setPlayerOneName(data.playerNames[0])
+      setPlayerTwoName(data.playerNames[1])
     })
 
-    socket.on('new-turn', (data: { tiles: Tile[][], playerSkippedTurn: boolean }) => {
+    socket.on('new-turn', (data: {
+      tiles: Tile[][],
+      playerSkippedTurn: boolean,
+      drawnCard: CardUnity | null,
+    }) => {
       setPlayerSkippedTurn(data.playerSkippedTurn)
       setPoints(data.tiles)
-      toggleTurnModal()
-      if (!isMyTurn) {
-        setBoard(data.tiles)
+      setBoard(data.tiles)
+      if (data.drawnCard) {
+        addCard(data.drawnCard)
       }
+      toggleTurnModal()
       toggleTurn()
+    })
+
+    socket.on('move-rejected', (data: {
+      reason: string;
+      board: Tile[][];
+      hand: CardUnity[];
+    }) => {
+      console.warn('Move rejected:', data.reason)
+      setBoard(data.board)
+      setPoints(data.board)
+      setHand(data.hand)
     })
 
     socket.on('game-end', (data) => {
@@ -79,6 +97,7 @@ export default function Game() {
       socket.off('player-connected');
       socket.off('game-start');
       socket.off('new-turn');
+      socket.off('move-rejected');
       socket.off('game-end');
       socket.off('game-busy');
     }

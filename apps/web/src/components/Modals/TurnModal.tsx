@@ -1,12 +1,10 @@
 import { motion } from "framer-motion";
 import { useModalStore } from "../../store/ModalStore";
-import useNeoHandStore from "../../store/NeoHandStore";
 import useTurnStore from "../../store/TurnStore";
 
 export function TurnModal() {
   const [toggleTurnModal] = useModalStore((state) => [state.toggleTurnModal]);
-  const [isMyTurn, isMyFirstTurn, setIsMyFirstTurn] = useTurnStore((state) => [state.isMyTurn, state.isMyFirstTurn, state.setIsMyFirstTurn])
-  const [drawCard, drawInitialHand] = useNeoHandStore((state) => [state.drawCard, state.drawInitialHand])
+  const [isMyTurn] = useTurnStore((state) => [state.isMyTurn])
 
   return <div className="fixed mt-[320px] top-0 left-0 w-full h-full flex items-start justify-center">
     <motion.div
@@ -14,19 +12,6 @@ export function TurnModal() {
       transition={{ duration: 2, times: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0], }}
       onAnimationComplete={() => {
         toggleTurnModal()
-      }}
-      onAnimationStart={() => {
-        setTimeout(() => {
-          if (isMyTurn) {
-            if (isMyFirstTurn) {
-              drawInitialHand()
-              setIsMyFirstTurn(false)
-              return
-            }
-            drawCard()
-            return;
-          }
-        }, 1000)
       }}
       className={`w-[600px] border-y border-yellow-400 bg-transparent text-center py-6 bg-gradient-to-r from-transparent ${isMyTurn ? 'via-[#15803d_33%,_#15803d_66%]' : 'via-[#b91c1c_33%,_#b91c1c_66%]'}`}
     >
@@ -36,4 +21,4 @@ export function TurnModal() {
       </motion.h2>
     </motion.div>
   </div>
-} 
+}
