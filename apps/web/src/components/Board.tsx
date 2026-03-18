@@ -1,5 +1,5 @@
 import { Tile } from '../@types/Tile'
-import { CardInfo } from '../@types/Card'
+import { canAddCardToPosition, mapPawns } from '@queens-blood/shared'
 import useCardStore from '../store/CardStore'
 import useBoardStore from '../store/BoardStore'
 import Card from './Card'
@@ -80,139 +80,17 @@ export default function Board({
     .fill(0)
     .map(() => new Array(cols).fill(0))
 
-  function canAddCardToPosition(card: CardInfo | null, position: Tile) {
-    if (!card) {
-      return false
-    }
-
-    if (!isMyTurn) {
-      return false
-    }
-
-    if (amIP1 && position?.playerOnePawns === 0) {
-      return false
-    }
-
-    if (!amIP1 && position?.playerTwoPawns === 0) {
-      return false
-    }
-
-    if (amIP1 && position?.playerOnePawns < card.pawnsCost) {
-      return false
-    }
-
-    if (!amIP1 && position?.playerTwoPawns < card.pawnsCost) {
-      return false
-    }
-
-    return true
-  }
-
-  function mapPawns(card: CardInfo, rowIndex: number, colIndex: number) {
-    const correctColIndex = isMyTurn ? colIndex : Math.abs(colIndex - 4)
-    const transformedRowIndex = correctColIndex
-    const transformedColIndex = -rowIndex
-    const newTiles = [...tiles]
-    for (let i = 0; i < card.pawnsPositions.length; i++) {
-      const newRow = -(transformedColIndex + card.pawnsPositions[i][1])
-      const newCol = amIP1 ? transformedRowIndex + card.pawnsPositions[i][0] : Math.abs(-transformedRowIndex + card.pawnsPositions[i][0])
-
-      if (newRow < 0 || newRow >= rows || newCol < 0 || newCol >= cols - 2) {
-        continue
-      }
-
-
-      if (amIP1) {
-        newTiles[newRow][newCol] = {
-          playerOnePoints:
-            newTiles[newRow][newCol].playerOnePawns === -1
-              ? newTiles[newRow][newCol].playerOnePoints
-              : 0,
-          playerTwoPoints:
-            newTiles[newRow][newCol].playerTwoPawns === -1
-              ? newTiles[newRow][newCol].playerTwoPoints
-              : 0,
-          playerOnePawns:
-            newTiles[newRow][newCol].playerOnePawns !== -1 &&
-              newTiles[newRow][newCol].playerOnePawns < 3
-              ? newTiles[newRow][newCol].playerTwoPawns !== 0
-                ? newTiles[newRow][newCol].playerTwoPawns
-                : newTiles[newRow][newCol].playerOnePawns + 1
-              : newTiles[newRow][newCol].playerOnePawns,
-          playerTwoPawns: 0,
-          card:
-            newTiles[newRow][newCol].playerOnePawns === -1
-              ? newTiles[newRow][newCol].card
-              : newTiles[newRow][newCol].playerTwoPawns === -1
-                ? newTiles[newRow][newCol].card
-                : null,
-        }
-        continue
-      }
-      newTiles[newRow][newCol] = {
-        playerOnePoints:
-          newTiles[newRow][newCol].playerOnePawns === -1
-            ? newTiles[newRow][newCol].playerOnePoints
-            : 0,
-        playerTwoPoints:
-          newTiles[newRow][newCol].playerTwoPawns === -1
-            ? newTiles[newRow][newCol].playerTwoPoints
-            : 0,
-        playerOnePawns: 0,
-        playerTwoPawns:
-          newTiles[newRow][newCol].playerTwoPawns !== -1 &&
-            newTiles[newRow][newCol].playerTwoPawns < 3
-            ? newTiles[newRow][newCol].playerOnePawns !== 0
-              ? newTiles[newRow][newCol].playerOnePawns
-              : newTiles[newRow][newCol].playerTwoPawns + 1
-            : newTiles[newRow][newCol].playerTwoPawns,
-        card:
-          newTiles[newRow][newCol].playerOnePawns === -1
-            ? newTiles[newRow][newCol].card
-            : newTiles[newRow][newCol].playerTwoPawns === -1
-              ? newTiles[newRow][newCol].card
-              : null,
-      }
-    }
-
-    if (amIP1) {
-      newTiles[rowIndex][correctColIndex] = {
-        playerOnePoints: card.points,
-        playerTwoPoints: 0,
-        playerOnePawns: -1,
-        playerTwoPawns: -1,
-        card: {
-          ...card,
-          placedByPlayerOne: true,
-        },
-      }
-      return newTiles
-    }
-
-    newTiles[rowIndex][correctColIndex] = {
-      playerOnePoints: 0,
-      playerTwoPoints: card.points,
-      playerOnePawns: -1,
-      playerTwoPawns: -1,
-      card: {
-        ...card,
-        placedByPlayerOne: false,
-      },
-    }
-
-    return newTiles
+  function canPlace(position: Tile) {
+    return isMyTurn && canAddCardToPosition(selectedCard, position, amIP1)
   }
 
   function handleCellClick(position: Tile, rowIndex: number, colIndex: number) {
-    if (!canAddCardToPosition(selectedCard, position)) {
+    if (!canPlace(position) || !selectedCard) {
       return
     }
 
-    if (!selectedCard) {
-      return
-    }
-
-    const newTiles = mapPawns(selectedCard, rowIndex, colIndex)
+    const correctColIndex = isMyTurn ? colIndex : Math.abs(colIndex - 4)
+    const newTiles = mapPawns(tiles, selectedCard, rowIndex, correctColIndex, amIP1)
 
     placeCard(selectedCard)
     setTiles(newTiles)
@@ -271,7 +149,7 @@ export default function Board({
       tilesElements[i][j] = (
         <div
           className={`${color} h-44 w-full border-solid border-4 hover:border-4 ${!tiles[i][j - 1].card ? 'flex justify-center items-center' : ''}  border-black
-           ${selectedCard ? (canAddCardToPosition(selectedCard, tiles[i][j - 1]) ? 'cursor-pointer  hover:border-green-400' : 'cursor-not-allowed hover:border-red-400') : ''}
+           ${selectedCard ? (canPlace(tiles[i][j - 1]) ? 'cursor-pointer  hover:border-green-400' : 'cursor-not-allowed hover:border-red-400') : ''}
            transition duration-300 ease-out`}
           onClick={() => handleCellClick(tiles[i][j - 1], i, j - 1)}
           key={`${i}-${j}`}
