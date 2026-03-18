@@ -1,6 +1,6 @@
 import fastify from "fastify";
 import { Server as SocketIOServer } from "socket.io";
-import { Tile } from "../src/@types/Tile";
+import { Tile } from "@queens-blood/shared";
 
 const app = fastify();
 
