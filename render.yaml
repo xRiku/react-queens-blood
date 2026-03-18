@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: queens-blood-server
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npx tsx apps/server/src/index.ts
+    envVars:
+      - key: NODE_ENV
+        value: production
