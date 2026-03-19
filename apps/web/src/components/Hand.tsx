@@ -49,7 +49,7 @@ export default function Hand() {
 
 
   return (
-    <motion.ul className="flex flex-wrap flex-row h-auto items-start justify-start w-full pt-2 pb-5 px-[4rem] gap-3" animate={{ transition: { staggerChildren: 0.5 } }}>
+    <motion.ul className="flex flex-wrap flex-row h-auto items-start justify-start w-full pt-2 pb-5 px-8 xl:px-12 2xl:px-16 gap-3" animate={{ transition: { staggerChildren: 0.5 } }}>
       <AnimatePresence>
         {
           playerCards.map((card) => (
@@ -61,7 +61,7 @@ export default function Hand() {
               className={`border-2 border-solid shadow-lg rounded-lg cursor-pointer ${selectedCard?.id === card?.id
                 ? 'border-green-400 -translate-y-8 transform '
                 : 'border-black hover:scale-105 hover:duration-100 hover:border-blue-500'
-                } h-60 w-52
+                } h-44 w-36 xl:h-52 xl:w-44 2xl:h-60 2xl:w-52
                   transition duration-300 ease-in-out hover:-translate-y-8 hover:transform`}
               onHoverStart={() => handleHoverStart(card)}
               onClick={

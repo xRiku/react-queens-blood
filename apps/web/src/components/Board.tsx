@@ -112,11 +112,11 @@ export default function Board({
   for (let i = 0; i < rows; i++) {
     tilesElements[i][0] = (
       <div
-        className={`bg-gray-800 h-44 w-full flex items-center justify-center border-solid border-2 border-black`}
+        className={`bg-gray-800 h-28 xl:h-36 2xl:h-44 w-full flex items-center justify-center border-solid border-2 border-black`}
         key={`${i}-${0}`}
       >
         <div
-          className={`h-24 w-24 outline outline-offset-2 outline-yellow-400 text-5xl font-medium
+          className={`h-16 w-16 xl:h-20 xl:w-20 2xl:h-24 2xl:w-24 outline outline-offset-2 outline-yellow-400 text-3xl xl:text-4xl 2xl:text-5xl font-medium
              text-white ${amIP1 ? playerOnePointsArray[i] > playerTwoPointsArray[i]
               ? 'bg-green-400  drop-shadow-glow'
               : 'bg-green-400 brightness-75 '
@@ -131,17 +131,17 @@ export default function Board({
     )
     tilesElements[i][cols - 1] = (
       <div
-        className={`bg-gray-800 h-44 w-full flex items-center justify-center border-solid border-2 border-black`}
+        className={`bg-gray-800 h-28 xl:h-36 2xl:h-44 w-full flex items-center justify-center border-solid border-2 border-black`}
         key={`${i}-${cols - 1}`}
       >
         <div
-          className={`h-24 w-24 outline outline-offset-2 outline-yellow-400 
+          className={`h-16 w-16 xl:h-20 xl:w-20 2xl:h-24 2xl:w-24 outline outline-offset-2 outline-yellow-400 
             ${amIP1 ? playerTwoPointsArray[i] > playerOnePointsArray[i]
               ? 'bg-red-400 drop-shadow-glow'
               : 'bg-red-400 brightness-75 ' : playerTwoPointsArray[i] > playerOnePointsArray[i]
               ? 'bg-green-400  drop-shadow-glow'
               : 'bg-green-400 brightness-75 '
-            } text-5xl text-white font-medium shadow-xl rounded-full
+            } text-3xl xl:text-4xl 2xl:text-5xl text-white font-medium shadow-xl rounded-full
              flex justify-center items-center`}
         >
           {playerTwoPointsArray[i]}
@@ -156,14 +156,14 @@ export default function Board({
       const color = (i + j) % 2 === 0 ? 'bg-white' : 'bg-gray-800'
       tilesElements[i][j] = (
         <div
-          className={`${color} h-44 w-full border-solid border-4 hover:border-4 ${!tiles[i][j - 1].card ? 'flex justify-center items-center' : ''}  border-black
+          className={`${color} h-28 xl:h-36 2xl:h-44 w-full border-solid border-4 hover:border-4 ${!tiles[i][j - 1].card ? 'flex justify-center items-center' : ''}  border-black
            ${selectedCard ? (canPlace(tiles[i][j - 1]) ? 'cursor-pointer  hover:border-green-400' : 'cursor-not-allowed hover:border-red-400') : ''}
            transition duration-300 ease-out`}
           onClick={() => handleCellClick(tiles[i][j - 1], i, j - 1)}
           key={`${i}-${j}`}
         >
           {!tiles[i][j - 1].card ? (
-            <div className="text-4xl font-bold text-center ">
+            <div className="text-2xl xl:text-3xl 2xl:text-4xl font-bold text-center ">
               {tiles[i][j - 1] && tiles[i][j - 1].playerOnePawns > 0 && (
                 <>
                   <p>{'♟'.repeat(tiles[i][j - 1].playerOnePawns)}</p>
@@ -190,26 +190,26 @@ export default function Board({
     <>
       <div className="flex flex-col items-center justify-center gap-4">
         <div className="flex w-full items-center justify-evenly">
-          <div className="flex flex-col items-center justify-center gap-3 w-32">
-            <span className={`text-8xl ${gameOver ? 'visible' : 'invisible'}`}>{sumOfPlayersPoints[0]}</span>
-            <span className={`text-8xl scale-x-[-1] `}>🐉</span>
-            <h1 className="text-4xl">
+          <div className="flex flex-col items-center justify-center gap-3 w-24 xl:w-28 2xl:w-32">
+            <span className={`text-5xl xl:text-6xl 2xl:text-8xl ${gameOver ? 'visible' : 'invisible'}`}>{sumOfPlayersPoints[0]}</span>
+            <span className={`text-5xl xl:text-6xl 2xl:text-8xl scale-x-[-1] `}>🐉</span>
+            <h1 className="text-2xl xl:text-3xl 2xl:text-4xl">
               {amIP1 ? playerOneName : playerTwoName} {' '}
             </h1>
-            <h2 className='text-2xl'>
+            <h2 className='text-lg xl:text-xl 2xl:text-2xl'>
               {amIP1 ? '(Player 1)' : '(Player 2)'}
             </h2>
           </div>
           <div className="grid grid-cols-7 gap-1 w-8/12">
             {amIP1 ? tilesElements : transformMatrix(tilesElements)}
           </div>
-          <div className="flex flex-col items-center justify-center gap-3 w-32">
-            <span className={`text-8xl ${gameOver ? 'visible' : 'invisible'}`}>{sumOfPlayersPoints[1]}</span>
-            <span className={`text-8xl`}>🐉</span>
-            <h1 className="text-4xl">
+          <div className="flex flex-col items-center justify-center gap-3 w-24 xl:w-28 2xl:w-32">
+            <span className={`text-5xl xl:text-6xl 2xl:text-8xl ${gameOver ? 'visible' : 'invisible'}`}>{sumOfPlayersPoints[1]}</span>
+            <span className={`text-5xl xl:text-6xl 2xl:text-8xl`}>🐉</span>
+            <h1 className="text-2xl xl:text-3xl 2xl:text-4xl">
               {amIP1 ? playerTwoName : playerOneName} {' '}
             </h1>
-            <h2 className='text-2xl'>
+            <h2 className='text-lg xl:text-xl 2xl:text-2xl'>
               {amIP1 ? '(Player 2)' : '(Player 1)'}
             </h2>
           </div>

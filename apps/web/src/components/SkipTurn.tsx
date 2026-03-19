@@ -24,15 +24,15 @@ export default function SkipTurn() {
   }
 
   return (
-    <div className="flex w-11/12 items-center justify-end p-2 h-20">
+    <div className="flex w-11/12 items-center justify-end p-2 h-14 xl:h-16 2xl:h-20">
       <AnimatePresence>
         {isMyTurn && !gameOver && (
           <motion.span
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className={`mr-8 text-4xl rounded-full bg-gray-50 hover:bg-gray-200 transition duration-200
-        shadow-xl cursor-pointer  text-black border-4 border-yellow-400 py-1 px-12`}
+            className={`mr-8 text-2xl xl:text-3xl 2xl:text-4xl rounded-full bg-gray-50 hover:bg-gray-200 transition duration-200
+        shadow-xl cursor-pointer  text-black border-4 border-yellow-400 py-1 px-8 xl:px-10 2xl:px-12`}
             onClick={handleSkipTurn}
           >
             {playerSkippedTurn ? 'End game' : 'Skip turn'}
