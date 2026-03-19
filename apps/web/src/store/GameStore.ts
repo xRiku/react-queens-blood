@@ -6,6 +6,8 @@ export enum Result {
   DRAW = "draw",
 }
 
+export type RematchStatus = "waiting" | "confirmed" | "refused";
+
 type GameStore = {
   amIP1: boolean;
   setAmIP1: (value: boolean) => void;
@@ -19,6 +21,9 @@ type GameStore = {
   setPlayerTwoName: (value: string) => void;
   playerDisconnected: boolean;
   setPlayerDisconnected: (value: boolean) => void;
+  playerOneRematchStatus: RematchStatus;
+  playerTwoRematchStatus: RematchStatus;
+  setRematchStatuses: (p1: RematchStatus, p2: RematchStatus) => void;
   resetStore: () => void;
 };
 
@@ -35,6 +40,10 @@ export const useGameStore = create<GameStore>((set) => ({
   setPlayerTwoName: (value) => set({ playerTwoName: value }),
   playerDisconnected: false,
   setPlayerDisconnected: (value) => set({ playerDisconnected: value }),
+  playerOneRematchStatus: "waiting",
+  playerTwoRematchStatus: "waiting",
+  setRematchStatuses: (p1, p2) =>
+    set({ playerOneRematchStatus: p1, playerTwoRematchStatus: p2 }),
   resetStore: () =>
     set({
       gameOver: false,
@@ -43,5 +52,7 @@ export const useGameStore = create<GameStore>((set) => ({
       playerOneName: "",
       playerTwoName: "",
       playerDisconnected: false,
+      playerOneRematchStatus: "waiting",
+      playerTwoRematchStatus: "waiting",
     }),
 }));

@@ -9,6 +9,9 @@ type useModalStoreType = {
   toggleEndGameModal: () => void;
   turnModal: boolean;
   toggleTurnModal: () => void;
+  rematchDialog: boolean;
+  showRematchDialog: () => void;
+  hideRematchDialog: () => void;
   resetStore: () => void;
 };
 
@@ -32,6 +35,9 @@ export const useModalStore = create<useModalStoreType>((set) => ({
       return { turnModal: !state.turnModal };
     });
   },
+  rematchDialog: false,
+  showRematchDialog: () => set({ rematchDialog: true }),
+  hideRematchDialog: () => set({ rematchDialog: false }),
   resetStore: () =>
-    set({ gameStartModal: false, endGameModal: false, turnModal: false }),
+    set({ gameStartModal: false, endGameModal: false, turnModal: false, rematchDialog: false }),
 }));

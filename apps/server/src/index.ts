@@ -34,6 +34,7 @@ type ServerGameState = {
   isBot: boolean;
   botId: string | null;
   botTimeoutId: ReturnType<typeof setTimeout> | null;
+  rematchStatus: Record<string, "waiting" | "confirmed" | "refused"> | null;
 };
 
 let currentGames: Record<string, ServerGameState> = {};
@@ -75,6 +76,10 @@ function executeBotTurn(gameId: string) {
     // Bot skips
     if (game.playerSkippedTurn) {
       // Both skipped — game over
+      game.rematchStatus = {
+        [humanId]: "waiting",
+        [botId]: "confirmed", // Bot always accepts rematch
+      };
       io.to(humanId).emit("game-end");
       return;
     }
@@ -227,6 +232,10 @@ io.on("connection", (socket) => {
 
     if (game.playerSkippedTurn) {
       // Both players skipped — game over
+      game.rematchStatus = {
+        [game.playerIds[0]]: "waiting",
+        [game.playerIds[1]]: "waiting",
+      };
       io.to(game.playerIds).emit("game-end");
       return;
     }
@@ -275,9 +284,24 @@ io.on("connection", (socket) => {
     if (gameIdForDcedPlayer) {
       const dcGame = currentGames[gameIdForDcedPlayer];
       if (dcGame.botTimeoutId) clearTimeout(dcGame.botTimeoutId);
-      io.to(dcGame.playerIds).emit("game-end", {
-        playerDisconnected: true,
-      });
+
+      if (dcGame.rematchStatus) {
+        // During rematch phase — mark as refused and notify
+        dcGame.rematchStatus[socket.id] = "refused";
+        const p1Id = dcGame.playerIds[0];
+        const p2Id = dcGame.playerIds[1];
+        const remainingId = socket.id === p1Id ? p2Id : p1Id;
+        io.to(remainingId).emit("rematch-status-update", {
+          playerOneStatus: dcGame.rematchStatus[p1Id],
+          playerTwoStatus: dcGame.rematchStatus[p2Id],
+        });
+        io.to(remainingId).emit("rematch-cancelled");
+      } else {
+        io.to(dcGame.playerIds).emit("game-end", {
+          playerDisconnected: true,
+        });
+      }
+
       delete currentGames[gameIdForDcedPlayer];
       return;
     }
@@ -300,6 +324,7 @@ io.on("connection", (socket) => {
         isBot: false,
         botId: null,
         botTimeoutId: null,
+        rematchStatus: null,
       };
       io.to(socket.id).emit("player-connected", {
         firstPlayer: true,
@@ -373,6 +398,85 @@ io.on("connection", (socket) => {
   });
 
   socket.on(
+    "rematch-respond",
+    (data: { gameId: string; response: "confirmed" | "refused" }) => {
+      const game = currentGames[data.gameId];
+      if (!game || !game.rematchStatus) return;
+
+      game.rematchStatus[socket.id] = data.response;
+
+      const p1Id = game.playerIds[0];
+      const p2Id = game.playerIds[1];
+
+      // Emit status update to human players
+      const statusUpdate = {
+        playerOneStatus: game.rematchStatus[p1Id],
+        playerTwoStatus: game.rematchStatus[p2Id],
+      };
+
+      if (game.isBot) {
+        io.to(p1Id).emit("rematch-status-update", statusUpdate);
+      } else {
+        io.to(game.playerIds).emit("rematch-status-update", statusUpdate);
+      }
+
+      // Check if both confirmed
+      if (
+        game.rematchStatus[p1Id] === "confirmed" &&
+        game.rematchStatus[p2Id] === "confirmed"
+      ) {
+        // Reset game state for rematch
+        game.board = createInitialBoard();
+        game.playerSkippedTurn = false;
+        game.currentTurnPlayerId = p1Id;
+        game.cardIdCounter = 0;
+        game.rematchStatus = null;
+
+        game.decks[p1Id] = shuffleDeck([...deckCards]);
+        game.decks[p2Id] = shuffleDeck([...deckCards]);
+
+        const p1Draw = drawCards(game.decks[p1Id], 5, game.cardIdCounter);
+        game.decks[p1Id] = p1Draw.remaining;
+        game.hands[p1Id] = p1Draw.drawn;
+        game.cardIdCounter = p1Draw.nextId;
+
+        const p2Draw = drawCards(game.decks[p2Id], 5, game.cardIdCounter);
+        game.decks[p2Id] = p2Draw.remaining;
+        game.hands[p2Id] = p2Draw.drawn;
+        game.cardIdCounter = p2Draw.nextId;
+
+        io.to(p1Id).emit("game-start", {
+          playerNames: game.playerNames,
+          initialHand: game.hands[p1Id],
+          isPlayerOne: true,
+        });
+
+        if (!game.isBot) {
+          io.to(p2Id).emit("game-start", {
+            playerNames: game.playerNames,
+            initialHand: game.hands[p2Id],
+            isPlayerOne: false,
+          });
+        }
+        return;
+      }
+
+      // Check if either refused
+      if (
+        game.rematchStatus[p1Id] === "refused" ||
+        game.rematchStatus[p2Id] === "refused"
+      ) {
+        if (game.isBot) {
+          io.to(p1Id).emit("rematch-cancelled");
+        } else {
+          io.to(game.playerIds).emit("rematch-cancelled");
+        }
+        delete currentGames[data.gameId];
+      }
+    }
+  );
+
+  socket.on(
     "start-bot-game",
     (data: { playerName: string; gameId: string }) => {
       const botId = "bot-" + data.gameId;
@@ -390,6 +494,7 @@ io.on("connection", (socket) => {
         isBot: true,
         botId,
         botTimeoutId: null,
+        rematchStatus: null,
       };
 
       // Shuffle separate decks for each player
