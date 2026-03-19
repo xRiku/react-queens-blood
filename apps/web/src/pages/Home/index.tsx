@@ -57,7 +57,8 @@ export default function Home() {
 
 
   return (
-    <div className="flex flex-row items-center justify-center w-1/3 mt-24 xl:mt-36 2xl:mt-48 gap-5">
+    <div className="flex flex-col items-center justify-center mt-24 xl:mt-36 2xl:mt-48 gap-5">
+      <div className="flex flex-row items-center justify-center w-1/3 gap-5">
       <div className="border border-black border-solid-2 rounded-lg h-48">
         <div className="flex flex-col items-center justify-center gap-6 p-10 ">
           <input value={gameId} onChange={handleChangeGameIdInput} className="text-sm w-72 py-2 px-1 text-center border border-solid-1 border-gray-400 rounded-md" placeholder="Game ID" />
@@ -85,6 +86,21 @@ export default function Home() {
             <span className="text-2xl font-medium text-black group-hover:text-white">Start Game</span>
           </button>
         </div>
+      </div>
+      </div>
+      <div className="flex gap-4 mt-2">
+        <button
+          onClick={() => navigate('/rules')}
+          className="text-sm xl:text-base text-gray-500 hover:text-black underline underline-offset-2"
+        >
+          How to Play
+        </button>
+        <button
+          onClick={() => navigate('/deck')}
+          className="text-sm xl:text-base text-gray-500 hover:text-black underline underline-offset-2"
+        >
+          View Deck
+        </button>
       </div>
     </div>
 
