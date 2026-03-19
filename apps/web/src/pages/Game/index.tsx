@@ -14,13 +14,15 @@ import { TurnModal } from "../../components/Modals/TurnModal";
 import useTurnStore from "../../store/TurnStore";
 import { EndGameModal } from "../../components/Modals/EndGameModal";
 import useNeoHandStore from "../../store/NeoHandStore";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
 
 
 export default function Game() {
-  const [loading, setLoading] = useState(true)
+  const [searchParams] = useSearchParams();
+  const isBotGame = searchParams.get('bot') === 'true';
+  const [loading, setLoading] = useState(!isBotGame)
   const [gameBusy, setGameBusy] = useState(false)
   const [isCopied, setIsCopied] = useState(false);
 

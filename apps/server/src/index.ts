@@ -9,6 +9,7 @@ import {
   mapPawns,
   shuffleDeck,
   drawCards,
+  findAllValidMoves,
   deckCards,
 } from "@queens-blood/shared";
 
@@ -30,6 +31,9 @@ type ServerGameState = {
   decks: Record<string, CardInfo[]>;
   hands: Record<string, CardUnity[]>;
   cardIdCounter: number;
+  isBot: boolean;
+  botId: string | null;
+  botTimeoutId: ReturnType<typeof setTimeout> | null;
 };
 
 let currentGames: Record<string, ServerGameState> = {};
@@ -45,6 +49,84 @@ function isPlayerOne(game: ServerGameState, socketId: string): boolean {
 function getOpponentId(game: ServerGameState, socketId: string): string {
   const idx = getPlayerIndex(game, socketId);
   return game.playerIds[idx === 0 ? 1 : 0];
+}
+
+function scheduleBotTurn(gameId: string) {
+  const game = currentGames[gameId];
+  if (!game || !game.isBot || !game.botId) return;
+  if (game.currentTurnPlayerId !== game.botId) return;
+
+  const delay = 1000 + Math.random() * 1000; // 1-2s
+  game.botTimeoutId = setTimeout(() => executeBotTurn(gameId), delay);
+}
+
+function executeBotTurn(gameId: string) {
+  const game = currentGames[gameId];
+  if (!game || !game.botId) return;
+
+  const botId = game.botId;
+  const humanId = game.playerIds[0];
+  const botHand = game.hands[botId];
+  const isBotP1 = isPlayerOne(game, botId);
+
+  const moves = findAllValidMoves(game.board, botHand, isBotP1);
+
+  if (moves.length === 0) {
+    // Bot skips
+    if (game.playerSkippedTurn) {
+      // Both skipped — game over
+      io.to(humanId).emit("game-end");
+      return;
+    }
+
+    game.playerSkippedTurn = true;
+    game.currentTurnPlayerId = humanId;
+
+    // Draw card for human
+    const humanDeck = game.decks[humanId];
+    let drawnCard: CardUnity | null = null;
+    if (humanDeck.length > 0) {
+      const result = drawCards(humanDeck, 1, game.cardIdCounter);
+      game.decks[humanId] = result.remaining;
+      game.cardIdCounter = result.nextId;
+      drawnCard = result.drawn[0];
+      game.hands[humanId].push(drawnCard);
+    }
+
+    io.to(humanId).emit("new-turn", {
+      tiles: game.board,
+      playerSkippedTurn: game.playerSkippedTurn,
+      drawnCard,
+    });
+    return;
+  }
+
+  // Pick a random valid move
+  const move = moves[Math.floor(Math.random() * moves.length)];
+  const cardIndex = botHand.findIndex((c) => c.id === move.card.id);
+
+  // Apply move
+  game.board = mapPawns(game.board, move.card, move.row, move.col, isBotP1);
+  botHand.splice(cardIndex, 1);
+  game.playerSkippedTurn = false;
+  game.currentTurnPlayerId = humanId;
+
+  // Draw card for human
+  const humanDeck = game.decks[humanId];
+  let drawnCard: CardUnity | null = null;
+  if (humanDeck.length > 0) {
+    const result = drawCards(humanDeck, 1, game.cardIdCounter);
+    game.decks[humanId] = result.remaining;
+    game.cardIdCounter = result.nextId;
+    drawnCard = result.drawn[0];
+    game.hands[humanId].push(drawnCard);
+  }
+
+  io.to(humanId).emit("new-turn", {
+    tiles: game.board,
+    playerSkippedTurn: game.playerSkippedTurn,
+    drawnCard,
+  });
 }
 
 io.on("connection", (socket) => {
@@ -130,6 +212,9 @@ io.on("connection", (socket) => {
         playerSkippedTurn: game.playerSkippedTurn,
         drawnCard,
       });
+
+      // Schedule bot turn if applicable
+      scheduleBotTurn(data.gameId);
     }
   );
 
@@ -176,6 +261,9 @@ io.on("connection", (socket) => {
       playerSkippedTurn: game.playerSkippedTurn,
       drawnCard,
     });
+
+    // Schedule bot turn if applicable
+    scheduleBotTurn(data.gameId);
   });
 
   socket.on("disconnect", () => {
@@ -185,7 +273,9 @@ io.on("connection", (socket) => {
     );
 
     if (gameIdForDcedPlayer) {
-      io.to(currentGames[gameIdForDcedPlayer].playerIds).emit("game-end", {
+      const dcGame = currentGames[gameIdForDcedPlayer];
+      if (dcGame.botTimeoutId) clearTimeout(dcGame.botTimeoutId);
+      io.to(dcGame.playerIds).emit("game-end", {
         playerDisconnected: true,
       });
       delete currentGames[gameIdForDcedPlayer];
@@ -207,6 +297,9 @@ io.on("connection", (socket) => {
         decks: {},
         hands: {},
         cardIdCounter: 0,
+        isBot: false,
+        botId: null,
+        botTimeoutId: null,
       };
       io.to(socket.id).emit("player-connected", {
         firstPlayer: true,
@@ -278,6 +371,52 @@ io.on("connection", (socket) => {
     }
     io.to(socket.id).emit("game-not-found");
   });
+
+  socket.on(
+    "start-bot-game",
+    (data: { playerName: string; gameId: string }) => {
+      const botId = "bot-" + data.gameId;
+      const board = createInitialBoard();
+
+      const game: ServerGameState = {
+        playerIds: [socket.id, botId],
+        playerNames: [data.playerName, "Bot"],
+        playerSkippedTurn: false,
+        board,
+        currentTurnPlayerId: socket.id, // Human (P1) goes first
+        decks: {},
+        hands: {},
+        cardIdCounter: 0,
+        isBot: true,
+        botId,
+        botTimeoutId: null,
+      };
+
+      // Shuffle separate decks for each player
+      game.decks[socket.id] = shuffleDeck([...deckCards]);
+      game.decks[botId] = shuffleDeck([...deckCards]);
+
+      // Draw initial hands (5 cards each)
+      const p1Draw = drawCards(game.decks[socket.id], 5, game.cardIdCounter);
+      game.decks[socket.id] = p1Draw.remaining;
+      game.hands[socket.id] = p1Draw.drawn;
+      game.cardIdCounter = p1Draw.nextId;
+
+      const botDraw = drawCards(game.decks[botId], 5, game.cardIdCounter);
+      game.decks[botId] = botDraw.remaining;
+      game.hands[botId] = botDraw.drawn;
+      game.cardIdCounter = botDraw.nextId;
+
+      currentGames[data.gameId] = game;
+
+      // Send game-start to human player immediately
+      io.to(socket.id).emit("game-start", {
+        playerNames: game.playerNames,
+        initialHand: game.hands[socket.id],
+        isPlayerOne: true,
+      });
+    }
+  );
 });
 
 app.listen({ port: 4000, host: "0.0.0.0" }, (err, address) => {

@@ -130,6 +130,24 @@ export function mapPawns(
   return newTiles
 }
 
+export function findAllValidMoves(
+  board: Tile[][],
+  hand: CardUnity[],
+  isPlayerOne: boolean
+): { card: CardUnity; row: number; col: number }[] {
+  const moves: { card: CardUnity; row: number; col: number }[] = []
+  for (const card of hand) {
+    for (let row = 0; row < BOARD_ROWS; row++) {
+      for (let col = 0; col < BOARD_COLS; col++) {
+        if (canAddCardToPosition(card, board[row][col], isPlayerOne)) {
+          moves.push({ card, row, col })
+        }
+      }
+    }
+  }
+  return moves
+}
+
 export function shuffleDeck(deck: CardInfo[]): CardInfo[] {
   const shuffled = [...deck]
   for (let i = shuffled.length - 1; i > 0; i--) {

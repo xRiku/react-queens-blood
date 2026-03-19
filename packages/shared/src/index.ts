@@ -6,4 +6,5 @@ export {
   mapPawns,
   shuffleDeck,
   drawCards,
+  findAllValidMoves,
 } from './gameLogic'
