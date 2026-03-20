@@ -12,6 +12,7 @@ import useTurnStore from '../store/TurnStore'
 import transformMatrix from '../utils/transformMatrix'
 import { useParams } from 'react-router-dom'
 import { useBotGameActions } from '../contexts/BotGameContext'
+import { playSynthSound } from '../store/SoundStore'
 
 
 export default function Board({
@@ -87,11 +88,16 @@ export default function Board({
   }
 
   function handleCellClick(position: Tile, rowIndex: number, colIndex: number) {
-    if (!canPlace(position) || !selectedCard) {
+    if (!selectedCard) return
+
+    if (!canPlace(position)) {
+      playSynthSound('invalid')
       return
     }
 
     const correctColIndex = isMyTurn ? colIndex : Math.abs(colIndex - 4)
+
+    playSynthSound('place')
 
     if (botActions) {
       botActions.placeCard(selectedCard.id, rowIndex, correctColIndex)
