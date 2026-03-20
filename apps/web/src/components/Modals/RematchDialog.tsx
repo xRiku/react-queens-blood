@@ -5,11 +5,17 @@ import socket from "../../socket";
 import { useNavigate, useParams } from "react-router-dom";
 import Hourglass from "../Hourglass";
 
-function StatusIcon({ status }: { status: RematchStatus }) {
-  if (status === "waiting") return <Hourglass />;
+function OpponentStatus({ status }: { status: RematchStatus }) {
+  if (status === "waiting")
+    return (
+      <div className="flex items-center gap-2 text-gray-500 text-sm">
+        <Hourglass />
+        <span>Waiting...</span>
+      </div>
+    );
   if (status === "confirmed")
-    return <span className="text-green-500 text-2xl font-bold">&#10003;</span>;
-  return <span className="text-red-500 text-2xl font-bold">&#10007;</span>;
+    return <span className="text-green-600 text-sm font-medium">Accepted!</span>;
+  return <span className="text-red-500 text-sm font-medium">Declined</span>;
 }
 
 export function RematchDialog() {
@@ -33,7 +39,8 @@ export function RematchDialog() {
   ]);
 
   const myStatus = amIP1 ? playerOneRematchStatus : playerTwoRematchStatus;
-  const hasResponded = myStatus !== "waiting";
+  const opponentStatus = amIP1 ? playerTwoRematchStatus : playerOneRematchStatus;
+  const opponentName = amIP1 ? playerTwoName || "Player 2" : playerOneName || "Player 1";
 
   const handleRematch = () => {
     socket.emit("rematch-respond", { gameId, response: "confirmed" });
@@ -46,44 +53,50 @@ export function RematchDialog() {
     navigate("/");
   };
 
+  const rematchButtonClass =
+    myStatus === "confirmed"
+      ? "rounded-md w-full px-4 py-2 bg-green-600 border border-green-600 text-white cursor-default"
+      : myStatus === "refused"
+        ? "rounded-md w-full px-4 py-2 bg-red-500 border border-red-500 text-white cursor-default"
+        : "rounded-md w-full px-4 py-2 border text-black border-black hover:bg-gray-700 hover:border-gray-700 group active:translate-y-0.5";
+
+  const rematchButtonLabel =
+    myStatus === "confirmed"
+      ? "\u2713 Rematch"
+      : myStatus === "refused"
+        ? "\u2717 Declined"
+        : "Rematch";
+
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-[2px]">
+    <div className="fixed inset-0 flex items-center justify-center z-50">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
-        className="bg-gray-950 border-2 border-yellow-400 rounded-xl p-8 xl:p-10 min-w-80 shadow-2xl"
+        className="bg-white border border-black rounded-lg p-8 w-80"
       >
-        <h2 className="font-title text-3xl xl:text-4xl text-yellow-400 text-center mb-6">
+        <h2 className="text-2xl font-medium text-center mb-6">
           Rematch?
         </h2>
 
-        <div className="flex flex-col gap-4 mb-8">
-          <div className="flex items-center justify-between gap-6">
-            <span className="text-white text-lg xl:text-xl font-medium">
-              {playerOneName || "Player 1"}
-            </span>
-            <StatusIcon status={playerOneRematchStatus} />
-          </div>
-          <div className="flex items-center justify-between gap-6">
-            <span className="text-white text-lg xl:text-xl font-medium">
-              {playerTwoName || "Player 2"}
-            </span>
-            <StatusIcon status={playerTwoRematchStatus} />
-          </div>
+        <div className="flex items-center justify-between mb-6">
+          <span className="text-base">{opponentName}</span>
+          <OpponentStatus status={opponentStatus} />
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col gap-2">
           <button
-            onClick={handleRematch}
-            disabled={hasResponded}
-            className="flex-1 py-2 px-4 rounded-md bg-yellow-400 text-black font-semibold hover:bg-yellow-300 active:translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:translate-y-0"
+            onClick={myStatus === "waiting" ? handleRematch : undefined}
+            disabled={myStatus !== "waiting"}
+            className={rematchButtonClass}
           >
-            Rematch
+            <span className={`text-lg font-medium ${myStatus === "waiting" ? "text-black group-hover:text-white" : ""}`}>
+              {rematchButtonLabel}
+            </span>
           </button>
           <button
             onClick={handleQuit}
-            className="flex-1 py-2 px-4 rounded-md border border-gray-600 text-gray-300 font-semibold hover:bg-gray-800 active:translate-y-0.5"
+            className="text-sm text-gray-500 hover:text-black underline underline-offset-2"
           >
             Quit
           </button>
