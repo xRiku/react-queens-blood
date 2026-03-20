@@ -41,12 +41,8 @@ export default function Home() {
 
   const handleStartBotGame = () => {
     const randomGameId = window.crypto.randomUUID()
-    navigate(`/game/${randomGameId}?bot=true`)
-    socket.connect()
-    socket.emit('start-bot-game', {
-      playerName: playerName || 'Player',
-      gameId: randomGameId
-    })
+    const name = playerName || 'Player'
+    navigate(`/game/${randomGameId}?bot=true&playerName=${encodeURIComponent(name)}`)
   }
 
   const handleJoinGame = () => {

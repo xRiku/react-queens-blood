@@ -11,6 +11,7 @@ import useNeoHandStore from '../store/NeoHandStore'
 import useTurnStore from '../store/TurnStore'
 import transformMatrix from '../utils/transformMatrix'
 import { useParams } from 'react-router-dom'
+import { useBotGameActions } from '../contexts/BotGameContext'
 
 
 export default function Board({
@@ -29,6 +30,7 @@ export default function Board({
 
 
   const [isMyTurn] = useTurnStore((state) => [state.isMyTurn])
+  const botActions = useBotGameActions()
 
   const [gameOver, setGameResult, playerOneName, playerTwoName, playerDisconnected] = useGameStore((state) => [state.gameOver, state.setGameResult, state.playerOneName, state.playerTwoName, state.playerDisconnected])
   const [playerOnePointsArray, playerTwoPointsArray] = usePointStore(state => [state.playerOnePoints, state.playerTwoPoints])
@@ -90,6 +92,12 @@ export default function Board({
     }
 
     const correctColIndex = isMyTurn ? colIndex : Math.abs(colIndex - 4)
+
+    if (botActions) {
+      botActions.placeCard(selectedCard.id, rowIndex, correctColIndex)
+      resetSelectedCard()
+      return
+    }
 
     // Optimistic update — apply locally for instant feedback
     const newTiles = mapPawns(tiles, selectedCard, rowIndex, correctColIndex, amIP1)

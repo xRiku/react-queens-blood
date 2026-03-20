@@ -19,6 +19,8 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
+import { useBotGame } from "../../hooks/useBotGame";
+import { BotGameContext } from "../../contexts/BotGameContext";
 
 
 export default function Game() {
@@ -45,7 +47,12 @@ export default function Game() {
 
   const [gameStartModal, toggleGameStartModal, turnModal, toggleTurnModal, rematchDialog, showRematchDialog, hideRematchDialog] = useModalStore((state) => [state.gameStartModal, state.toggleGameStartModal, state.turnModal, state.toggleTurnModal, state.rematchDialog, state.showRematchDialog, state.hideRematchDialog])
 
+  const botPlayerName = searchParams.get('playerName') || 'Player'
+  const botActions = useBotGame(isBotGame, botPlayerName)
+
   useEffect(() => {
+    if (isBotGame) return;
+
     socket.on('player-connected', (data: { firstPlayer: boolean }) => {
       setAmIP1(data.firstPlayer)
     })
@@ -165,32 +172,34 @@ export default function Game() {
   const shouldShowBoard = !loading && !gameBusy
 
   return (
-    <div className="h-full overflow-x-hidden w-full">
-      {
-        loading && <div className="flex flex-col items-center gap-10">
-          <p className="text-center">Waiting for another player...</p>
-          <div className="flex gap-6" title={`${isCopied ? 'Copied!' : 'Copy'}`}>
-            <h1 className="text-5xl " >{gameId}</h1>
-            <button className="cursor-pointer" onClick={() => handleGameIdClick(gameId)}><FontAwesomeIcon icon={faCopy} size={"xl"} /></button>
+    <BotGameContext.Provider value={botActions}>
+      <div className="h-full overflow-x-hidden w-full">
+        {
+          loading && <div className="flex flex-col items-center gap-10">
+            <p className="text-center">Waiting for another player...</p>
+            <div className="flex gap-6" title={`${isCopied ? 'Copied!' : 'Copy'}`}>
+              <h1 className="text-5xl " >{gameId}</h1>
+              <button className="cursor-pointer" onClick={() => handleGameIdClick(gameId)}><FontAwesomeIcon icon={faCopy} size={"xl"} /></button>
+            </div>
           </div>
-        </div>
-      }
-      {
-        shouldShowBoard && <div className="h-full">
-          <Board amIP1={amIP1} />
-          <SkipTurn />
-          <Hand />
-        </div>
-      }
-      {
-        gameBusy && <h1 className="text-center">Game is busy. Please try again later.</h1>
-      }
-      {gameStartModal && !gameOver && <GameStartModal />}
-      {turnModal && !gameOver && <TurnModal />}
-      <AnimatePresence>
-        {gameOver && showEndGame && <EndGameModal />}
-      </AnimatePresence>
-      {rematchDialog && <RematchDialog />}
-    </div>
+        }
+        {
+          shouldShowBoard && <div className="h-full">
+            <Board amIP1={amIP1} />
+            <SkipTurn />
+            <Hand />
+          </div>
+        }
+        {
+          gameBusy && <h1 className="text-center">Game is busy. Please try again later.</h1>
+        }
+        {gameStartModal && !gameOver && <GameStartModal />}
+        {turnModal && !gameOver && <TurnModal />}
+        <AnimatePresence>
+          {gameOver && showEndGame && <EndGameModal />}
+        </AnimatePresence>
+        {rematchDialog && <RematchDialog />}
+      </div>
+    </BotGameContext.Provider>
   )
 }

@@ -4,10 +4,12 @@ import { useGameStore } from "../store/GameStore"
 import { AnimatePresence, motion } from 'framer-motion'
 import useTurnStore from "../store/TurnStore"
 import { useParams } from "react-router-dom"
+import { useBotGameActions } from "../contexts/BotGameContext"
 
 
 export default function SkipTurn() {
   const [isMyTurn, playerSkippedTurn] = useTurnStore((state) => [state.isMyTurn, state.playerSkippedTurn])
+  const botActions = useBotGameActions()
 
   const [resetSelectedCard] = useCardStore((state) => [
     state.resetSelectedCard,
@@ -20,6 +22,10 @@ export default function SkipTurn() {
 
   function handleSkipTurn() {
     resetSelectedCard()
+    if (botActions) {
+      botActions.skipTurn()
+      return
+    }
     socket.emit('skip-turn', { gameId })
   }
 

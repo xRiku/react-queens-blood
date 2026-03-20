@@ -4,6 +4,7 @@ import { useModalStore } from "../../store/ModalStore";
 import socket from "../../socket";
 import { useNavigate, useParams } from "react-router-dom";
 import Hourglass from "../Hourglass";
+import { useBotGameActions } from "../../contexts/BotGameContext";
 
 function OpponentStatus({ status }: { status: RematchStatus }) {
   if (status === "waiting")
@@ -21,6 +22,7 @@ function OpponentStatus({ status }: { status: RematchStatus }) {
 export function RematchDialog() {
   const navigate = useNavigate();
   const { id: gameId } = useParams<{ id: string }>();
+  const botActions = useBotGameActions();
   const [
     playerOneName,
     playerTwoName,
@@ -43,10 +45,19 @@ export function RematchDialog() {
   const opponentName = amIP1 ? playerTwoName || "Player 2" : playerOneName || "Player 1";
 
   const handleRematch = () => {
+    if (botActions) {
+      botActions.rematchRespond("confirmed");
+      return;
+    }
     socket.emit("rematch-respond", { gameId, response: "confirmed" });
   };
 
   const handleQuit = () => {
+    if (botActions) {
+      hideRematchDialog();
+      navigate("/");
+      return;
+    }
     socket.emit("rematch-respond", { gameId, response: "refused" });
     hideRematchDialog();
     socket.disconnect();
