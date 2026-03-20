@@ -6,10 +6,12 @@ import { useRef } from "react";
 import explosion0 from "../../assets/sounds/explosion0.mp3";
 import explosion1 from "../../assets/sounds/explosion1.mp3";
 import explosion2 from "../../assets/sounds/explosion2.mp3";
+import useSoundStore from "../../store/SoundStore";
 
 export function EndGameModal() {
 
   const [gameResult] = useGameStore((state) => [state.gameResult])
+  const [muted] = useSoundStore((state) => [state.muted])
   const ref = useRef<FireworksHandlers>(null)
 
   return <motion.div
@@ -34,7 +36,7 @@ export function EndGameModal() {
         </div>
         <Fireworks
           ref={ref}
-          options={{ opacity: 0.5, acceleration: 1.0, intensity: 20, particles: 100, sound: { enabled: true, files: [explosion0, explosion1, explosion2], volume: { min: 0, max: 4 } } }}
+          options={{ opacity: 0.5, acceleration: 1.0, intensity: 20, particles: 100, sound: { enabled: !muted, files: [explosion0, explosion1, explosion2], volume: { min: 0, max: 4 } } }}
           style={{
             top: 0,
             left: 0,

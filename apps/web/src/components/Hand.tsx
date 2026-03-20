@@ -5,6 +5,7 @@ import useNeoHandStore from '../store/NeoHandStore'
 import { AnimatePresence, motion } from 'framer-motion'
 import hoverSound from '../assets/sounds/hover.wav'
 import flickSound from '../assets/sounds/cardflick.mp3'
+import { playSound } from '../store/SoundStore'
 
 type Hand = {
   cards: CardUnity[]
@@ -31,19 +32,12 @@ export default function Hand() {
     }
 
     setSelectedCard(card)
-    flickAudio.pause()
-    flickAudio.currentTime = 0
-    flickAudio.volume = 0.4
-    flickAudio.play()
+    playSound(flickAudio, 0.4)
   }
 
   const handleHoverStart = (card: CardUnity) => {
     if (selectedCard?.id !== card.id) {
-      hoverAudio.pause()
-      hoverAudio.currentTime = 0
-      hoverAudio.volume = 0.2
-      hoverAudio.play()
-
+      playSound(hoverAudio, 0.2)
     }
   }
 

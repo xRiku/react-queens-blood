@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import turnSound from "../assets/sounds/turn.mp3";
+import { playSound } from "./SoundStore";
 const turnAudio = new Audio(turnSound);
 
 type useModalStoreType = {
@@ -27,10 +28,7 @@ export const useModalStore = create<useModalStoreType>((set) => ({
   toggleTurnModal: () => {
     return set((state) => {
       if (!state.turnModal) {
-        turnAudio.pause();
-        turnAudio.currentTime = 0;
-        turnAudio.volume = 0.4;
-        turnAudio.play();
+        playSound(turnAudio, 0.4);
       }
       return { turnModal: !state.turnModal };
     });
