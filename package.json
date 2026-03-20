@@ -2,13 +2,17 @@
   "name": "queens-blood",
   "private": true,
   "packageManager": "npm@11.6.2",
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "turbo dev",
+    "dev": "concurrently --names server,web --prefix-colors blue,green \"npm run dev -w @queens-blood/server\" \"npm run dev -w @queens-blood/web\"",
     "build": "turbo build",
     "lint": "turbo lint"
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "turbo": "^2.4.4"
   }
 }

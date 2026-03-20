@@ -15,6 +15,7 @@ import { usePointStore } from "../store/PointsStore";
 import useTurnStore from "../store/TurnStore";
 import useNeoHandStore from "../store/NeoHandStore";
 import { useModalStore } from "../store/ModalStore";
+import useCardStore from "../store/CardStore";
 import type { BotGameActions } from "../contexts/BotGameContext";
 
 type BotGameState = {
@@ -30,6 +31,7 @@ type BotGameState = {
 export function useBotGame(
   enabled: boolean,
   playerName: string,
+  setShowEndGame?: (show: boolean) => void,
 ): BotGameActions | null {
   const stateRef = useRef<BotGameState | null>(null);
 
@@ -48,6 +50,8 @@ export function useBotGame(
   const setPlayerOneName = useGameStore((s) => s.setPlayerOneName);
   const setPlayerTwoName = useGameStore((s) => s.setPlayerTwoName);
   const setRematchStatuses = useGameStore((s) => s.setRematchStatuses);
+  const resetModalStore = useModalStore((s) => s.resetStore);
+  const resetCardStore = useCardStore((s) => s.resetSelectedCard);
   const toggleGameStartModal = useModalStore((s) => s.toggleGameStartModal);
   const toggleTurnModal = useModalStore((s) => s.toggleTurnModal);
   const showRematchDialog = useModalStore((s) => s.showRematchDialog);
@@ -58,6 +62,8 @@ export function useBotGame(
     resetPointsStore();
     resetTurnStore();
     resetNeoHandStore();
+    resetModalStore();
+    resetCardStore();
     setGameOver(false);
     setRematchStatuses("waiting", "waiting");
 
@@ -94,6 +100,7 @@ export function useBotGame(
 
   const triggerGameEnd = useCallback(() => {
     setGameOver(true);
+    setShowEndGame?.(true);
     setTimeout(() => {
       showRematchDialog();
     }, 4000);
@@ -236,6 +243,7 @@ export function useBotGame(
   const rematchRespond = useCallback(
     (response: "confirmed" | "refused") => {
       if (response === "confirmed") {
+        setShowEndGame?.(false);
         hideRematchDialog();
         initGame();
       }

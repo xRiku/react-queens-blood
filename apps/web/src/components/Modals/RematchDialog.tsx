@@ -90,10 +90,12 @@ export function RematchDialog() {
           Rematch?
         </h2>
 
-        <div className="flex items-center justify-between mb-6">
-          <span className="text-base">{opponentName}</span>
-          <OpponentStatus status={opponentStatus} />
-        </div>
+        {!botActions && (
+          <div className="flex items-center justify-between mb-6">
+            <span className="text-base">{opponentName}</span>
+            <OpponentStatus status={opponentStatus} />
+          </div>
+        )}
 
         <div className="flex flex-col gap-2">
           <button

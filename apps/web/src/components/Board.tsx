@@ -97,8 +97,6 @@ export default function Board({
 
     const correctColIndex = isMyTurn ? colIndex : Math.abs(colIndex - 4)
 
-    playSynthSound('place')
-
     if (botActions) {
       botActions.placeCard(selectedCard.id, rowIndex, correctColIndex)
       resetSelectedCard()
@@ -171,7 +169,7 @@ export default function Board({
       tilesElements[i][j] = (
         <div
           className={`${color} h-28 xl:h-36 2xl:h-44 w-full border-solid border-4 hover:border-4 ${!tiles[i][j - 1].card ? 'flex justify-center items-center' : ''}  border-black
-           ${selectedCard ? (canPlace(tiles[i][j - 1]) ? 'cursor-pointer ring-2 ring-green-400 ring-inset hover:ring-4' : 'cursor-not-allowed hover:border-red-400') : ''}
+           ${selectedCard ? (canPlace(tiles[i][j - 1]) ? 'cursor-pointer border-green-400 hover:border-green-300' : 'cursor-not-allowed hover:border-red-400') : ''}
            transition duration-300 ease-out`}
           onClick={() => handleCellClick(tiles[i][j - 1], i, j - 1)}
           key={`${i}-${j}`}

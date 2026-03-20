@@ -1,9 +1,15 @@
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { useModalStore } from "../../store/ModalStore";
+import { playSynthSound } from "../../store/SoundStore";
 
 export function GameStartModal() {
 
   const [toggleGameStartModal, toggleTurnModal] = useModalStore((state) => [state.toggleGameStartModal, state.toggleTurnModal]);
+
+  useEffect(() => {
+    playSynthSound("gameStart");
+  }, []);
 
   return <div className="fixed mt-[200px] xl:mt-[260px] 2xl:mt-[320px] top-0 left-0 w-full h-full flex items-start justify-center">
     <motion.div

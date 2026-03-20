@@ -7,6 +7,7 @@ import { usePointStore } from "../store/PointsStore";
 import useTurnStore from "../store/TurnStore";
 import useNeoHandStore from "../store/NeoHandStore";
 import useSoundStore from "../store/SoundStore";
+import { Volume2, VolumeOff } from "lucide-react";
 
 
 
@@ -42,18 +43,16 @@ export default function DefaultLayout() {
 
 
   return (
-    <div className="h-full overflow-x-hidden overflow-y-hidden">
+    <div className="h-full overflow-x-hidden overflow-y-hidden relative">
+      <button
+        onClick={toggleMute}
+        className="absolute top-4 right-6 z-50 p-2 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-all cursor-pointer"
+        title={muted ? "Unmute" : "Mute"}
+      >
+        {muted ? <VolumeOff size={24} /> : <Volume2 size={24} />}
+      </button>
       <div className="flex flex-col justify-center items-center mt-2 h-full w-full">
-        <div className="flex items-center gap-4 z-50">
-          <h1 className="font-light text-5xl xl:text-6xl 2xl:text-7xl hover:cursor-pointer font-title" onClick={handleTitleClick}>Queen's Blood</h1>
-          <button
-            onClick={toggleMute}
-            className="text-3xl xl:text-4xl 2xl:text-5xl hover:cursor-pointer hover:scale-110 transition-transform"
-            title={muted ? "Unmute" : "Mute"}
-          >
-            {muted ? "🔇" : "🔊"}
-          </button>
-        </div>
+        <h1 className="font-light z-50 text-5xl xl:text-6xl 2xl:text-7xl hover:cursor-pointer font-title" onClick={handleTitleClick}>Queen's Blood</h1>
         <Outlet />
       </div>
     </div>

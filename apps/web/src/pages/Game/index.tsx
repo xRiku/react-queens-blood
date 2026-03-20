@@ -21,6 +21,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
 import { useBotGame } from "../../hooks/useBotGame";
 import { BotGameContext } from "../../contexts/BotGameContext";
+import useCardStore from "../../store/CardStore";
 
 
 export default function Game() {
@@ -39,6 +40,7 @@ export default function Game() {
   const [resetPointsStore] = usePointStore((state) => [state.resetStore])
   const [resetTurnStore] = useTurnStore((state) => [state.resetStore])
   const [resetNeoHandStore] = useNeoHandStore((state) => [state.resetStore])
+  const resetCardStore = useCardStore((state) => state.resetSelectedCard)
 
   const navigate = useNavigate()
   const { id: gameId } = useParams<{ id: string }>()
@@ -48,7 +50,7 @@ export default function Game() {
   const [gameStartModal, toggleGameStartModal, turnModal, toggleTurnModal, rematchDialog, showRematchDialog, hideRematchDialog] = useModalStore((state) => [state.gameStartModal, state.toggleGameStartModal, state.turnModal, state.toggleTurnModal, state.rematchDialog, state.showRematchDialog, state.hideRematchDialog])
 
   const botPlayerName = searchParams.get('playerName') || 'Player'
-  const botActions = useBotGame(isBotGame, botPlayerName)
+  const botActions = useBotGame(isBotGame, botPlayerName, setShowEndGame)
 
   useEffect(() => {
     if (isBotGame) return;
@@ -74,6 +76,7 @@ export default function Game() {
       resetPointsStore()
       resetTurnStore()
       resetNeoHandStore()
+      resetCardStore()
       setRematchStatuses('waiting', 'waiting')
 
       setLoading(false)
