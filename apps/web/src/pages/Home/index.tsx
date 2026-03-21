@@ -38,11 +38,9 @@ export default function Home() {
   };
 
   const handleStartBotGame = () => {
-    const randomGameId = window.crypto.randomUUID();
-    const name = playerName || "Player";
-    navigate(
-      `/game/${randomGameId}?bot=true&playerName=${encodeURIComponent(name)}`,
-    );
+    navigate("/game/bot", {
+      state: { playerName: playerName || "Player" },
+    });
   };
 
   const handleJoinGame = () => {

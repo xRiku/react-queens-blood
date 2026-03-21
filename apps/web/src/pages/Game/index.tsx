@@ -15,7 +15,7 @@ import useTurnStore from "../../store/TurnStore";
 import { EndGameModal } from "../../components/Modals/EndGameModal";
 import { RematchDialog } from "../../components/Modals/RematchDialog";
 import useNeoHandStore from "../../store/NeoHandStore";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
@@ -25,8 +25,9 @@ import useCardStore from "../../store/CardStore";
 
 
 export default function Game() {
-  const [searchParams] = useSearchParams();
-  const isBotGame = searchParams.get('bot') === 'true';
+  const { id: gameId } = useParams<{ id: string }>()
+  const location = useLocation()
+  const isBotGame = gameId === 'bot';
   const [loading, setLoading] = useState(!isBotGame)
   const [gameBusy, setGameBusy] = useState(false)
   const [isCopied, setIsCopied] = useState(false);
@@ -43,13 +44,12 @@ export default function Game() {
   const resetCardStore = useCardStore((state) => state.resetSelectedCard)
 
   const navigate = useNavigate()
-  const { id: gameId } = useParams<{ id: string }>()
   const [showEndGame, setShowEndGame] = useState(false)
   const endGameTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const [gameStartModal, toggleGameStartModal, turnModal, toggleTurnModal, rematchDialog, showRematchDialog, hideRematchDialog] = useModalStore((state) => [state.gameStartModal, state.toggleGameStartModal, state.turnModal, state.toggleTurnModal, state.rematchDialog, state.showRematchDialog, state.hideRematchDialog])
 
-  const botPlayerName = searchParams.get('playerName') || 'Player'
+  const botPlayerName = location.state?.playerName || 'Player'
   const botActions = useBotGame(isBotGame, botPlayerName, setShowEndGame)
 
   useEffect(() => {
