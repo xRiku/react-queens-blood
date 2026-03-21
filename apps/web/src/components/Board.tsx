@@ -6,7 +6,7 @@ import Card from './Card'
 import socket from '../socket'
 import { Result, useGameStore } from '../store/GameStore'
 import { usePointStore } from '../store/PointsStore'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import useNeoHandStore from '../store/NeoHandStore'
 import useTurnStore from '../store/TurnStore'
 import transformMatrix from '../utils/transformMatrix'
@@ -24,9 +24,8 @@ export default function Board({
     state.selectedCard,
     state.resetSelectedCard,
   ])
-  const [tiles, setTiles] = useBoardStore((state) => [
+  const [tiles] = useBoardStore((state) => [
     state.board,
-    state.setBoard,
   ])
 
 
@@ -39,6 +38,47 @@ export default function Board({
   const [placeCard] = useNeoHandStore(state => [state.placeCard])
 
   const { id: gameId } = useParams<{ id: string }>()
+
+  const [hoveredTile, setHoveredTile] = useState<[number, number] | null>(null)
+
+  useEffect(() => {
+    setHoveredTile(null)
+  }, [selectedCard])
+
+  const previewData = useMemo(() => {
+    if (!hoveredTile || !selectedCard) return null
+
+    const [row, col] = hoveredTile
+    const previewBoard = mapPawns(tiles, selectedCard, row, col, amIP1)
+
+    const previewP1Points = [0, 0, 0]
+    const previewP2Points = [0, 0, 0]
+    previewBoard.forEach((boardRow, idx) => {
+      previewP1Points[idx] = boardRow.reduce((sum, t) => sum + t.playerOnePoints, 0)
+      previewP2Points[idx] = boardRow.reduce((sum, t) => sum + t.playerTwoPoints, 0)
+    })
+
+    const affectedTiles = new Set<string>()
+    for (let r = 0; r < 3; r++) {
+      for (let c = 0; c < 5; c++) {
+        const cur = tiles[r][c]
+        const prev = previewBoard[r][c]
+        if (
+          !cur.card && (
+            cur.playerOnePawns !== prev.playerOnePawns ||
+            cur.playerTwoPawns !== prev.playerTwoPawns ||
+            cur.playerOnePoints !== prev.playerOnePoints ||
+            cur.playerTwoPoints !== prev.playerTwoPoints ||
+            cur.card !== prev.card
+          )
+        ) {
+          affectedTiles.add(`${r}-${c}`)
+        }
+      }
+    }
+
+    return { previewBoard, previewP1Points, previewP2Points, affectedTiles }
+  }, [hoveredTile, tiles, selectedCard, amIP1])
 
   useEffect(() => {
     if (gameOver) {
@@ -103,10 +143,8 @@ export default function Board({
       return
     }
 
-    // Optimistic update — apply locally for instant feedback
-    const newTiles = mapPawns(tiles, selectedCard, rowIndex, correctColIndex, amIP1)
+    // Remove card from hand for UI feedback, board updates from server's new-turn event
     placeCard(selectedCard)
-    setTiles(newTiles)
     resetSelectedCard()
 
     // Send action to server for validation
@@ -122,6 +160,11 @@ export default function Board({
 
 
   for (let i = 0; i < rows; i++) {
+    const p1Score = previewData ? previewData.previewP1Points[i] : playerOnePointsArray[i]
+    const p2Score = previewData ? previewData.previewP2Points[i] : playerTwoPointsArray[i]
+    const p1ScoreChanged = previewData && previewData.previewP1Points[i] !== playerOnePointsArray[i]
+    const p2ScoreChanged = previewData && previewData.previewP2Points[i] !== playerTwoPointsArray[i]
+
     tilesElements[i][0] = (
       <div
         className={`bg-gray-800 h-28 xl:h-36 2xl:h-44 w-full flex items-center justify-center border-solid border-2 border-black`}
@@ -129,15 +172,15 @@ export default function Board({
       >
         <div
           className={`h-16 w-16 xl:h-20 xl:w-20 2xl:h-24 2xl:w-24 outline outline-offset-2 outline-yellow-400 text-3xl xl:text-4xl 2xl:text-5xl font-medium
-             text-white ${amIP1 ? playerOnePointsArray[i] > playerTwoPointsArray[i]
+             ${(amIP1 ? p1ScoreChanged : p1ScoreChanged) ? 'text-yellow-300 animate-pulse' : 'text-white'} ${amIP1 ? p1Score > p2Score
               ? 'bg-green-400  drop-shadow-glow'
               : 'bg-green-400 brightness-75 '
-              : playerOnePointsArray[i] > playerTwoPointsArray[i]
+              : p1Score > p2Score
                 ? 'bg-red-400 drop-shadow-glow'
                 : 'bg-red-400 brightness-75 '} shadow-xl
              rounded-full flex justify-center items-center`}
         >
-          {playerOnePointsArray[i]}
+          {p1Score}
         </div>
       </div>
     )
@@ -147,16 +190,16 @@ export default function Board({
         key={`${i}-${cols - 1}`}
       >
         <div
-          className={`h-16 w-16 xl:h-20 xl:w-20 2xl:h-24 2xl:w-24 outline outline-offset-2 outline-yellow-400 
-            ${amIP1 ? playerTwoPointsArray[i] > playerOnePointsArray[i]
+          className={`h-16 w-16 xl:h-20 xl:w-20 2xl:h-24 2xl:w-24 outline outline-offset-2 outline-yellow-400
+            ${amIP1 ? p2Score > p1Score
               ? 'bg-red-400 drop-shadow-glow'
-              : 'bg-red-400 brightness-75 ' : playerTwoPointsArray[i] > playerOnePointsArray[i]
+              : 'bg-red-400 brightness-75 ' : p2Score > p1Score
               ? 'bg-green-400  drop-shadow-glow'
               : 'bg-green-400 brightness-75 '
-            } text-3xl xl:text-4xl 2xl:text-5xl text-white font-medium shadow-xl rounded-full
+            } text-3xl xl:text-4xl 2xl:text-5xl ${(amIP1 ? p2ScoreChanged : p2ScoreChanged) ? 'text-yellow-300 animate-pulse' : 'text-white'} font-medium shadow-xl rounded-full
              flex justify-center items-center`}
         >
-          {playerTwoPointsArray[i]}
+          {p2Score}
         </div>
       </div>
     )
@@ -165,33 +208,56 @@ export default function Board({
 
   for (let i = 0; i < rows; i++) {
     for (let j = 1; j < cols - 1; j++) {
+      const boardCol = j - 1
       const color = (i + j) % 2 === 0 ? 'bg-white' : 'bg-gray-800'
+      const isAffected = previewData?.affectedTiles.has(`${i}-${boardCol}`)
+      const previewTile = isAffected ? previewData!.previewBoard[i][boardCol] : null
+      const isPlacementTile = previewTile !== null && previewTile.card !== null && !tiles[i][boardCol].card
+
       tilesElements[i][j] = (
         <div
-          className={`${color} h-28 xl:h-36 2xl:h-44 w-full border-solid border-4 hover:border-4 ${!tiles[i][j - 1].card ? 'flex justify-center items-center' : ''}  border-black
-           ${selectedCard ? (canPlace(tiles[i][j - 1]) ? 'cursor-pointer border-green-400 hover:border-green-300' : 'cursor-not-allowed hover:border-red-400') : ''}
-           transition duration-300 ease-out`}
-          onClick={() => handleCellClick(tiles[i][j - 1], i, j - 1)}
+          className={`${color} h-28 xl:h-36 2xl:h-44 w-full border-solid border-4 hover:border-4 ${!tiles[i][boardCol].card && !isPlacementTile ? 'flex justify-center items-center' : ''}  border-black
+           ${selectedCard ? (canPlace(tiles[i][boardCol]) ? 'cursor-pointer border-green-400 hover:border-green-300' : 'cursor-not-allowed hover:border-red-400') : ''}
+           ${isAffected && !isPlacementTile ? 'border-blue-400' : ''}
+           transition duration-300 ease-out relative`}
+          onClick={() => handleCellClick(tiles[i][boardCol], i, boardCol)}
+          onMouseEnter={() => {
+            if (selectedCard && canPlace(tiles[i][boardCol])) {
+              setHoveredTile([i, boardCol])
+            }
+          }}
+          onMouseLeave={() => setHoveredTile(null)}
           key={`${i}-${j}`}
         >
-          {!tiles[i][j - 1].card ? (
-            <div className="text-2xl xl:text-3xl 2xl:text-4xl font-bold text-center ">
-              {tiles[i][j - 1] && tiles[i][j - 1].playerOnePawns > 0 && (
-                <>
-                  <p>{'♟'.repeat(tiles[i][j - 1].playerOnePawns)}</p>
-                  <hr className={`rounded mt-4 border-2 ${amIP1 ? 'border-green-400' : 'border-red-400'}`} />
-                </>
-              )}
-              {tiles[i][j - 1] && tiles[i][j - 1].playerTwoPawns > 0 && (
-                <>
-                  <p>{'♟'.repeat(tiles[i][j - 1].playerTwoPawns)}</p>
-                  <hr className={`rounded mt-4 border-2 ${!amIP1 ? 'border-green-400' : 'border-red-400'}`} />
-                </>
-              )}
+          {isPlacementTile ? (
+            <div className="flex justify-center p-1 h-full items-center opacity-50">
+              <Card placed={true} card={previewTile!.card} amIP1={amIP1} />
+            </div>
+          ) : !tiles[i][boardCol].card ? (
+            <div className={`text-2xl xl:text-3xl 2xl:text-4xl font-bold text-center ${isAffected ? 'opacity-60' : ''}`}>
+              {(() => {
+                const displayTile = isAffected && previewTile ? previewTile : tiles[i][boardCol]
+                return (
+                  <>
+                    {displayTile.playerOnePawns > 0 && (
+                      <>
+                        <p>{'♟'.repeat(displayTile.playerOnePawns)}</p>
+                        <hr className={`rounded mt-4 border-2 ${amIP1 ? 'border-green-400' : 'border-red-400'}`} />
+                      </>
+                    )}
+                    {displayTile.playerTwoPawns > 0 && (
+                      <>
+                        <p>{'♟'.repeat(displayTile.playerTwoPawns)}</p>
+                        <hr className={`rounded mt-4 border-2 ${!amIP1 ? 'border-green-400' : 'border-red-400'}`} />
+                      </>
+                    )}
+                  </>
+                )
+              })()}
             </div>
           ) : (
             <div className="flex justify-center p-1 h-full items-center">
-              <Card placed={true} card={tiles[i][j - 1].card} amIP1={amIP1} />
+              <Card placed={true} card={tiles[i][boardCol].card} amIP1={amIP1} />
             </div>
           )}
         </div>
