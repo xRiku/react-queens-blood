@@ -14,9 +14,8 @@ import { useParams } from 'react-router-dom'
 import { useBotGameActions } from '../contexts/BotGameContext'
 import { playSynthSound } from '../store/SoundStore'
 
-
 export default function Board({
-  amIP1
+  amIP1,
 }: {
   amIP1: boolean
 }) {
@@ -27,7 +26,6 @@ export default function Board({
   const [tiles] = useBoardStore((state) => [
     state.board,
   ])
-
 
   const [isMyTurn] = useTurnStore((state) => [state.isMyTurn])
   const botActions = useBotGameActions()
@@ -135,7 +133,9 @@ export default function Board({
       return
     }
 
-    const correctColIndex = isMyTurn ? colIndex : Math.abs(colIndex - 4)
+    const correctColIndex = isMyTurn
+      ? colIndex
+      : Math.abs(colIndex - 4)
 
     if (botActions) {
       botActions.placeCard(selectedCard.id, rowIndex, correctColIndex)
@@ -156,23 +156,29 @@ export default function Board({
     })
   }
 
-
-
-
   for (let i = 0; i < rows; i++) {
-    const p1Score = previewData ? previewData.previewP1Points[i] : playerOnePointsArray[i]
-    const p2Score = previewData ? previewData.previewP2Points[i] : playerTwoPointsArray[i]
+    const p1Score = previewData
+      ? previewData.previewP1Points[i]
+      : playerOnePointsArray[i]
+    const p2Score = previewData
+      ? previewData.previewP2Points[i]
+      : playerTwoPointsArray[i]
     const p1ScoreChanged = previewData && previewData.previewP1Points[i] !== playerOnePointsArray[i]
     const p2ScoreChanged = previewData && previewData.previewP2Points[i] !== playerTwoPointsArray[i]
 
     tilesElements[i][0] = (
       <div
-        className={`bg-gray-800 h-28 xl:h-36 2xl:h-44 w-full flex items-center justify-center border-solid border-2 border-black`}
+        className="bg-gray-800 h-28 xl:h-36 2xl:h-44 w-full flex items-center justify-center border-solid border-2 border-black"
         key={`${i}-${0}`}
       >
         <div
           className={`h-16 w-16 xl:h-20 xl:w-20 2xl:h-24 2xl:w-24 outline outline-offset-2 outline-yellow-400 text-3xl xl:text-4xl 2xl:text-5xl font-medium
-             ${(amIP1 ? p1ScoreChanged : p1ScoreChanged) ? 'text-yellow-300 animate-pulse' : 'text-white'} ${amIP1 ? p1Score > p2Score
+             ${(amIP1
+? p1ScoreChanged
+: p1ScoreChanged)
+? 'text-yellow-300 animate-pulse'
+: 'text-white'} ${amIP1
+? p1Score > p2Score
               ? 'bg-green-400  drop-shadow-glow'
               : 'bg-green-400 brightness-75 '
               : p1Score > p2Score
@@ -186,17 +192,23 @@ export default function Board({
     )
     tilesElements[i][cols - 1] = (
       <div
-        className={`bg-gray-800 h-28 xl:h-36 2xl:h-44 w-full flex items-center justify-center border-solid border-2 border-black`}
+        className="bg-gray-800 h-28 xl:h-36 2xl:h-44 w-full flex items-center justify-center border-solid border-2 border-black"
         key={`${i}-${cols - 1}`}
       >
         <div
           className={`h-16 w-16 xl:h-20 xl:w-20 2xl:h-24 2xl:w-24 outline outline-offset-2 outline-yellow-400
-            ${amIP1 ? p2Score > p1Score
+            ${amIP1
+? p2Score > p1Score
               ? 'bg-red-400 drop-shadow-glow'
-              : 'bg-red-400 brightness-75 ' : p2Score > p1Score
+              : 'bg-red-400 brightness-75 '
+: p2Score > p1Score
               ? 'bg-green-400  drop-shadow-glow'
               : 'bg-green-400 brightness-75 '
-            } text-3xl xl:text-4xl 2xl:text-5xl ${(amIP1 ? p2ScoreChanged : p2ScoreChanged) ? 'text-yellow-300 animate-pulse' : 'text-white'} font-medium shadow-xl rounded-full
+            } text-3xl xl:text-4xl 2xl:text-5xl ${(amIP1
+? p2ScoreChanged
+: p2ScoreChanged)
+? 'text-yellow-300 animate-pulse'
+: 'text-white'} font-medium shadow-xl rounded-full
              flex justify-center items-center`}
         >
           {p2Score}
@@ -205,20 +217,31 @@ export default function Board({
     )
   }
 
-
   for (let i = 0; i < rows; i++) {
     for (let j = 1; j < cols - 1; j++) {
       const boardCol = j - 1
-      const color = (i + j) % 2 === 0 ? 'bg-white' : 'bg-gray-800'
+      const color = (i + j) % 2 === 0
+        ? 'bg-white'
+        : 'bg-gray-800'
       const isAffected = previewData?.affectedTiles.has(`${i}-${boardCol}`)
-      const previewTile = isAffected ? previewData!.previewBoard[i][boardCol] : null
+      const previewTile = isAffected
+        ? previewData!.previewBoard[i][boardCol]
+        : null
       const isPlacementTile = previewTile !== null && previewTile.card !== null && !tiles[i][boardCol].card
 
       tilesElements[i][j] = (
         <div
-          className={`${color} h-28 xl:h-36 2xl:h-44 w-full border-solid border-4 hover:border-4 ${!tiles[i][boardCol].card && !isPlacementTile ? 'flex justify-center items-center' : ''}  border-black
-           ${selectedCard ? (canPlace(tiles[i][boardCol]) ? 'cursor-pointer border-green-400 hover:border-green-300' : 'cursor-not-allowed hover:border-red-400') : ''}
-           ${isAffected && !isPlacementTile ? 'border-blue-400' : ''}
+          className={`${color} h-28 xl:h-36 2xl:h-44 w-full border-solid border-4 hover:border-4 ${!tiles[i][boardCol].card && !isPlacementTile
+? 'flex justify-center items-center'
+: ''}  border-black
+           ${selectedCard
+? (canPlace(tiles[i][boardCol])
+? 'cursor-pointer border-green-400 hover:border-green-300'
+: 'cursor-not-allowed hover:border-red-400')
+: ''}
+           ${isAffected && !isPlacementTile
+? 'border-blue-400'
+: ''}
            transition duration-300 ease-out relative`}
           onClick={() => handleCellClick(tiles[i][boardCol], i, boardCol)}
           onMouseEnter={() => {
@@ -229,37 +252,52 @@ export default function Board({
           onMouseLeave={() => setHoveredTile(null)}
           key={`${i}-${j}`}
         >
-          {isPlacementTile ? (
-            <div className="flex justify-center p-1 h-full items-center opacity-50">
-              <Card placed={true} card={previewTile!.card} amIP1={amIP1} />
-            </div>
-          ) : !tiles[i][boardCol].card ? (
-            <div className={`text-2xl xl:text-3xl 2xl:text-4xl font-bold text-center ${isAffected ? 'opacity-60' : ''}`}>
-              {(() => {
-                const displayTile = isAffected && previewTile ? previewTile : tiles[i][boardCol]
-                return (
-                  <>
-                    {displayTile.playerOnePawns > 0 && (
-                      <>
-                        <p>{'♟'.repeat(displayTile.playerOnePawns)}</p>
-                        <hr className={`rounded mt-4 border-2 ${amIP1 ? 'border-green-400' : 'border-red-400'}`} />
-                      </>
-                    )}
-                    {displayTile.playerTwoPawns > 0 && (
-                      <>
-                        <p>{'♟'.repeat(displayTile.playerTwoPawns)}</p>
-                        <hr className={`rounded mt-4 border-2 ${!amIP1 ? 'border-green-400' : 'border-red-400'}`} />
-                      </>
-                    )}
-                  </>
-                )
-              })()}
-            </div>
-          ) : (
-            <div className="flex justify-center p-1 h-full items-center">
-              <Card placed={true} card={tiles[i][boardCol].card} amIP1={amIP1} />
-            </div>
-          )}
+          {isPlacementTile
+            ? (
+              <div className="flex justify-center p-1 h-full items-center opacity-50">
+                <Card placed card={previewTile!.card} amIP1={amIP1} />
+              </div>
+              )
+            : !tiles[i][boardCol].card
+                ? (
+                  <div className={`text-2xl xl:text-3xl 2xl:text-4xl font-bold text-center ${isAffected
+? 'opacity-60'
+: ''}`}
+                  >
+                    {(() => {
+                      const displayTile = isAffected && previewTile
+                        ? previewTile
+                        : tiles[i][boardCol]
+                      return (
+                        <>
+                          {displayTile.playerOnePawns > 0 && (
+                            <>
+                              <p>{'♟'.repeat(displayTile.playerOnePawns)}</p>
+                              <hr className={`rounded mt-4 border-2 ${amIP1
+? 'border-green-400'
+: 'border-red-400'}`}
+                              />
+                            </>
+                          )}
+                          {displayTile.playerTwoPawns > 0 && (
+                            <>
+                              <p>{'♟'.repeat(displayTile.playerTwoPawns)}</p>
+                              <hr className={`rounded mt-4 border-2 ${!amIP1
+? 'border-green-400'
+: 'border-red-400'}`}
+                              />
+                            </>
+                          )}
+                        </>
+                      )
+                    })()}
+                  </div>
+                  )
+                : (
+                  <div className="flex justify-center p-1 h-full items-center">
+                    <Card placed card={tiles[i][boardCol].card} amIP1={amIP1} />
+                  </div>
+                  )}
         </div>
       )
     }
@@ -269,26 +307,44 @@ export default function Board({
       <div className="flex flex-col items-center justify-center gap-4">
         <div className="flex w-full items-center justify-evenly">
           <div className="flex flex-col items-center justify-center gap-3 w-24 xl:w-28 2xl:w-32">
-            <span className={`text-5xl xl:text-6xl 2xl:text-8xl ${gameOver ? 'visible' : 'invisible'}`}>{sumOfPlayersPoints[0]}</span>
-            <span className={`text-5xl xl:text-6xl 2xl:text-8xl scale-x-[-1] `}>🐉</span>
+            <span className={`text-5xl xl:text-6xl 2xl:text-8xl ${gameOver
+? 'visible'
+: 'invisible'}`}
+            >{sumOfPlayersPoints[0]}
+            </span>
+            <span className="text-5xl xl:text-6xl 2xl:text-8xl scale-x-[-1] ">🐉</span>
             <h1 className="text-2xl xl:text-3xl 2xl:text-4xl">
-              {amIP1 ? playerOneName : playerTwoName} {' '}
+              {amIP1
+                ? playerOneName
+                : playerTwoName} {' '}
             </h1>
-            <h2 className='text-lg xl:text-xl 2xl:text-2xl'>
-              {amIP1 ? '(Player 1)' : '(Player 2)'}
+            <h2 className="text-lg xl:text-xl 2xl:text-2xl">
+              {amIP1
+                ? '(Player 1)'
+                : '(Player 2)'}
             </h2>
           </div>
           <div className="grid grid-cols-7 gap-1 w-8/12">
-            {amIP1 ? tilesElements : transformMatrix(tilesElements)}
+            {amIP1
+              ? tilesElements
+              : transformMatrix(tilesElements)}
           </div>
           <div className="flex flex-col items-center justify-center gap-3 w-24 xl:w-28 2xl:w-32">
-            <span className={`text-5xl xl:text-6xl 2xl:text-8xl ${gameOver ? 'visible' : 'invisible'}`}>{sumOfPlayersPoints[1]}</span>
-            <span className={`text-5xl xl:text-6xl 2xl:text-8xl`}>🐉</span>
+            <span className={`text-5xl xl:text-6xl 2xl:text-8xl ${gameOver
+? 'visible'
+: 'invisible'}`}
+            >{sumOfPlayersPoints[1]}
+            </span>
+            <span className="text-5xl xl:text-6xl 2xl:text-8xl">🐉</span>
             <h1 className="text-2xl xl:text-3xl 2xl:text-4xl">
-              {amIP1 ? playerTwoName : playerOneName} {' '}
+              {amIP1
+                ? playerTwoName
+                : playerOneName} {' '}
             </h1>
-            <h2 className='text-lg xl:text-xl 2xl:text-2xl'>
-              {amIP1 ? '(Player 2)' : '(Player 1)'}
+            <h2 className="text-lg xl:text-xl 2xl:text-2xl">
+              {amIP1
+                ? '(Player 2)'
+                : '(Player 1)'}
             </h2>
           </div>
         </div>

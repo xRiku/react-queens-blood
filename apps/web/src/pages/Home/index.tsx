@@ -1,64 +1,64 @@
-import { useNavigate } from "react-router-dom";
-import socket from "../../socket";
-import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom'
+import socket from '../../socket'
+import { useEffect, useState } from 'react'
 export default function Home() {
-  const navigate = useNavigate();
-  const [playerName, setPlayerName] = useState<string>("");
-  const [gameId, setGameId] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string>("");
+  const navigate = useNavigate()
+  const [playerName, setPlayerName] = useState<string>('')
+  const [gameId, setGameId] = useState<string>('')
+  const [errorMessage, setErrorMessage] = useState<string>('')
 
   useEffect(() => {
-    socket.on("game-busy", () => {
-      setErrorMessage("Game is busy");
-    });
+    socket.on('game-busy', () => {
+      setErrorMessage('Game is busy')
+    })
 
-    socket.on("game-not-found", () => {
-      setErrorMessage("Game not found");
-    });
+    socket.on('game-not-found', () => {
+      setErrorMessage('Game not found')
+    })
 
-    socket.on("game-found", (data: { gameIdFound: string }) => {
-      navigate(`/waiting-room/${data.gameIdFound}`);
-    });
+    socket.on('game-found', (data: { gameIdFound: string }) => {
+      navigate(`/waiting-room/${data.gameIdFound}`)
+    })
 
     return () => {
-      socket.off("game-found");
-      socket.off("game-not-found");
-      socket.off("game-busy");
-    };
-  }, []);
+      socket.off('game-found')
+      socket.off('game-not-found')
+      socket.off('game-busy')
+    }
+  }, [])
 
   const handleStartGame = () => {
-    const randomGameId = window.crypto.randomUUID();
-    navigate(`/game/${randomGameId}`);
-    socket.connect();
-    socket.emit("start-game-info", {
+    const randomGameId = window.crypto.randomUUID()
+    navigate(`/game/${randomGameId}`)
+    socket.connect()
+    socket.emit('start-game-info', {
       playerName,
       gameId: randomGameId,
-    });
-  };
+    })
+  }
 
   const handleStartBotGame = () => {
-    navigate("/game/bot", {
-      state: { playerName: playerName || "Player" },
-    });
-  };
+    navigate('/game/bot', {
+      state: { playerName: playerName || 'Player' },
+    })
+  }
 
   const handleJoinGame = () => {
-    socket.connect();
-    socket.emit("attempt-to-join-game", {
+    socket.connect()
+    socket.emit('attempt-to-join-game', {
       gameId,
-    });
-  };
+    })
+  }
 
   const handleChangePlayerNameInput = (
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
-    setPlayerName(e.target.value);
-  };
+    setPlayerName(e.target.value)
+  }
 
   const handleChangeGameIdInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setGameId(e.target.value);
-  };
+    setGameId(e.target.value)
+  }
 
   return (
     <div className="flex flex-col items-center justify-center mt-24 xl:mt-36 2xl:mt-48 gap-6 w-96 mx-auto">
@@ -118,18 +118,18 @@ export default function Home() {
 
       <div className="flex gap-4 mt-2">
         <button
-          onClick={() => navigate("/rules")}
+          onClick={() => navigate('/rules')}
           className="text-sm xl:text-base text-gray-500 hover:text-black underline underline-offset-2"
         >
           How to Play
         </button>
         <button
-          onClick={() => navigate("/deck")}
+          onClick={() => navigate('/deck')}
           className="text-sm xl:text-base text-gray-500 hover:text-black underline underline-offset-2"
         >
           View Deck
         </button>
       </div>
     </div>
-  );
+  )
 }

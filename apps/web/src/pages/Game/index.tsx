@@ -1,36 +1,35 @@
-import { useEffect, useRef, useState } from "react";
-import Board from "../../components/Board";
-import Hand from "../../components/Hand";
-import socket from "../../socket";
-import { Tile } from "../../@types/Tile";
-import { CardUnity } from "../../@types/Card";
-import useBoardStore from "../../store/BoardStore";
-import { useGameStore, RematchStatus } from "../../store/GameStore";
-import { usePointStore } from "../../store/PointsStore";
-import SkipTurn from "../../components/SkipTurn";
-import { useModalStore } from "../../store/ModalStore";
-import { GameStartModal } from "../../components/Modals/GameStartModal";
-import { TurnModal } from "../../components/Modals/TurnModal";
-import useTurnStore from "../../store/TurnStore";
-import { EndGameModal } from "../../components/Modals/EndGameModal";
-import { RematchDialog } from "../../components/Modals/RematchDialog";
-import useNeoHandStore from "../../store/NeoHandStore";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCopy } from "@fortawesome/free-regular-svg-icons";
-import { useBotGame } from "../../hooks/useBotGame";
-import { BotGameContext } from "../../contexts/BotGameContext";
-import useCardStore from "../../store/CardStore";
-
+import { useEffect, useRef, useState } from 'react'
+import Board from '../../components/Board'
+import Hand from '../../components/Hand'
+import socket from '../../socket'
+import { Tile } from '../../@types/Tile'
+import { CardUnity } from '../../@types/Card'
+import useBoardStore from '../../store/BoardStore'
+import { useGameStore, RematchStatus } from '../../store/GameStore'
+import { usePointStore } from '../../store/PointsStore'
+import SkipTurn from '../../components/SkipTurn'
+import { useModalStore } from '../../store/ModalStore'
+import { GameStartModal } from '../../components/Modals/GameStartModal'
+import { TurnModal } from '../../components/Modals/TurnModal'
+import useTurnStore from '../../store/TurnStore'
+import { EndGameModal } from '../../components/Modals/EndGameModal'
+import { RematchDialog } from '../../components/Modals/RematchDialog'
+import useNeoHandStore from '../../store/NeoHandStore'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { AnimatePresence } from 'framer-motion'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCopy } from '@fortawesome/free-regular-svg-icons'
+import { useBotGame } from '../../hooks/useBotGame'
+import { BotGameContext } from '../../contexts/BotGameContext'
+import useCardStore from '../../store/CardStore'
 
 export default function Game() {
   const { id: gameId } = useParams<{ id: string }>()
   const location = useLocation()
-  const isBotGame = gameId === 'bot';
+  const isBotGame = gameId === 'bot'
   const [loading, setLoading] = useState(!isBotGame)
   const [gameBusy, setGameBusy] = useState(false)
-  const [isCopied, setIsCopied] = useState(false);
+  const [isCopied, setIsCopied] = useState(false)
 
   const [isMyTurn, toggleTurn, setPlayerSkippedTurn] = useTurnStore((state) => [state.isMyTurn, state.toggleTurn, state.setPlayerSkippedTurn])
   const [setBoard] = useBoardStore((state) => [state.setBoard])
@@ -53,7 +52,7 @@ export default function Game() {
   const botActions = useBotGame(isBotGame, botPlayerName, setShowEndGame)
 
   useEffect(() => {
-    if (isBotGame) return;
+    if (isBotGame) return
 
     socket.on('player-connected', (data: { firstPlayer: boolean }) => {
       setAmIP1(data.firstPlayer)
@@ -150,25 +149,25 @@ export default function Game() {
     })
 
     return () => {
-      socket.off('player-connected');
-      socket.off('game-start');
-      socket.off('new-turn');
-      socket.off('move-rejected');
-      socket.off('game-end');
-      socket.off('game-busy');
-      socket.off('rematch-status-update');
-      socket.off('rematch-cancelled');
+      socket.off('player-connected')
+      socket.off('game-start')
+      socket.off('new-turn')
+      socket.off('move-rejected')
+      socket.off('game-end')
+      socket.off('game-busy')
+      socket.off('rematch-status-update')
+      socket.off('rematch-cancelled')
       if (endGameTimerRef.current) clearTimeout(endGameTimerRef.current)
     }
-  }, [isMyTurn, amIP1]);
+  }, [isMyTurn, amIP1])
 
   const handleGameIdClick = async (gameId?: string) => {
     try {
-      if (!gameId) return;
-      await navigator.clipboard.writeText(gameId);
-      setIsCopied(true);
+      if (!gameId) return
+      await navigator.clipboard.writeText(gameId)
+      setIsCopied(true)
     } catch (err) {
-      console.error('Failed to copy: ', err);
+      console.error('Failed to copy: ', err)
     }
   }
 
@@ -180,9 +179,13 @@ export default function Game() {
         {
           loading && <div className="flex flex-col items-center gap-10">
             <p className="text-center">Waiting for another player...</p>
-            <div className="flex gap-6" title={`${isCopied ? 'Copied!' : 'Copy'}`}>
-              <h1 className="text-5xl " >{gameId}</h1>
-              <button className="cursor-pointer" onClick={() => handleGameIdClick(gameId)}><FontAwesomeIcon icon={faCopy} size={"xl"} /></button>
+            <div
+              className="flex gap-6" title={`${isCopied
+? 'Copied!'
+: 'Copy'}`}
+            >
+              <h1 className="text-5xl ">{gameId}</h1>
+              <button className="cursor-pointer" onClick={() => handleGameIdClick(gameId)}><FontAwesomeIcon icon={faCopy} size="xl" /></button>
             </div>
           </div>
         }

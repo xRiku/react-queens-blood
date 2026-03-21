@@ -1,7 +1,6 @@
-import { useNavigate, useParams } from "react-router-dom"
-import socket from "../../socket"
-import { useState } from "react"
-
+import { useNavigate, useParams } from 'react-router-dom'
+import socket from '../../socket'
+import { useState } from 'react'
 
 export function WaitingRoom() {
   const [playerName, setPlayerName] = useState<string>('')
@@ -12,7 +11,7 @@ export function WaitingRoom() {
     navigate(`/game/${gameId}`)
     socket.emit('join-game', {
       playerName,
-      gameId
+      gameId,
     })
   }
 

@@ -1,5 +1,5 @@
 export default function transformMatrix(
-  matrix: Array<Array<any>>
+  matrix: Array<Array<any>>,
 ): Array<Array<any>> {
-  return matrix.map((row: Array<any>) => row.reverse());
+  return matrix.map((row: Array<any>) => row.reverse())
 }

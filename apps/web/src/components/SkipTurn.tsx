@@ -1,11 +1,10 @@
-import socket from "../socket"
-import useCardStore from "../store/CardStore"
-import { useGameStore } from "../store/GameStore"
+import socket from '../socket'
+import useCardStore from '../store/CardStore'
+import { useGameStore } from '../store/GameStore'
 import { AnimatePresence, motion } from 'framer-motion'
-import useTurnStore from "../store/TurnStore"
-import { useParams } from "react-router-dom"
-import { useBotGameActions } from "../contexts/BotGameContext"
-
+import useTurnStore from '../store/TurnStore'
+import { useParams } from 'react-router-dom'
+import { useBotGameActions } from '../contexts/BotGameContext'
 
 export default function SkipTurn() {
   const [isMyTurn, playerSkippedTurn] = useTurnStore((state) => [state.isMyTurn, state.playerSkippedTurn])
@@ -18,7 +17,6 @@ export default function SkipTurn() {
   const [gameOver] = useGameStore((state) => [state.gameOver, state.amIP1])
 
   const { id: gameId } = useParams<{ id: string }>()
-
 
   function handleSkipTurn() {
     resetSelectedCard()
@@ -41,10 +39,11 @@ export default function SkipTurn() {
         shadow-xl cursor-pointer  text-black border-4 border-yellow-400 py-1 px-8 xl:px-10 2xl:px-12`}
             onClick={handleSkipTurn}
           >
-            {playerSkippedTurn ? 'End game' : 'Skip turn'}
+            {playerSkippedTurn
+              ? 'End game'
+              : 'Skip turn'}
           </motion.span>
-        )
-        }
+        )}
       </AnimatePresence>
     </div>
   )

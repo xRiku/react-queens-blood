@@ -53,7 +53,7 @@ export default {
     },
     boxShadow: {
       'join-room-button': '0 5px 0 rgb(17 24 39)',
-    }
+    },
   },
   plugins: [],
 }

@@ -1,12 +1,12 @@
-import { create } from "zustand";
+import { create } from 'zustand'
 
 export enum Result {
-  WIN = "win",
-  LOSE = "lose",
-  DRAW = "draw",
+  WIN = 'win',
+  LOSE = 'lose',
+  DRAW = 'draw',
 }
 
-export type RematchStatus = "waiting" | "confirmed" | "refused";
+export type RematchStatus = 'waiting' | 'confirmed' | 'refused'
 
 type GameStore = {
   amIP1: boolean;
@@ -25,7 +25,7 @@ type GameStore = {
   playerTwoRematchStatus: RematchStatus;
   setRematchStatuses: (p1: RematchStatus, p2: RematchStatus) => void;
   resetStore: () => void;
-};
+}
 
 export const useGameStore = create<GameStore>((set) => ({
   amIP1: false,
@@ -34,14 +34,14 @@ export const useGameStore = create<GameStore>((set) => ({
   setGameOver: (value) => set({ gameOver: value }),
   gameResult: Result.DRAW,
   setGameResult: (value) => set({ gameResult: value }),
-  playerOneName: "",
+  playerOneName: '',
   setPlayerOneName: (value) => set({ playerOneName: value }),
-  playerTwoName: "",
+  playerTwoName: '',
   setPlayerTwoName: (value) => set({ playerTwoName: value }),
   playerDisconnected: false,
   setPlayerDisconnected: (value) => set({ playerDisconnected: value }),
-  playerOneRematchStatus: "waiting",
-  playerTwoRematchStatus: "waiting",
+  playerOneRematchStatus: 'waiting',
+  playerTwoRematchStatus: 'waiting',
   setRematchStatuses: (p1, p2) =>
     set({ playerOneRematchStatus: p1, playerTwoRematchStatus: p2 }),
   resetStore: () =>
@@ -49,10 +49,10 @@ export const useGameStore = create<GameStore>((set) => ({
       gameOver: false,
       amIP1: false,
       gameResult: Result.DRAW,
-      playerOneName: "",
-      playerTwoName: "",
+      playerOneName: '',
+      playerTwoName: '',
       playerDisconnected: false,
-      playerOneRematchStatus: "waiting",
-      playerTwoRematchStatus: "waiting",
+      playerOneRematchStatus: 'waiting',
+      playerTwoRematchStatus: 'waiting',
     }),
-}));
+}))

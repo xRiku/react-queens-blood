@@ -14,21 +14,19 @@ type Hand = {
 const flickAudio = new Audio(flickSound)
 const hoverAudio = new Audio(hoverSound)
 
-
 export default function Hand() {
   const [playerCards] = useNeoHandStore((state) => [
-    state.playerCards
+    state.playerCards,
   ])
   const [selectedCard, setSelectedCard] = useCardStore((state) => [
     state.selectedCard,
     state.setSelectedCard,
   ])
 
-
   const handleCardClick = (card: CardUnity) => {
     if (selectedCard?.id === card.id) {
       setSelectedCard(null)
-      return;
+      return
     }
 
     setSelectedCard(card)
@@ -41,7 +39,6 @@ export default function Hand() {
     }
   }
 
-
   return (
     <motion.ul className="flex flex-wrap flex-row h-auto items-start justify-start w-full pt-2 pb-5 px-8 xl:px-12 2xl:px-16 gap-3" animate={{ transition: { staggerChildren: 0.5 } }}>
       <AnimatePresence>
@@ -50,7 +47,14 @@ export default function Hand() {
             <motion.li
               key={card.id}
               initial={{ opacity: 0, x: -200, y: 0 }}
-              animate={{ x: 0, opacity: 1, y: selectedCard?.id === card?.id ? -32 : 0, transition: { duration: 0.0 } }}
+              animate={{
+                x: 0,
+                opacity: 1,
+                y: selectedCard?.id === card?.id
+                  ? -32
+                  : 0,
+                transition: { duration: 0.0 },
+              }}
               exit={{ opacity: 0, transition: { duration: 1 } }}
               className={`border-2 border-solid shadow-lg rounded-lg cursor-pointer ${selectedCard?.id === card?.id
                 ? 'border-green-400 -translate-y-8 transform '

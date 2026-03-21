@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion'
 
 // Single-phase cycle: sand falls, hold, flip, hold → seamless restart.
 // The glass is symmetric, so resetting rotation from 180° to 0° while
@@ -17,7 +17,7 @@ export default function Hourglass() {
       transition={{
         duration: 3,
         repeat: Infinity,
-        ease: "linear",
+        ease: 'linear',
         times: [0, 0.55, 0.7, 0.9, 1.0],
       }}
     >
@@ -27,15 +27,15 @@ export default function Hourglass() {
           fill="#9ca3af"
           animate={{
             points: [
-              "22,12 78,12 50,48", // full
-              "46,42 54,42 50,48", // drained
-              "46,42 54,42 50,48", // hold
+              '22,12 78,12 50,48', // full
+              '46,42 54,42 50,48', // drained
+              '46,42 54,42 50,48', // hold
             ],
           }}
           transition={{
             duration: 3,
             repeat: Infinity,
-            ease: "linear",
+            ease: 'linear',
             times: [0, 0.55, 1.0],
           }}
         />
@@ -44,15 +44,15 @@ export default function Hourglass() {
           fill="#9ca3af"
           animate={{
             points: [
-              "49,88 51,88 50,88", // empty
-              "22,88 78,88 50,52", // full
-              "22,88 78,88 50,52", // hold
+              '49,88 51,88 50,88', // empty
+              '22,88 78,88 50,52', // full
+              '22,88 78,88 50,52', // hold
             ],
           }}
           transition={{
             duration: 3,
             repeat: Infinity,
-            ease: "linear",
+            ease: 'linear',
             times: [0, 0.55, 1.0],
           }}
         />
@@ -65,7 +65,7 @@ export default function Hourglass() {
           transition={{
             duration: 3,
             repeat: Infinity,
-            ease: "linear",
+            ease: 'linear',
             times: [0, 0.5, 0.55, 1.0],
           }}
         />
@@ -82,5 +82,5 @@ export default function Hourglass() {
         <line x1="15" y1="90" x2="85" y2="90" stroke="#6b7280" strokeWidth="5" strokeLinecap="round" />
       </svg>
     </motion.div>
-  );
+  )
 }
