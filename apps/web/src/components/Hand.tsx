@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import hoverSound from '../assets/sounds/hover.wav'
 import flickSound from '../assets/sounds/cardflick.mp3'
 import { playSound } from '../store/SoundStore'
+import { cn } from '../utils/cn'
 
 type Hand = {
   cards: CardUnity[]
@@ -56,11 +57,12 @@ export default function Hand() {
                 transition: { duration: 0.0 },
               }}
               exit={{ opacity: 0, transition: { duration: 1 } }}
-              className={`border-2 border-solid shadow-lg rounded-lg cursor-pointer ${selectedCard?.id === card?.id
-                ? 'border-green-400 -translate-y-8 transform '
-                : 'border-black hover:scale-105 hover:duration-100 hover:border-blue-500'
-                } h-44 w-36 xl:h-52 xl:w-44 2xl:h-60 2xl:w-52
-                  transition duration-300 ease-in-out hover:-translate-y-8 hover:transform`}
+              className={cn(
+                'border-2 border-solid shadow-lg rounded-lg cursor-pointer h-44 w-36 xl:h-52 xl:w-44 2xl:h-60 2xl:w-52 transition duration-300 ease-in-out hover:-translate-y-8 hover:transform',
+                selectedCard?.id === card?.id
+                  ? 'border-green-400 -translate-y-8 transform'
+                  : 'border-black hover:scale-105 hover:duration-100 hover:border-blue-500',
+              )}
               onHoverStart={() => handleHoverStart(card)}
               onClick={
                 () => handleCardClick(card)

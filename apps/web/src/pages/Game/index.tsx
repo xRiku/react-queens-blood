@@ -176,35 +176,33 @@ export default function Game() {
   return (
     <BotGameContext.Provider value={botActions}>
       <div className="h-full overflow-x-hidden w-full">
-        {
-          loading && <div className="flex flex-col items-center gap-10">
+        {loading ? (
+          <div className="flex flex-col items-center gap-10">
             <p className="text-center">Waiting for another player...</p>
             <div
-              className="flex gap-6" title={`${isCopied
-? 'Copied!'
-: 'Copy'}`}
+              className="flex gap-6" title={isCopied ? 'Copied!' : 'Copy'}
             >
               <h1 className="text-5xl ">{gameId}</h1>
               <button className="cursor-pointer" onClick={() => handleGameIdClick(gameId)}><FontAwesomeIcon icon={faCopy} size="xl" /></button>
             </div>
           </div>
-        }
-        {
-          shouldShowBoard && <div className="h-full">
+        ) : null}
+        {shouldShowBoard ? (
+          <div className="h-full">
             <Board amIP1={amIP1} />
             <SkipTurn />
             <Hand />
           </div>
-        }
-        {
-          gameBusy && <h1 className="text-center">Game is busy. Please try again later.</h1>
-        }
-        {gameStartModal && !gameOver && <GameStartModal />}
-        {turnModal && !gameOver && <TurnModal />}
+        ) : null}
+        {gameBusy ? (
+          <h1 className="text-center">Game is busy. Please try again later.</h1>
+        ) : null}
+        {gameStartModal && !gameOver ? <GameStartModal /> : null}
+        {turnModal && !gameOver ? <TurnModal /> : null}
         <AnimatePresence>
-          {gameOver && showEndGame && <EndGameModal />}
+          {gameOver && showEndGame ? <EndGameModal /> : null}
         </AnimatePresence>
-        {rematchDialog && <RematchDialog />}
+        {rematchDialog ? <RematchDialog /> : null}
       </div>
     </BotGameContext.Provider>
   )

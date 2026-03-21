@@ -13,6 +13,7 @@ import transformMatrix from '../utils/transformMatrix'
 import { useParams } from 'react-router-dom'
 import { useBotGameActions } from '../contexts/BotGameContext'
 import { playSynthSound } from '../store/SoundStore'
+import { cn } from '../utils/cn'
 
 export default function Board({
   amIP1,
@@ -32,7 +33,6 @@ export default function Board({
 
   const [gameOver, setGameResult, playerOneName, playerTwoName, playerDisconnected] = useGameStore((state) => [state.gameOver, state.setGameResult, state.playerOneName, state.playerTwoName, state.playerDisconnected])
   const [playerOnePointsArray, playerTwoPointsArray] = usePointStore(state => [state.playerOnePoints, state.playerTwoPoints])
-  const [sumOfPlayersPoints, setSumOfPlayersPoints] = useState<number[]>([0, 0])
   const [placeCard] = useNeoHandStore(state => [state.placeCard])
 
   const { id: gameId } = useParams<{ id: string }>()
@@ -78,42 +78,44 @@ export default function Board({
     return { previewBoard, previewP1Points, previewP2Points, affectedTiles }
   }, [hoveredTile, tiles, selectedCard, amIP1])
 
-  useEffect(() => {
-    if (gameOver) {
-      if (playerDisconnected) {
-        setGameResult(Result.WIN)
-        return
-      }
-      const newSumOfPlayersPoints = [0, 0]
-      Array(3).fill(0).forEach((_, index) => {
-        if (amIP1) {
-          if (playerOnePointsArray[index] > playerTwoPointsArray[index]) {
-            newSumOfPlayersPoints[0] += playerOnePointsArray[index]
-          }
-          if (playerOnePointsArray[index] < playerTwoPointsArray[index]) {
-            newSumOfPlayersPoints[1] += playerTwoPointsArray[index]
-          }
-          return
-        }
+  // rerender-derived-state-no-effect: derive game result during render instead of in an effect
+  const sumOfPlayersPoints = useMemo(() => {
+    if (!gameOver) return [0, 0]
+
+    if (playerDisconnected) {
+      setGameResult(Result.WIN)
+      return [0, 0]
+    }
+
+    const sums = [0, 0]
+    Array(3).fill(0).forEach((_, index) => {
+      if (amIP1) {
         if (playerOnePointsArray[index] > playerTwoPointsArray[index]) {
-          newSumOfPlayersPoints[1] += playerOnePointsArray[index]
+          sums[0] += playerOnePointsArray[index]
         }
         if (playerOnePointsArray[index] < playerTwoPointsArray[index]) {
-          newSumOfPlayersPoints[0] += playerTwoPointsArray[index]
+          sums[1] += playerTwoPointsArray[index]
         }
-      })
-      setSumOfPlayersPoints(newSumOfPlayersPoints)
-      if (newSumOfPlayersPoints[0] > newSumOfPlayersPoints[1]) {
-        setGameResult(Result.WIN)
+        return
       }
-      if (newSumOfPlayersPoints[0] < newSumOfPlayersPoints[1]) {
-        setGameResult(Result.LOSE)
+      if (playerOnePointsArray[index] > playerTwoPointsArray[index]) {
+        sums[1] += playerOnePointsArray[index]
       }
-      if (newSumOfPlayersPoints[0] === newSumOfPlayersPoints[1]) {
-        setGameResult(Result.DRAW)
+      if (playerOnePointsArray[index] < playerTwoPointsArray[index]) {
+        sums[0] += playerTwoPointsArray[index]
       }
+    })
+
+    if (sums[0] > sums[1]) {
+      setGameResult(Result.WIN)
+    } else if (sums[0] < sums[1]) {
+      setGameResult(Result.LOSE)
+    } else {
+      setGameResult(Result.DRAW)
     }
-  }, [gameOver])
+
+    return sums
+  }, [gameOver, playerDisconnected, amIP1, playerOnePointsArray, playerTwoPointsArray, setGameResult])
 
   const rows = 3
   const cols = 7
@@ -172,19 +174,13 @@ export default function Board({
         key={`${i}-${0}`}
       >
         <div
-          className={`h-16 w-16 xl:h-20 xl:w-20 2xl:h-24 2xl:w-24 outline outline-offset-2 outline-yellow-400 text-3xl xl:text-4xl 2xl:text-5xl font-medium
-             ${(amIP1
-? p1ScoreChanged
-: p1ScoreChanged)
-? 'text-yellow-300 animate-pulse'
-: 'text-white'} ${amIP1
-? p1Score > p2Score
-              ? 'bg-green-400  drop-shadow-glow'
-              : 'bg-green-400 brightness-75 '
-              : p1Score > p2Score
-                ? 'bg-red-400 drop-shadow-glow'
-                : 'bg-red-400 brightness-75 '} shadow-xl
-             rounded-full flex justify-center items-center`}
+          className={cn(
+            'h-16 w-16 xl:h-20 xl:w-20 2xl:h-24 2xl:w-24 outline outline-offset-2 outline-yellow-400 text-3xl xl:text-4xl 2xl:text-5xl font-medium shadow-xl rounded-full flex justify-center items-center',
+            p1ScoreChanged ? 'text-yellow-300 animate-pulse' : 'text-white',
+            amIP1
+              ? (p1Score > p2Score ? 'bg-green-400 drop-shadow-glow' : 'bg-green-400 brightness-75')
+              : (p1Score > p2Score ? 'bg-red-400 drop-shadow-glow' : 'bg-red-400 brightness-75'),
+          )}
         >
           {p1Score}
         </div>
@@ -196,20 +192,13 @@ export default function Board({
         key={`${i}-${cols - 1}`}
       >
         <div
-          className={`h-16 w-16 xl:h-20 xl:w-20 2xl:h-24 2xl:w-24 outline outline-offset-2 outline-yellow-400
-            ${amIP1
-? p2Score > p1Score
-              ? 'bg-red-400 drop-shadow-glow'
-              : 'bg-red-400 brightness-75 '
-: p2Score > p1Score
-              ? 'bg-green-400  drop-shadow-glow'
-              : 'bg-green-400 brightness-75 '
-            } text-3xl xl:text-4xl 2xl:text-5xl ${(amIP1
-? p2ScoreChanged
-: p2ScoreChanged)
-? 'text-yellow-300 animate-pulse'
-: 'text-white'} font-medium shadow-xl rounded-full
-             flex justify-center items-center`}
+          className={cn(
+            'h-16 w-16 xl:h-20 xl:w-20 2xl:h-24 2xl:w-24 outline outline-offset-2 outline-yellow-400 text-3xl xl:text-4xl 2xl:text-5xl font-medium shadow-xl rounded-full flex justify-center items-center',
+            p2ScoreChanged ? 'text-yellow-300 animate-pulse' : 'text-white',
+            amIP1
+              ? (p2Score > p1Score ? 'bg-red-400 drop-shadow-glow' : 'bg-red-400 brightness-75')
+              : (p2Score > p1Score ? 'bg-green-400 drop-shadow-glow' : 'bg-green-400 brightness-75'),
+          )}
         >
           {p2Score}
         </div>
@@ -231,18 +220,15 @@ export default function Board({
 
       tilesElements[i][j] = (
         <div
-          className={`${color} h-28 xl:h-36 2xl:h-44 w-full border-solid border-4 hover:border-4 ${!tiles[i][boardCol].card && !isPlacementTile
-? 'flex justify-center items-center'
-: ''}  border-black
-           ${selectedCard
-? (canPlace(tiles[i][boardCol])
-? 'cursor-pointer border-green-400 hover:border-green-300'
-: 'cursor-not-allowed hover:border-red-400')
-: ''}
-           ${isAffected && !isPlacementTile
-? 'border-blue-400'
-: ''}
-           transition duration-300 ease-out relative`}
+          className={cn(
+            color,
+            'h-28 xl:h-36 2xl:h-44 w-full border-solid border-4 hover:border-4 border-black transition duration-300 ease-out relative',
+            !tiles[i][boardCol].card && !isPlacementTile && 'flex justify-center items-center',
+            selectedCard && (canPlace(tiles[i][boardCol])
+              ? 'cursor-pointer border-green-400 hover:border-green-300'
+              : 'cursor-not-allowed hover:border-red-400'),
+            isAffected && !isPlacementTile && 'border-blue-400',
+          )}
           onClick={() => handleCellClick(tiles[i][boardCol], i, boardCol)}
           onMouseEnter={() => {
             if (selectedCard && canPlace(tiles[i][boardCol])) {
@@ -260,9 +246,10 @@ export default function Board({
               )
             : !tiles[i][boardCol].card
                 ? (
-                  <div className={`text-2xl xl:text-3xl 2xl:text-4xl font-bold text-center ${isAffected
-? 'opacity-60'
-: ''}`}
+                  <div className={cn(
+                    'text-2xl xl:text-3xl 2xl:text-4xl font-bold text-center',
+                    isAffected && 'opacity-60',
+                  )}
                   >
                     {(() => {
                       const displayTile = isAffected && previewTile
@@ -273,18 +260,20 @@ export default function Board({
                           {displayTile.playerOnePawns > 0 && (
                             <>
                               <p>{'♟'.repeat(displayTile.playerOnePawns)}</p>
-                              <hr className={`rounded mt-4 border-2 ${amIP1
-? 'border-green-400'
-: 'border-red-400'}`}
+                              <hr className={cn(
+                                'rounded mt-4 border-2',
+                                amIP1 ? 'border-green-400' : 'border-red-400',
+                              )}
                               />
                             </>
                           )}
                           {displayTile.playerTwoPawns > 0 && (
                             <>
                               <p>{'♟'.repeat(displayTile.playerTwoPawns)}</p>
-                              <hr className={`rounded mt-4 border-2 ${!amIP1
-? 'border-green-400'
-: 'border-red-400'}`}
+                              <hr className={cn(
+                                'rounded mt-4 border-2',
+                                amIP1 ? 'border-red-400' : 'border-green-400',
+                              )}
                               />
                             </>
                           )}
@@ -307,9 +296,10 @@ export default function Board({
       <div className="flex flex-col items-center justify-center gap-4">
         <div className="flex w-full items-center justify-evenly">
           <div className="flex flex-col items-center justify-center gap-3 w-24 xl:w-28 2xl:w-32">
-            <span className={`text-5xl xl:text-6xl 2xl:text-8xl ${gameOver
-? 'visible'
-: 'invisible'}`}
+            <span className={cn(
+              'text-5xl xl:text-6xl 2xl:text-8xl',
+              gameOver ? 'visible' : 'invisible',
+            )}
             >{sumOfPlayersPoints[0]}
             </span>
             <span className="text-5xl xl:text-6xl 2xl:text-8xl scale-x-[-1] ">🐉</span>
@@ -330,9 +320,10 @@ export default function Board({
               : transformMatrix(tilesElements)}
           </div>
           <div className="flex flex-col items-center justify-center gap-3 w-24 xl:w-28 2xl:w-32">
-            <span className={`text-5xl xl:text-6xl 2xl:text-8xl ${gameOver
-? 'visible'
-: 'invisible'}`}
+            <span className={cn(
+              'text-5xl xl:text-6xl 2xl:text-8xl',
+              gameOver ? 'visible' : 'invisible',
+            )}
             >{sumOfPlayersPoints[1]}
             </span>
             <span className="text-5xl xl:text-6xl 2xl:text-8xl">🐉</span>

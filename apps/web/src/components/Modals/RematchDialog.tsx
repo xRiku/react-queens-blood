@@ -5,6 +5,7 @@ import socket from '../../socket'
 import { useNavigate, useParams } from 'react-router-dom'
 import Hourglass from '../Hourglass'
 import { useBotGameActions } from '../../contexts/BotGameContext'
+import { cn } from '../../utils/cn'
 
 function OpponentStatus({ status }: { status: RematchStatus }) {
   if (status === 'waiting') {
@@ -111,9 +112,10 @@ export function RematchDialog() {
             disabled={myStatus !== 'waiting'}
             className={rematchButtonClass}
           >
-            <span className={`text-lg font-medium ${myStatus === 'waiting'
-? 'text-black group-hover:text-white'
-: ''}`}
+            <span className={cn(
+              'text-lg font-medium',
+              myStatus === 'waiting' && 'text-black group-hover:text-white',
+            )}
             >
               {rematchButtonLabel}
             </span>
