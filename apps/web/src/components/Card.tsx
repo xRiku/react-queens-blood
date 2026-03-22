@@ -1,4 +1,5 @@
 import { CardInfo } from '../@types/Card'
+import Pawn from './Pawn'
 import { cn } from '../utils/cn'
 
 type CardProps = {
@@ -29,8 +30,8 @@ export default function Card({ card, placed = false, amIP1 }: CardProps) {
   }
 
   const cellSize = placed
-    ? 'h-2 w-2 xl:h-3 xl:w-3'
-    : 'h-3 w-3 2xl:h-4 2xl:w-4'
+    ? 'h-1 w-1 md:h-2 md:w-2 xl:h-3 xl:w-3'
+    : 'h-2 w-2 md:h-3 md:w-3 2xl:h-4 2xl:w-4'
 
   return (
     <div
@@ -43,16 +44,29 @@ export default function Card({ card, placed = false, amIP1 }: CardProps) {
       <div className="flex justify-between items-center">
         <span className={cn(
           placed
-            ? 'p-1 text-sm xl:text-base 2xl:text-xl'
-            : 'p-2 text-3xl',
+            ? 'p-0.5 md:p-1 text-[8px] md:text-sm xl:text-base 2xl:text-xl'
+            : 'p-0.5 md:p-2 text-sm md:text-3xl',
         )}
-        >{'♟'.repeat(card!.pawnsCost)}
+        >
+          <span className="flex -space-x-1">
+            {Array.from({ length: card!.pawnsCost }).map((_, idx) => (
+              <Pawn
+                key={idx}
+                color="black"
+                className={cn(
+                  placed
+                    ? 'h-2 w-2 md:h-3.5 md:w-3.5 xl:h-4 xl:w-4 2xl:h-5 2xl:w-5'
+                    : 'h-3.5 w-3.5 md:h-7 md:w-7',
+                )}
+              />
+            ))}
+          </span>
         </span>
         <span className={cn(
           'flex items-center justify-center border font-semibold border-solid bg-white border-yellow-400 rounded-full',
           placed
-            ? 'p-1 w-8 h-8 text-sm xl:w-10 xl:h-10 xl:text-base 2xl:w-12 2xl:h-12 2xl:text-xl'
-            : 'p-2 w-14 h-14 text-3xl',
+            ? 'p-0 md:p-1 w-4 h-4 text-[8px] md:w-8 md:h-8 md:text-sm xl:w-10 xl:h-10 xl:text-base 2xl:w-12 2xl:h-12 2xl:text-xl'
+            : 'p-0.5 md:p-2 w-7 h-7 text-sm md:w-14 md:h-14 md:text-3xl',
         )}
         >
           {card!.points}
@@ -61,11 +75,15 @@ export default function Card({ card, placed = false, amIP1 }: CardProps) {
       <div className="flex justify-center items-center">
         <div className="grid grid-cols-5 border-black border">
           {fillMonsterPositions(card!.pawnsPositions).map((pawn, index) => {
+            const borderClass = placed
+              ? 'border-solid border-[0.5px] md:border-[1.5px] border-black'
+              : 'border-solid border md:border-2 border-black'
+
             if (index === 12) {
               return (
                 <div
                   key={index}
-                  className={cn(cellSize, 'border-solid border-2 border-black bg-white')}
+                  className={cn(cellSize, borderClass, 'bg-white')}
                 />
               )
             }
@@ -74,7 +92,7 @@ export default function Card({ card, placed = false, amIP1 }: CardProps) {
               return (
                 <div
                   key={index}
-                  className={cn(cellSize, 'border-solid border-2 border-black bg-yellow-400')}
+                  className={cn(cellSize, borderClass, 'bg-yellow-400')}
                 />
               )
             }
@@ -82,7 +100,7 @@ export default function Card({ card, placed = false, amIP1 }: CardProps) {
             return (
               <div
                 key={index}
-                className={cn(cellSize, 'border-solid border-2 border-black bg-gray-400')}
+                className={cn(cellSize, borderClass, 'bg-gray-400')}
               />
             )
           })}
@@ -91,8 +109,8 @@ export default function Card({ card, placed = false, amIP1 }: CardProps) {
       <div className={cn(
         'flex items-center justify-center rounded-b-md font-medium w-full bg-black border-t-2 border-t-yellow-400 text-yellow-400',
         placed
-          ? 'text-xs xl:text-sm 2xl:text-base px-1 py-0.5'
-          : 'text-sm xl:text-base 2xl:text-xl px-4 py-2',
+          ? 'text-[7px] md:text-xs xl:text-sm 2xl:text-base px-0.5 md:px-1 py-0 md:py-0.5'
+          : 'text-[10px] md:text-sm xl:text-base 2xl:text-xl px-1 md:px-4 py-0.5 md:py-2',
       )}
       >
         {card!.name}

@@ -11,10 +11,7 @@
   },
   "dependencies": {
     "@fireworks-js/react": "2.10.7",
-    "@fortawesome/fontawesome-svg-core": "6.6.0",
-    "@fortawesome/free-regular-svg-icons": "6.6.0",
-    "@fortawesome/react-fontawesome": "0.2.2",
-    "@queens-blood/shared": "*",
+"@queens-blood/shared": "*",
     "framer-motion": "11.2.10",
     "lucide-react": "0.577.0",
     "react": "18.2.0",

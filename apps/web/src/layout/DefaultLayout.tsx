@@ -35,7 +35,7 @@ export default function DefaultLayout() {
   }
 
   return (
-    <div className="h-full overflow-x-hidden overflow-y-hidden relative">
+    <div className="min-h-full md:h-full overflow-x-hidden overflow-y-auto md:overflow-y-hidden relative">
       <button
         onClick={toggleMute}
         className="absolute top-4 right-6 z-50 p-2 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-all cursor-pointer"
@@ -47,8 +47,8 @@ export default function DefaultLayout() {
           ? <VolumeOff size={24} />
           : <Volume2 size={24} />}
       </button>
-      <div className="flex flex-col justify-center items-center mt-2 h-full w-full">
-        <h1 className="font-light z-50 text-5xl xl:text-6xl 2xl:text-7xl hover:cursor-pointer font-title" onClick={handleTitleClick}>Queen's Blood</h1>
+      <div className="flex flex-col justify-center items-center mt-2 md:h-full w-full">
+        <h1 className="font-light z-50 text-2xl md:text-5xl xl:text-6xl 2xl:text-7xl hover:cursor-pointer font-title" onClick={handleTitleClick}>Queen's Blood</h1>
         <Outlet />
       </div>
     </div>

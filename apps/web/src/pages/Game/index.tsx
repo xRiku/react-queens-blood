@@ -17,11 +17,11 @@ import { RematchDialog } from '../../components/Modals/RematchDialog'
 import useNeoHandStore from '../../store/NeoHandStore'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCopy } from '@fortawesome/free-regular-svg-icons'
+import { Copy } from 'lucide-react'
 import { useBotGame } from '../../hooks/useBotGame'
 import { BotGameContext } from '../../contexts/BotGameContext'
 import useCardStore from '../../store/CardStore'
+import PlaceCardButton from '../../components/PlaceCardButton'
 
 export default function Game() {
   const { id: gameId } = useParams<{ id: string }>()
@@ -40,7 +40,7 @@ export default function Game() {
   const [resetPointsStore] = usePointStore((state) => [state.resetStore])
   const [resetTurnStore] = useTurnStore((state) => [state.resetStore])
   const [resetNeoHandStore] = useNeoHandStore((state) => [state.resetStore])
-  const resetCardStore = useCardStore((state) => state.resetSelectedCard)
+  const [resetCardStore, resetPreviewTile] = useCardStore((state) => [state.resetSelectedCard, state.resetPreviewTile])
 
   const navigate = useNavigate()
   const [showEndGame, setShowEndGame] = useState(false)
@@ -97,6 +97,7 @@ export default function Game() {
       setPlayerSkippedTurn(data.playerSkippedTurn)
       setPoints(data.tiles)
       setBoard(data.tiles)
+      resetPreviewTile()
       if (data.drawnCard) {
         addCard(data.drawnCard)
       }
@@ -175,7 +176,7 @@ export default function Game() {
 
   return (
     <BotGameContext.Provider value={botActions}>
-      <div className="h-full overflow-x-hidden w-full">
+      <div className="md:h-full overflow-x-hidden w-full">
         {loading ? (
           <div className="flex flex-col items-center gap-10">
             <p className="text-center">Waiting for another player...</p>
@@ -183,15 +184,22 @@ export default function Game() {
               className="flex gap-6" title={isCopied ? 'Copied!' : 'Copy'}
             >
               <h1 className="text-5xl ">{gameId}</h1>
-              <button className="cursor-pointer" onClick={() => handleGameIdClick(gameId)}><FontAwesomeIcon icon={faCopy} size="xl" /></button>
+              <button className="cursor-pointer" onClick={() => handleGameIdClick(gameId)}><Copy size={24} /></button>
             </div>
           </div>
         ) : null}
         {shouldShowBoard ? (
-          <div className="h-full">
-            <Board amIP1={amIP1} />
-            <SkipTurn />
-            <Hand />
+          <div className="md:h-full flex flex-col">
+            <div className="flex-shrink-0">
+              <Board amIP1={amIP1} />
+            </div>
+            <div className="flex items-center justify-start md:justify-end gap-2 flex-shrink-0 px-4 md:px-0 md:w-11/12 md:mx-auto h-12 md:h-14 xl:h-16 2xl:h-20 py-1.5 md:py-1 my-2 md:my-0">
+              <SkipTurn />
+              <PlaceCardButton />
+            </div>
+            <div className="min-h-0">
+              <Hand />
+            </div>
           </div>
         ) : null}
         {gameBusy ? (
