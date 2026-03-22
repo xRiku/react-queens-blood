@@ -2,13 +2,13 @@ import { cn } from '../utils/cn'
 
 type PawnProps = {
   className?: string
-  color: 'green' | 'red' | 'black'
+  color: 'green' | 'red' | 'black' | 'white'
 }
 
 export default function Pawn({ className, color }: PawnProps) {
-  const colorMap = { green: '#4ade80', red: '#f87171', black: '#000000' }
+  const colorMap = { green: '#4ade80', red: '#f87171', black: '#000000', white: '#ffffff' }
   const headColor = colorMap[color]
-  const bodyColor = color === 'black' ? '#000000' : '#a3a3a3'
+  const bodyColor = color === 'black' ? '#000000' : color === 'white' ? '#d4d4d4' : '#a3a3a3'
 
   return (
     <svg

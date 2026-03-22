@@ -1,26 +1,8 @@
 import type { CardInfo } from './types'
 
-export const deckCards: CardInfo[] = [
+export const allCards: CardInfo[] = [
   {
-    name: "Wolf",
-    pawnsPositions: [
-      [1, 0],
-      [0, 1],
-    ],
-    points: 2,
-    pawnsCost: 1,
-  },
-  {
-    name: "Wolf",
-    pawnsPositions: [
-      [1, 0],
-      [0, 1],
-    ],
-    points: 2,
-    pawnsCost: 1,
-  },
-  {
-    name: "Soldier",
+    name: "Security Officer",
     pawnsPositions: [
       [0, 1],
       [1, 0],
@@ -31,18 +13,30 @@ export const deckCards: CardInfo[] = [
     pawnsCost: 1,
   },
   {
-    name: "Soldier",
+    name: "Riot Trooper",
     pawnsPositions: [
+      [0, 2],
       [0, 1],
       [1, 0],
-      [-1, 0],
       [0, -1],
+      [0, -2],
     ],
-    points: 1,
-    pawnsCost: 1,
+    points: 3,
+    pawnsCost: 2,
   },
   {
-    name: "Bee",
+    name: "J-Unit Sweeper",
+    pawnsPositions: [
+      [0, 1],
+      [1, 1],
+      [0, -1],
+      [1, -1],
+    ],
+    points: 2,
+    pawnsCost: 2,
+  },
+  {
+    name: "Queen Bee",
     pawnsPositions: [
       [0, 2],
       [0, -2],
@@ -51,16 +45,7 @@ export const deckCards: CardInfo[] = [
     pawnsCost: 1,
   },
   {
-    name: "Bee",
-    pawnsPositions: [
-      [0, 2],
-      [0, -2],
-    ],
-    points: 1,
-    pawnsCost: 1,
-  },
-  {
-    name: "Ostrich",
+    name: "Levrikon",
     pawnsPositions: [
       [1, 0],
       [0, -1],
@@ -69,23 +54,23 @@ export const deckCards: CardInfo[] = [
     pawnsCost: 1,
   },
   {
-    name: "Flan",
+    name: "Grasslands Wolf",
     pawnsPositions: [
-      [-1, 1],
+      [1, 0],
+      [0, 1],
+    ],
+    points: 2,
+    pawnsCost: 1,
+  },
+  {
+    name: "Elphadunk",
+    pawnsPositions: [
+      [0, 1],
       [-1, 0],
-      [-1, -1],
-    ],
-    points: 2,
-    pawnsCost: 1,
-  },
-  {
-    name: "Ostrich",
-    pawnsPositions: [
-      [1, 0],
       [0, -1],
     ],
-    points: 2,
-    pawnsCost: 1,
+    points: 4,
+    pawnsCost: 2,
   },
   {
     name: "Quetzalcoatl",
@@ -99,16 +84,81 @@ export const deckCards: CardInfo[] = [
     pawnsCost: 2,
   },
   {
-    name: "Screamer",
+    name: "Zu",
     pawnsPositions: [
-      [0, 1],
+      [-1, 1],
+      [1, 1],
+      [-1, -1],
+      [1, -1],
+    ],
+    points: 2,
+    pawnsCost: 2,
+  },
+  {
+    name: "Devil Rider",
+    pawnsPositions: [
+      [-2, 1],
+      [-2, 0],
+      [-1, 0],
+      [-2, -1],
+    ],
+    points: 4,
+    pawnsCost: 2,
+  },
+  {
+    name: "Flan",
+    pawnsPositions: [
       [-1, 1],
       [-1, 0],
       [-1, -1],
+    ],
+    points: 2,
+    pawnsCost: 1,
+  },
+  {
+    name: "Crawler",
+    pawnsPositions: [
+      [-1, 1],
+      [0, 1],
+      [-1, -1],
+      [0, -1],
+    ],
+    points: 2,
+    pawnsCost: 1,
+  },
+  {
+    name: "Fleetwing",
+    pawnsPositions: [
+      [-2, 2],
+      [-1, 1],
+      [-1, -1],
+      [-2, -2],
+    ],
+    points: 3,
+    pawnsCost: 1,
+  },
+  {
+    name: "Thug",
+    pawnsPositions: [
+      [1, 2],
+      [-1, 0],
+      [1, 0],
+      [1, -2],
+    ],
+    points: 4,
+    pawnsCost: 2,
+  },
+  {
+    name: "Screamer",
+    pawnsPositions: [
+      [-1, 1],
+      [0, 1],
+      [1, 1],
+      [-1, 0],
+      [1, 0],
+      [-1, -1],
       [0, -1],
       [1, -1],
-      [1, 0],
-      [1, 1],
     ],
     points: 1,
     pawnsCost: 3,
@@ -134,28 +184,28 @@ export const deckCards: CardInfo[] = [
     points: 5,
     pawnsCost: 2,
   },
-  {
-    name: "R. Trooper",
-    pawnsPositions: [
-      [0, 2],
-      [0, 1],
-      [1, 0],
-      [0, -1],
-      [0, -2],
-    ],
-    points: 3,
-    pawnsCost: 2,
-  },
-  {
-    name: "R. Trooper",
-    pawnsPositions: [
-      [0, 2],
-      [0, 1],
-      [1, 0],
-      [0, -1],
-      [0, -2],
-    ],
-    points: 3,
-    pawnsCost: 2,
-  },
+]
+
+function findCard(name: string): CardInfo {
+  const card = allCards.find(c => c.name === name)
+  if (!card) throw new Error(`Card not found: ${name}`)
+  return card
+}
+
+export const deckCards: CardInfo[] = [
+  findCard("Grasslands Wolf"),
+  findCard("Grasslands Wolf"),
+  findCard("Security Officer"),
+  findCard("Security Officer"),
+  findCard("Queen Bee"),
+  findCard("Queen Bee"),
+  findCard("Levrikon"),
+  findCard("Flan"),
+  findCard("Levrikon"),
+  findCard("Quetzalcoatl"),
+  findCard("Screamer"),
+  findCard("Crab"),
+  findCard("Ogre"),
+  findCard("Riot Trooper"),
+  findCard("Riot Trooper"),
 ]

@@ -10,6 +10,7 @@ import {
 } from '@queens-blood/shared'
 import type { CardInfo, CardUnity, Tile } from '@queens-blood/shared'
 import useBoardStore from '../store/BoardStore'
+import useDeckStore from '../store/DeckStore'
 import { useGameStore } from '../store/GameStore'
 import { usePointStore } from '../store/PointsStore'
 import useTurnStore from '../store/TurnStore'
@@ -68,7 +69,8 @@ export function useBotGame(
     setRematchStatuses('waiting', 'waiting')
 
     const board = createInitialBoard()
-    const humanDeck = shuffleDeck([...deckCards])
+    const storedDeck = useDeckStore.getState().deck
+    const humanDeck = shuffleDeck([...(storedDeck.length === 15 ? storedDeck : deckCards)])
     const botDeck = shuffleDeck([...deckCards])
     let cardIdCounter = 0
 

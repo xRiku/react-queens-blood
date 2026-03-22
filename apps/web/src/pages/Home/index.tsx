@@ -124,10 +124,16 @@ export default function Home() {
           How to Play
         </button>
         <button
-          onClick={() => navigate('/deck')}
+          onClick={() => navigate('/cards')}
           className="text-sm xl:text-base text-gray-500 hover:text-black underline underline-offset-2"
         >
-          View Deck
+          All Cards
+        </button>
+        <button
+          onClick={() => navigate('/deck-builder')}
+          className="text-sm xl:text-base text-gray-500 hover:text-black underline underline-offset-2"
+        >
+          Deck Builder
         </button>
       </div>
     </div>

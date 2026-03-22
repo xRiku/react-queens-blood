@@ -1,5 +1,5 @@
 export type { CardInfo, CardUnity, Tile } from './types'
-export { deckCards } from './deck'
+export { allCards, deckCards } from './deck'
 export {
   createInitialBoard,
   canAddCardToPosition,
