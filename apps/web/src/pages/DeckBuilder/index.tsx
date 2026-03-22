@@ -6,6 +6,7 @@ import MiniCard from '../../components/MiniCard'
 import DeckBuilderCard from '../../components/DeckBuilderCard'
 import useDeckStore from '../../store/DeckStore'
 import { cn } from '../../utils/cn'
+import { useIsMobile } from '../../hooks/useIsMobile'
 
 type DeckEntry = { card: CardInfo; count: number }
 
@@ -33,6 +34,7 @@ export default function DeckBuilder() {
     })),
   )
 
+  const isMobile = useIsMobile()
   const deckEntries = deduplicateDeck(deck)
   const deckFull = deck.length >= 15
 
@@ -41,7 +43,7 @@ export default function DeckBuilder() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-80px)] px-6 pt-2 overflow-hidden">
+    <div className="flex flex-col h-[calc(100vh-80px)] px-3 md:px-6 pt-2 overflow-hidden">
       <div className="w-full mx-auto flex flex-col h-full min-h-0">
         {/* Header row */}
         <div className="flex items-center justify-between mb-2 shrink-0">
@@ -66,9 +68,22 @@ export default function DeckBuilder() {
           </div>
         </div>
 
-        {/* Selected Deck - 15-column grid, single row */}
-        <div className="border border-gray-300 rounded-lg p-4 mb-3 bg-gray-50 shrink-0 min-h-[140px]">
-          <div className="grid grid-cols-[repeat(15,minmax(0,1fr))] gap-1.5">
+        {/* Selected Deck */}
+        <div
+          className={cn(
+            'shrink-0 mb-3',
+            isMobile
+              ? 'border-b border-gray-300 pb-2'
+              : 'border border-gray-300 rounded-lg p-4 bg-gray-50 min-h-[140px]',
+          )}
+        >
+          <div
+            className={cn(
+              isMobile
+                ? 'grid grid-cols-5 gap-1.5'
+                : 'grid grid-cols-[repeat(15,minmax(0,1fr))] gap-1.5',
+            )}
+          >
             {Array.from({ length: 15 }).map((_, i) => {
               const entry = i < deckEntries.length ? deckEntries[i] : null
               return (
@@ -102,7 +117,7 @@ export default function DeckBuilder() {
 
         {/* Scrollable card gallery */}
         <div className="flex-1 overflow-y-auto min-h-0 pb-2">
-          <div className="grid grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-2.5">
+          <div className="grid grid-cols-4 md:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-1.5 md:gap-2.5">
             {allCards.map((card) => {
               const count = getCountInDeck(card.name)
               const maxed = count >= 2

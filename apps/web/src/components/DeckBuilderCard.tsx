@@ -34,27 +34,27 @@ export default function DeckBuilderCard({
           : 'border-gray-700 hover:border-yellow-400 hover:shadow-lg hover:shadow-yellow-400/20 cursor-pointer',
       )}
     >
-      <div className="flex flex-col justify-between flex-1 bg-gray-800 p-1.5">
+      <div className="flex flex-col justify-between flex-1 bg-gray-800 p-1 md:p-1.5">
         {/* Top row: pawns + points */}
         <div className="flex justify-between items-center">
-          <span className="flex -space-x-1">
+          <span className="flex -space-x-1.5 md:-space-x-1">
             {Array.from({ length: card.pawnsCost }).map((_, idx) => (
-              <Pawn key={idx} color="white" className="h-4 w-4" />
+              <Pawn key={idx} color="white" className="h-3 w-3 md:h-4 md:w-4" />
             ))}
           </span>
-          <span className="flex items-center justify-center border border-yellow-400 rounded-full bg-gray-900 text-yellow-400 font-bold text-xs w-5 h-5">
+          <span className="flex items-center justify-center border border-yellow-400 rounded-full bg-gray-900 text-yellow-400 font-bold text-[9px] md:text-xs w-4 h-4 md:w-5 md:h-5">
             {card.points}
           </span>
         </div>
 
         {/* Grid */}
-        <div className="flex justify-center items-center py-2">
+        <div className="flex justify-center items-center py-1 md:py-2">
           <div className="grid grid-cols-5 border border-gray-600">
             {fillPositions(card.pawnsPositions).map((pawn, index) => (
               <div
                 key={index}
                 className={cn(
-                  'h-3.5 w-3.5 border-[0.5px] border-gray-600',
+                  'h-2.5 w-2.5 md:h-3.5 md:w-3.5 border-[0.5px] border-gray-600',
                   index === 12
                     ? 'bg-white'
                     : pawn === 1
@@ -67,7 +67,7 @@ export default function DeckBuilderCard({
         </div>
 
         {/* Name */}
-        <div className="text-yellow-400 text-[10px] leading-tight text-center font-medium truncate">
+        <div className="text-yellow-400 text-[8px] md:text-[10px] leading-tight text-center font-medium truncate">
           {card.name}
         </div>
       </div>
@@ -75,7 +75,7 @@ export default function DeckBuilderCard({
       {/* Count badge */}
       <div
         className={cn(
-          'text-xs font-semibold text-center py-0.5',
+          'text-[10px] md:text-xs font-semibold text-center py-0.5',
           count >= 2
             ? 'bg-yellow-400 text-gray-900'
             : count > 0
