@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@fireworks-js/react": "2.10.7",
-"@queens-blood/shared": "*",
+    "@queens-blood/shared": "*",
     "framer-motion": "11.2.10",
     "lucide-react": "0.577.0",
     "react": "18.2.0",
@@ -23,6 +23,7 @@
     "zustand": "4.5.2"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@rocketseat/eslint-config": "3.0.12",
     "@types/react": "18.2.64",
     "@types/react-dom": "18.2.21",
@@ -33,6 +34,7 @@
     "eslint-plugin-react-hooks": "7.0.1",
     "eslint-plugin-react-refresh": "0.4.26",
     "postcss": "8.4.35",
+    "satori": "^0.26.0",
     "tailwindcss": "3.4.1",
     "typescript": "5.2.2",
     "vite": "6.4.1"
