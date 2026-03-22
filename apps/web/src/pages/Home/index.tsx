@@ -61,7 +61,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center mt-24 xl:mt-36 2xl:mt-48 gap-6 px-6 sm:px-0 w-full sm:w-96 mx-auto">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] md:min-h-0 md:mt-24 xl:mt-36 2xl:mt-48 gap-6 px-6 sm:px-0 w-full sm:w-96 mx-auto">
       <div className="flex gap-2 w-full">
         <input
           value={playerName}
@@ -81,9 +81,9 @@ export default function Home() {
 
       <button
         onClick={handleStartBotGame}
-        className="rounded-md w-full px-4 py-3 border text-black border-black hover:bg-gray-700 hover:border-gray-700 group active:translate-y-0.5"
+        className="rounded-md w-full px-4 py-2 border text-black border-black hover:bg-gray-700 hover:border-gray-700 group active:translate-y-0.5"
       >
-        <span className="text-2xl font-medium text-black group-hover:text-white">
+        <span className="text-base font-medium text-black group-hover:text-white">
           Play vs Bot
         </span>
       </button>
