@@ -6,13 +6,11 @@ import socket from '../socket'
 import { useParams } from 'react-router-dom'
 
 export function usePlaceCard() {
-  const [selectedCard, resetSelectedCard, resetPreviewTile] = useCardStore((state) => [
-    state.selectedCard,
-    state.resetSelectedCard,
-    state.resetPreviewTile,
-  ])
-  const [placeCard] = useNeoHandStore((state) => [state.placeCard])
-  const [isMyTurn] = useTurnStore((state) => [state.isMyTurn])
+  const selectedCard = useCardStore((state) => state.selectedCard)
+  const resetSelectedCard = useCardStore((state) => state.resetSelectedCard)
+  const resetPreviewTile = useCardStore((state) => state.resetPreviewTile)
+  const placeCard = useNeoHandStore((state) => state.placeCard)
+  const isMyTurn = useTurnStore((state) => state.isMyTurn)
   const botActions = useBotGameActions()
   const { id: gameId } = useParams<{ id: string }>()
 

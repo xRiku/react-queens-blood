@@ -17,13 +17,9 @@ const flickAudio = new Audio(flickSound)
 const hoverAudio = new Audio(hoverSound)
 
 export default function Hand() {
-  const [playerCards] = useNeoHandStore((state) => [
-    state.playerCards,
-  ])
-  const [selectedCard, setSelectedCard] = useCardStore((state) => [
-    state.selectedCard,
-    state.setSelectedCard,
-  ])
+  const playerCards = useNeoHandStore((state) => state.playerCards)
+  const selectedCard = useCardStore((state) => state.selectedCard)
+  const setSelectedCard = useCardStore((state) => state.setSelectedCard)
   const isMobile = useIsMobile()
 
   const handleCardClick = (card: CardUnity) => {
@@ -71,7 +67,7 @@ export default function Hand() {
               }}
               exit={{ opacity: 0, transition: { duration: 1 } }}
               className={cn(
-                'border-2 border-solid shadow-lg rounded-lg cursor-pointer transition duration-300 ease-in-out',
+                'border-2 border-solid shadow-lg rounded-lg cursor-pointer md:transition md:duration-300 md:ease-in-out',
                 isMobile
                   ? 'h-36 w-full'
                   : 'h-44 w-36 xl:h-52 xl:w-44 2xl:h-60 2xl:w-52 hover:-translate-y-8 hover:transform',

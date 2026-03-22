@@ -61,7 +61,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center mt-24 xl:mt-36 2xl:mt-48 gap-6 w-96 mx-auto">
+    <div className="flex flex-col items-center justify-center mt-24 xl:mt-36 2xl:mt-48 gap-6 px-6 sm:px-0 w-full sm:w-96 mx-auto">
       <div className="flex gap-2 w-full">
         <input
           value={playerName}

@@ -13,27 +13,24 @@ import { useIsMobile } from '../hooks/useIsMobile'
 import { playSynthSound } from '../store/SoundStore'
 import Pawn from './Pawn'
 import { cn } from '../utils/cn'
+import { useShallow } from 'zustand/react/shallow'
 
 export default function Board({
   amIP1,
 }: {
   amIP1: boolean
 }) {
-  const [selectedCard, previewTile, setPreviewTile] = useCardStore((state) => [
-    state.selectedCard,
-    state.previewTile,
-    state.setPreviewTile,
-  ])
-  const [tiles] = useBoardStore((state) => [
-    state.board,
-  ])
+  const selectedCard = useCardStore((state) => state.selectedCard)
+  const previewTile = useCardStore((state) => state.previewTile)
+  const setPreviewTile = useCardStore((state) => state.setPreviewTile)
+  const tiles = useBoardStore((state) => state.board)
 
-  const [isMyTurn] = useTurnStore((state) => [state.isMyTurn])
+  const isMyTurn = useTurnStore((state) => state.isMyTurn)
   const isMobile = useIsMobile()
   const { confirmPlacement } = usePlaceCard()
 
-  const [gameOver, setGameResult, playerOneName, playerTwoName, playerDisconnected] = useGameStore((state) => [state.gameOver, state.setGameResult, state.playerOneName, state.playerTwoName, state.playerDisconnected])
-  const [playerOnePointsArray, playerTwoPointsArray] = usePointStore(state => [state.playerOnePoints, state.playerTwoPoints])
+  const { gameOver, setGameResult, playerOneName, playerTwoName, playerDisconnected } = useGameStore(useShallow((state) => ({ gameOver: state.gameOver, setGameResult: state.setGameResult, playerOneName: state.playerOneName, playerTwoName: state.playerTwoName, playerDisconnected: state.playerDisconnected })))
+  const { playerOnePointsArray, playerTwoPointsArray } = usePointStore(useShallow(state => ({ playerOnePointsArray: state.playerOnePoints, playerTwoPointsArray: state.playerTwoPoints })))
 
   const previewData = useMemo(() => {
     if (!previewTile || !selectedCard) return null
@@ -198,7 +195,7 @@ export default function Board({
         <div
           className={cn(
             color,
-            'h-20 md:h-28 xl:h-36 2xl:h-44 w-full border-solid border-2 md:border-4 hover:border-4 border-black transition duration-300 ease-out relative',
+            'h-20 md:h-28 xl:h-36 2xl:h-44 w-full border-solid border-2 md:border-4 hover:border-4 border-black md:transition md:duration-300 md:ease-out relative',
             !tiles[i][boardCol].card && !isPlacementTile && 'flex justify-center items-center',
             selectedCard && (canPlace(tiles[i][boardCol])
               ? 'cursor-pointer border-green-400 hover:border-green-300'
