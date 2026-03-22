@@ -107,10 +107,13 @@ export default function Card({ card, placed = false, amIP1 }: CardProps) {
         </div>
       </div>
       <div className={cn(
-        'flex items-center justify-center rounded-b-md font-medium w-full bg-black border-t-2 border-t-yellow-400 text-yellow-400',
+        'flex items-center justify-center rounded-b-md font-medium w-full bg-black border-t-2 border-t-yellow-400 text-yellow-400 leading-tight text-center',
         placed
           ? 'text-[7px] md:text-xs xl:text-sm 2xl:text-base px-0.5 md:px-1 py-0 md:py-0.5'
           : 'text-[10px] md:text-sm xl:text-base 2xl:text-xl px-1 md:px-4 py-0.5 md:py-2',
+        card!.name.length > 10 && (placed
+          ? 'text-[5px] md:text-[10px] xl:text-xs 2xl:text-sm'
+          : 'text-[8px] md:text-xs xl:text-sm 2xl:text-base'),
       )}
       >
         {card!.name}

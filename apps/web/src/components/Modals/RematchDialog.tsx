@@ -1,11 +1,14 @@
 import { motion } from 'framer-motion'
-import { useGameStore, RematchStatus } from '../../store/GameStore'
+import { Result, useGameStore, RematchStatus } from '../../store/GameStore'
 import { useModalStore } from '../../store/ModalStore'
+import { usePointStore } from '../../store/PointsStore'
 import socket from '../../socket'
 import { useNavigate, useParams } from 'react-router-dom'
 import Hourglass from '../Hourglass'
 import { useBotGameActions } from '../../contexts/BotGameContext'
 import { cn } from '../../utils/cn'
+import { useMemo } from 'react'
+import { useShallow } from 'zustand/react/shallow'
 
 function OpponentStatus({ status }: { status: RematchStatus }) {
   if (status === 'waiting') {
@@ -37,9 +40,27 @@ export function RematchDialog() {
     state.playerTwoRematchStatus,
     state.amIP1,
   ])
+  const gameResult = useGameStore((state) => state.gameResult)
   const [hideRematchDialog] = useModalStore((state) => [
     state.hideRematchDialog,
   ])
+  const { playerOnePointsArray, playerTwoPointsArray } = usePointStore(useShallow(state => ({ playerOnePointsArray: state.playerOnePoints, playerTwoPointsArray: state.playerTwoPoints })))
+
+  const scores = useMemo(() => {
+    const sums = [0, 0]
+    for (let i = 0; i < 3; i++) {
+      if (playerOnePointsArray[i] > playerTwoPointsArray[i]) {
+        sums[0] += playerOnePointsArray[i]
+      } else if (playerOnePointsArray[i] < playerTwoPointsArray[i]) {
+        sums[1] += playerTwoPointsArray[i]
+      }
+    }
+    return amIP1 ? sums : [sums[1], sums[0]]
+  }, [playerOnePointsArray, playerTwoPointsArray, amIP1])
+
+  const myName = amIP1
+    ? playerOneName || 'Player 1'
+    : playerTwoName || 'Player 2'
 
   const myStatus = amIP1
     ? playerOneRematchStatus
@@ -93,6 +114,34 @@ export function RematchDialog() {
         transition={{ duration: 0.3 }}
         className="bg-white border border-black rounded-lg p-8 w-80"
       >
+        <div className="flex flex-col items-center mb-4">
+          <motion.h2
+            initial={{ opacity: 0, translateY: -40 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className={cn(
+              'text-3xl font-semibold drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]',
+              gameResult === Result.WIN && 'text-yellow-300',
+              gameResult === Result.LOSE && 'text-red-500',
+              gameResult === Result.DRAW && 'bg-gradient-to-t text-transparent bg-clip-text from-blue-600 via-blue-500 to-white inline-block',
+            )}
+          >
+            {gameResult === Result.WIN ? 'You Win!' : gameResult === Result.LOSE ? 'You Lose!' : "It's a Draw!"}
+          </motion.h2>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+            className="flex items-center gap-3 mt-2 text-sm text-gray-700"
+          >
+            <span className="font-medium">{myName}</span>
+            <span className="text-xl font-bold text-black">{scores[0]}</span>
+            <span className="text-gray-400">-</span>
+            <span className="text-xl font-bold text-black">{scores[1]}</span>
+            <span className="font-medium">{opponentName}</span>
+          </motion.div>
+        </div>
+
         <h2 className="text-2xl font-medium text-center mb-6">
           Rematch?
         </h2>

@@ -25,12 +25,13 @@ import { checkRateLimit, cleanupRateLimit } from "./rateLimit";
 
 const isDev = process.env.NODE_ENV !== "production";
 const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:5173";
+const PRODUCTION_ORIGINS = ["https://react-queens-blood.vercel.app"];
 
 const app = fastify();
 
 const io = new SocketIOServer(app.server, {
   cors: {
-    origin: CORS_ORIGIN.split(","),
+    origin: [...CORS_ORIGIN.split(","), ...PRODUCTION_ORIGINS],
     methods: ["GET", "POST"],
   },
 });

@@ -5,7 +5,7 @@ import useBoardStore from '../store/BoardStore'
 import Card from './Card'
 import { Result, useGameStore } from '../store/GameStore'
 import { usePointStore } from '../store/PointsStore'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import useTurnStore from '../store/TurnStore'
 import transformMatrix from '../utils/transformMatrix'
 import { usePlaceCard } from '../hooks/usePlaceCard'
@@ -71,7 +71,6 @@ export default function Board({
     if (!gameOver) return [0, 0]
 
     if (playerDisconnected) {
-      setGameResult(Result.WIN)
       return [0, 0]
     }
 
@@ -94,16 +93,26 @@ export default function Board({
       }
     })
 
-    if (sums[0] > sums[1]) {
+    return sums
+  }, [gameOver, playerDisconnected, amIP1, playerOnePointsArray, playerTwoPointsArray])
+
+  useEffect(() => {
+    if (!gameOver) return
+
+    if (playerDisconnected) {
       setGameResult(Result.WIN)
-    } else if (sums[0] < sums[1]) {
+      return
+    }
+
+    const [myPoints, opponentPoints] = sumOfPlayersPoints
+    if (myPoints > opponentPoints) {
+      setGameResult(Result.WIN)
+    } else if (myPoints < opponentPoints) {
       setGameResult(Result.LOSE)
     } else {
       setGameResult(Result.DRAW)
     }
-
-    return sums
-  }, [gameOver, playerDisconnected, amIP1, playerOnePointsArray, playerTwoPointsArray, setGameResult])
+  }, [gameOver, playerDisconnected, sumOfPlayersPoints, setGameResult])
 
   const rows = 3
   const cols = 7
