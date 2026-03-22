@@ -8,85 +8,134 @@ import type { ReactNode } from "react";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const YELLOW = "#FACC15";
-const DARK_BG = "#111827"; // gray-900
-const CARD_BG = "#1F2937"; // gray-800
-const CARD_CELL = "#374151"; // gray-700
+const GREEN = "#4ADE80"; // green-400
+const RED = "#F87171"; // red-400
+const YELLOW = "#FACC15"; // yellow-400
+const GRAY_800 = "#1F2937";
+const GRAY_400 = "#9CA3AF";
+const GRAY_500 = "#6B7280";
+const BLACK = "#000000";
 const WHITE = "#FFFFFF";
 
-// 5x5 card grid pattern (1 = yellow highlight, 0 = dark cell, 2 = center/white)
-const CARD_PATTERN_1 = [
-  [0, 1, 0, 0, 0],
-  [0, 0, 0, 0, 0],
-  [0, 0, 2, 1, 0],
-  [0, 0, 0, 0, 0],
-  [0, 1, 0, 0, 0],
-];
-
-const CARD_PATTERN_2 = [
-  [0, 0, 0, 1, 0],
-  [0, 0, 0, 0, 0],
-  [0, 1, 2, 0, 0],
-  [0, 0, 0, 0, 0],
-  [0, 0, 0, 1, 0],
-];
-
-function CardGrid({
-  pattern,
-  size,
+function ScoreCircle({
+  color,
+  score,
 }: {
-  pattern: number[][];
-  size: number;
+  color: string;
+  score: number;
 }): ReactNode {
-  const cellSize = Math.floor(size / 5);
   return (
     <div
       style={{
+        width: 56,
+        height: 56,
+        borderRadius: "50%",
+        backgroundColor: color,
         display: "flex",
-        flexDirection: "column",
-        border: `2px solid ${YELLOW}`,
-        borderRadius: 8,
-        overflow: "hidden",
-        opacity: 0.6,
+        alignItems: "center",
+        justifyContent: "center",
+        border: `3px solid ${YELLOW}`,
       }}
     >
-      {pattern.map((row, ri) => (
-        <div key={ri} style={{ display: "flex" }}>
-          {row.map((cell, ci) => (
-            <div
-              key={ci}
-              style={{
-                width: cellSize,
-                height: cellSize,
-                backgroundColor:
-                  cell === 1 ? YELLOW : cell === 2 ? WHITE : CARD_CELL,
-                border: `1px solid ${DARK_BG}`,
-              }}
-            />
-          ))}
-        </div>
-      ))}
+      <span
+        style={{
+          fontFamily: "Inter",
+          fontSize: 22,
+          fontWeight: 500,
+          color: WHITE,
+        }}
+      >
+        {score}
+      </span>
     </div>
   );
 }
 
-function PawnDot({
+function BoardTile({
   color,
-  size,
+  hasCard,
 }: {
-  color: string;
-  size: number;
+  color?: string;
+  hasCard?: boolean;
 }): ReactNode {
   return (
     <div
       style={{
-        width: size,
-        height: size,
-        borderRadius: "50%",
-        backgroundColor: color,
-        border: `2px solid ${DARK_BG}`,
+        width: 72,
+        height: 72,
+        backgroundColor: color || WHITE,
+        border: `2px solid ${BLACK}`,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
-    />
+    >
+      {hasCard && (
+        <div
+          style={{
+            width: 52,
+            height: 64,
+            backgroundColor: WHITE,
+            border: `1px solid ${GRAY_400}`,
+            borderRadius: 4,
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <div
+            style={{
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <div
+              style={{
+                width: 20,
+                height: 20,
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 1,
+              }}
+            >
+              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <div
+                  key={i}
+                  style={{
+                    width: 6,
+                    height: 6,
+                    backgroundColor:
+                      i === 4 ? WHITE : [1, 5, 7].includes(i) ? YELLOW : GRAY_400,
+                    border: `0.5px solid ${BLACK}`,
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+          <div
+            style={{
+              height: 14,
+              backgroundColor: BLACK,
+              borderTop: `1px solid ${YELLOW}`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <span
+              style={{
+                fontFamily: "Inter",
+                fontSize: 7,
+                color: YELLOW,
+              }}
+            >
+              Card
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -107,221 +156,119 @@ async function main() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: DARK_BG,
+        backgroundColor: WHITE,
         position: "relative",
-        overflow: "hidden",
       }}
     >
-      {/* Subtle radial glow behind title */}
+      {/* Title — matching app header exactly */}
       <div
         style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -55%)",
-          width: 800,
-          height: 400,
-          borderRadius: "50%",
-          background:
-            "radial-gradient(circle, rgba(250,204,21,0.12) 0%, rgba(250,204,21,0) 70%)",
-        }}
-      />
-
-      {/* Decorative card grids - left side */}
-      <div
-        style={{
-          position: "absolute",
-          left: 60,
-          top: 120,
-          display: "flex",
-          opacity: 0.4,
+          fontFamily: "Canterbury",
+          fontSize: 80,
+          color: BLACK,
+          lineHeight: 1.1,
+          textAlign: "center",
+          marginBottom: 32,
         }}
       >
-        <CardGrid pattern={CARD_PATTERN_1} size={150} />
+        Queen's Blood
       </div>
 
-      {/* Decorative card grids - right side */}
-      <div
-        style={{
-          position: "absolute",
-          right: 60,
-          top: 120,
-          display: "flex",
-          opacity: 0.4,
-        }}
-      >
-        <CardGrid pattern={CARD_PATTERN_2} size={150} />
-      </div>
-
-      {/* Decorative pawns - left */}
-      <div
-        style={{
-          position: "absolute",
-          left: 80,
-          top: 80,
-          display: "flex",
-          gap: 8,
-        }}
-      >
-        <PawnDot color="#4ADE80" size={24} />
-        <PawnDot color="#4ADE80" size={24} />
-      </div>
-
-      {/* Decorative pawns - right */}
-      <div
-        style={{
-          position: "absolute",
-          right: 80,
-          top: 80,
-          display: "flex",
-          gap: 8,
-        }}
-      >
-        <PawnDot color="#F87171" size={24} />
-        <PawnDot color="#F87171" size={24} />
-      </div>
-
-      {/* Score dots - left bottom */}
-      <div
-        style={{
-          position: "absolute",
-          left: 110,
-          bottom: 140,
-          display: "flex",
-          flexDirection: "column",
-          gap: 12,
-        }}
-      >
-        <PawnDot color="#4ADE80" size={32} />
-        <PawnDot color="#4ADE80" size={32} />
-        <PawnDot color="#4ADE80" size={32} />
-      </div>
-
-      {/* Score dots - right bottom */}
-      <div
-        style={{
-          position: "absolute",
-          right: 110,
-          bottom: 140,
-          display: "flex",
-          flexDirection: "column",
-          gap: 12,
-        }}
-      >
-        <PawnDot color="#F87171" size={32} />
-        <PawnDot color="#F87171" size={32} />
-        <PawnDot color="#F87171" size={32} />
-      </div>
-
-      {/* Title */}
+      {/* Mini board row — 1 row of the game board */}
       <div
         style={{
           display: "flex",
-          flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center",
-          gap: 0,
-          zIndex: 1,
+          marginBottom: 36,
         }}
       >
+        {/* P1 score column */}
         <div
           style={{
-            fontFamily: "Canterbury",
-            fontSize: 96,
-            color: YELLOW,
-            lineHeight: 1.1,
-            textAlign: "center",
-            letterSpacing: 2,
-          }}
-        >
-          Queen's Blood
-        </div>
-
-        {/* Decorative line */}
-        <div
-          style={{
+            width: 80,
+            height: 76,
+            backgroundColor: GRAY_800,
             display: "flex",
             alignItems: "center",
-            gap: 16,
-            marginTop: 16,
-            marginBottom: 24,
+            justifyContent: "center",
+            border: `2px solid ${BLACK}`,
           }}
         >
-          <div
-            style={{
-              width: 120,
-              height: 2,
-              background: `linear-gradient(to right, transparent, ${YELLOW})`,
-            }}
-          />
-          <div
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              backgroundColor: YELLOW,
-            }}
-          />
-          <div
-            style={{
-              width: 120,
-              height: 2,
-              background: `linear-gradient(to left, transparent, ${YELLOW})`,
-            }}
-          />
+          <ScoreCircle color={GREEN} score={5} />
         </div>
 
-        {/* Tagline */}
-        <div
-          style={{
-            fontFamily: "Inter",
-            fontSize: 28,
-            color: WHITE,
-            letterSpacing: 6,
-            textTransform: "uppercase",
-            opacity: 0.9,
-          }}
-        >
-          A Strategic Card Game
-        </div>
+        {/* Board tiles */}
+        <BoardTile color={GREEN} hasCard />
+        <BoardTile />
+        <BoardTile hasCard />
+        <BoardTile />
+        <BoardTile color={RED} hasCard />
 
-        {/* Subtitle */}
+        {/* P2 score column */}
         <div
           style={{
-            fontFamily: "Inter",
-            fontSize: 18,
-            color: "#9CA3AF",
-            marginTop: 16,
-            letterSpacing: 2,
+            width: 80,
+            height: 76,
+            backgroundColor: GRAY_800,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            border: `2px solid ${BLACK}`,
           }}
         >
-          Inspired by Final Fantasy VII Rebirth
+          <ScoreCircle color={RED} score={3} />
         </div>
       </div>
 
-      {/* Bottom decorative bar */}
+      {/* Tagline */}
       <div
         style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          width: 1200,
-          height: 4,
-          background: `linear-gradient(to right, transparent, ${YELLOW}, transparent)`,
+          fontFamily: "Inter",
+          fontSize: 24,
+          color: GRAY_500,
+          letterSpacing: 4,
+          textTransform: "uppercase",
+          marginBottom: 12,
         }}
-      />
+      >
+        A Strategic Card Game
+      </div>
 
-      {/* Top decorative bar */}
+      {/* Subtitle */}
+      <div
+        style={{
+          fontFamily: "Inter",
+          fontSize: 16,
+          color: GRAY_400,
+          letterSpacing: 1,
+        }}
+      >
+        Inspired by Final Fantasy VII Rebirth
+      </div>
+
+      {/* Bottom links hint — mirroring home page */}
       <div
         style={{
           position: "absolute",
-          top: 0,
-          left: 0,
-          width: 1200,
-          height: 4,
-          background: `linear-gradient(to right, transparent, ${YELLOW}, transparent)`,
+          bottom: 32,
+          display: "flex",
+          gap: 24,
         }}
-      />
+      >
+        {["How to Play", "All Cards", "Deck Builder"].map((label) => (
+          <span
+            key={label}
+            style={{
+              fontFamily: "Inter",
+              fontSize: 14,
+              color: GRAY_500,
+              textDecoration: "underline",
+            }}
+          >
+            {label}
+          </span>
+        ))}
+      </div>
     </div>,
     {
       width: 1200,
