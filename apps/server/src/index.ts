@@ -91,7 +91,7 @@ function requirePlayer(game: ServerGameState, socketId: string): boolean {
 }
 
 io.on("connection", (socket) => {
-  console.log("Player connected:", socket.id);
+  if (isDev) console.log("A Player with id", socket.id, "connected");
 
   socket.on("place-card", (data: unknown) => {
     if (!checkRateLimit(socket.id)) return;
@@ -282,13 +282,9 @@ io.on("connection", (socket) => {
   // rooms
 
   socket.on("create-game", (data: unknown) => {
-    console.log("create-game received from", socket.id, "data:", data);
     if (!checkRateLimit(socket.id)) return;
     const parsed = validatePayload(socket, createGameSchema, data);
-    if (!parsed) {
-      console.log("create-game validation failed for", socket.id);
-      return;
-    }
+    if (!parsed) return;
 
     const gameId = generateGameCode();
     currentGames[gameId] = {
@@ -303,7 +299,6 @@ io.on("connection", (socket) => {
       rematchStatus: null,
       readyStatus: null,
     };
-    console.log("Game created:", gameId, "for player:", parsed.playerName);
     io.to(socket.id).emit("game-created", { gameId });
     io.to(socket.id).emit("player-connected", {
       firstPlayer: true,
