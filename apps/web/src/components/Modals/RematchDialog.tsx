@@ -9,6 +9,7 @@ import { useBotGameActions } from '../../contexts/BotGameContext'
 import { cn } from '../../utils/cn'
 import { useMemo } from 'react'
 import { useShallow } from 'zustand/react/shallow'
+import { calcPlayerScores } from '../../utils/calcPlayerScores'
 
 function OpponentStatus({ status }: { status: RematchStatus }) {
   if (status === 'waiting') {
@@ -46,17 +47,10 @@ export function RematchDialog() {
   ])
   const { playerOnePointsArray, playerTwoPointsArray } = usePointStore(useShallow(state => ({ playerOnePointsArray: state.playerOnePoints, playerTwoPointsArray: state.playerTwoPoints })))
 
-  const scores = useMemo(() => {
-    const sums = [0, 0]
-    for (let i = 0; i < 3; i++) {
-      if (playerOnePointsArray[i] > playerTwoPointsArray[i]) {
-        sums[0] += playerOnePointsArray[i]
-      } else if (playerOnePointsArray[i] < playerTwoPointsArray[i]) {
-        sums[1] += playerTwoPointsArray[i]
-      }
-    }
-    return amIP1 ? sums : [sums[1], sums[0]]
-  }, [playerOnePointsArray, playerTwoPointsArray, amIP1])
+  const scores = useMemo(
+    () => calcPlayerScores(playerOnePointsArray, playerTwoPointsArray, amIP1),
+    [playerOnePointsArray, playerTwoPointsArray, amIP1],
+  )
 
   const myName = amIP1
     ? playerOneName || 'Player 1'

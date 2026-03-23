@@ -29,6 +29,18 @@ type BotGameState = {
   botTimeoutId: ReturnType<typeof setTimeout> | null;
 }
 
+function drawFromDeck(
+  state: BotGameState,
+  deckKey: 'humanDeck' | 'botDeck',
+): CardUnity | null {
+  const deck = state[deckKey]
+  if (deck.length === 0) return null
+  const result = drawCards(deck, 1, state.cardIdCounter)
+  state[deckKey] = result.remaining
+  state.cardIdCounter = result.nextId
+  return result.drawn[0]
+}
+
 export function useBotGame(
   enabled: boolean,
   playerName: string,
@@ -135,14 +147,7 @@ export function useBotGame(
 
       state.playerSkippedTurn = true
 
-      // Draw card for human
-      let drawnCard: CardUnity | null = null
-      if (state.humanDeck.length > 0) {
-        const result = drawCards(state.humanDeck, 1, state.cardIdCounter)
-        state.humanDeck = result.remaining
-        state.cardIdCounter = result.nextId
-        drawnCard = result.drawn[0]
-      }
+      const drawnCard = drawFromDeck(state, 'humanDeck')
 
       setPlayerSkippedTurn(true)
       setPoints(state.board)
@@ -161,14 +166,7 @@ export function useBotGame(
     state.botHand.splice(cardIndex, 1)
     state.playerSkippedTurn = false
 
-    // Draw card for human
-    let drawnCard: CardUnity | null = null
-    if (state.humanDeck.length > 0) {
-      const result = drawCards(state.humanDeck, 1, state.cardIdCounter)
-      state.humanDeck = result.remaining
-      state.cardIdCounter = result.nextId
-      drawnCard = result.drawn[0]
-    }
+    const drawnCard = drawFromDeck(state, 'humanDeck')
 
     setPlayerSkippedTurn(false)
     setPoints(state.board)
@@ -197,13 +195,8 @@ export function useBotGame(
       // Remove card from hand
       useNeoHandStore.getState().placeCard(card)
 
-      // Draw card for bot
-      if (state.botDeck.length > 0) {
-        const result = drawCards(state.botDeck, 1, state.cardIdCounter)
-        state.botDeck = result.remaining
-        state.cardIdCounter = result.nextId
-        state.botHand.push(result.drawn[0])
-      }
+      const botDrawn = drawFromDeck(state, 'botDeck')
+      if (botDrawn) state.botHand.push(botDrawn)
 
       // Update UI
       setBoard(state.board)
@@ -229,13 +222,8 @@ export function useBotGame(
 
     state.playerSkippedTurn = true
 
-    // Draw card for bot
-    if (state.botDeck.length > 0) {
-      const result = drawCards(state.botDeck, 1, state.cardIdCounter)
-      state.botDeck = result.remaining
-      state.cardIdCounter = result.nextId
-      state.botHand.push(result.drawn[0])
-    }
+    const botDrawn = drawFromDeck(state, 'botDeck')
+    if (botDrawn) state.botHand.push(botDrawn)
 
     // Toggle to bot's turn
     toggleTurnModal()

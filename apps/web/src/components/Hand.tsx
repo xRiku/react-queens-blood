@@ -9,10 +9,6 @@ import { playSound } from '../store/SoundStore'
 import { cn } from '../utils/cn'
 import { useIsMobile } from '../hooks/useIsMobile'
 
-type Hand = {
-  cards: CardUnity[]
-}
-
 const flickAudio = new Audio(flickSound)
 const hoverAudio = new Audio(hoverSound)
 
