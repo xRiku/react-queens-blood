@@ -104,6 +104,7 @@ export function useBotGame(
     setGameOver(true)
     setShowEndGame?.(true)
     setTimeout(() => {
+      setShowEndGame?.(false)
       showRematchDialog()
     }, 4000)
   }, [])
