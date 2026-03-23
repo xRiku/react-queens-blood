@@ -50,7 +50,8 @@ export function ReadyRoomDialog() {
   const opponentStatus = amIP1 ? playerTwoReadyStatus : playerOneReadyStatus
 
   const handleReady = () => {
-    socket.emit('ready-respond', { gameId, response: 'confirmed' })
+    const response = myStatus === 'confirmed' ? 'waiting' : 'confirmed'
+    socket.emit('ready-respond', { gameId, response })
   }
 
   const handleQuit = () => {
@@ -62,8 +63,8 @@ export function ReadyRoomDialog() {
 
   const readyButtonClass =
     myStatus === 'confirmed'
-      ? 'rounded-md w-full px-4 py-2 bg-green-600 border border-green-600 text-white cursor-default'
-      : 'rounded-md w-full px-4 py-2 border text-black border-black hover:bg-gray-700 hover:border-gray-700 group active:translate-y-0.5'
+      ? 'rounded-md w-full px-4 py-2 bg-green-600 border border-green-600 text-white hover:bg-green-700 hover:border-green-700 active:translate-y-0.5 cursor-pointer'
+      : 'rounded-md w-full px-4 py-2 border text-black border-black hover:bg-gray-700 hover:border-gray-700 group active:translate-y-0.5 cursor-pointer'
 
   const readyButtonLabel = myStatus === 'confirmed' ? '\u2713 Ready' : 'Ready'
 
@@ -93,8 +94,7 @@ export function ReadyRoomDialog() {
 
         <div className="flex flex-col gap-2">
           <button
-            onClick={myStatus === 'waiting' ? handleReady : undefined}
-            disabled={myStatus !== 'waiting'}
+            onClick={handleReady}
             className={readyButtonClass}
           >
             <span className={cn(

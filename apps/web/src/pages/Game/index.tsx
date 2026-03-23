@@ -32,22 +32,42 @@ export default function Game() {
   const [gameBusy, setGameBusy] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
 
-  const [isMyTurn, toggleTurn, setPlayerSkippedTurn] = useTurnStore((state) => [state.isMyTurn, state.toggleTurn, state.setPlayerSkippedTurn])
-  const [setBoard] = useBoardStore((state) => [state.setBoard])
-  const [amIP1, setAmIP1, gameOver, setGameOver, setPlayerOneName, setPlayerTwoName, setPlayerDisconnected, setRematchStatuses, setReadyStatuses] = useGameStore((state) => [state.amIP1, state.setAmIP1, state.gameOver, state.setGameOver, state.setPlayerOneName, state.setPlayerTwoName, state.setPlayerDisconnected, state.setRematchStatuses, state.setReadyStatuses])
-  const [setPoints] = usePointStore((state) => [state.setPoints])
-  const [setHand, addCard] = useNeoHandStore((state) => [state.setHand, state.addCard])
-  const [resetBoardStore] = useBoardStore((state) => [state.resetStore])
-  const [resetPointsStore] = usePointStore((state) => [state.resetStore])
-  const [resetTurnStore] = useTurnStore((state) => [state.resetStore])
-  const [resetNeoHandStore] = useNeoHandStore((state) => [state.resetStore])
-  const [resetCardStore, resetPreviewTile] = useCardStore((state) => [state.resetSelectedCard, state.resetPreviewTile])
+  const toggleTurn = useTurnStore((s) => s.toggleTurn)
+  const setPlayerSkippedTurn = useTurnStore((s) => s.setPlayerSkippedTurn)
+  const resetTurnStore = useTurnStore((s) => s.resetStore)
+  const setBoard = useBoardStore((s) => s.setBoard)
+  const resetBoardStore = useBoardStore((s) => s.resetStore)
+  const amIP1 = useGameStore((s) => s.amIP1)
+  const setAmIP1 = useGameStore((s) => s.setAmIP1)
+  const gameOver = useGameStore((s) => s.gameOver)
+  const setGameOver = useGameStore((s) => s.setGameOver)
+  const setPlayerOneName = useGameStore((s) => s.setPlayerOneName)
+  const setPlayerTwoName = useGameStore((s) => s.setPlayerTwoName)
+  const setPlayerDisconnected = useGameStore((s) => s.setPlayerDisconnected)
+  const setRematchStatuses = useGameStore((s) => s.setRematchStatuses)
+  const setReadyStatuses = useGameStore((s) => s.setReadyStatuses)
+  const setPoints = usePointStore((s) => s.setPoints)
+  const resetPointsStore = usePointStore((s) => s.resetStore)
+  const setHand = useNeoHandStore((s) => s.setHand)
+  const addCard = useNeoHandStore((s) => s.addCard)
+  const resetNeoHandStore = useNeoHandStore((s) => s.resetStore)
+  const resetCardStore = useCardStore((s) => s.resetSelectedCard)
+  const resetPreviewTile = useCardStore((s) => s.resetPreviewTile)
 
   const navigate = useNavigate()
   const [showEndGame, setShowEndGame] = useState(false)
   const endGameTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const [gameStartModal, toggleGameStartModal, turnModal, toggleTurnModal, rematchDialog, showRematchDialog, hideRematchDialog, readyRoom, showReadyRoom, hideReadyRoom] = useModalStore((state) => [state.gameStartModal, state.toggleGameStartModal, state.turnModal, state.toggleTurnModal, state.rematchDialog, state.showRematchDialog, state.hideRematchDialog, state.readyRoom, state.showReadyRoom, state.hideReadyRoom])
+  const gameStartModal = useModalStore((s) => s.gameStartModal)
+  const toggleGameStartModal = useModalStore((s) => s.toggleGameStartModal)
+  const turnModal = useModalStore((s) => s.turnModal)
+  const toggleTurnModal = useModalStore((s) => s.toggleTurnModal)
+  const rematchDialog = useModalStore((s) => s.rematchDialog)
+  const showRematchDialog = useModalStore((s) => s.showRematchDialog)
+  const hideRematchDialog = useModalStore((s) => s.hideRematchDialog)
+  const readyRoom = useModalStore((s) => s.readyRoom)
+  const showReadyRoom = useModalStore((s) => s.showReadyRoom)
+  const hideReadyRoom = useModalStore((s) => s.hideReadyRoom)
 
   const botPlayerName = location.state?.playerName || 'Player'
   const botActions = useBotGame(isBotGame, botPlayerName, setShowEndGame)
@@ -151,9 +171,10 @@ export default function Game() {
       setGameBusy(true)
     })
 
-    socket.on('ready-room', (data: { playerNames: string[] }) => {
+    socket.on('ready-room', (data: { playerNames: string[], isPlayerOne: boolean }) => {
       setPlayerOneName(data.playerNames[0])
       setPlayerTwoName(data.playerNames[1])
+      setAmIP1(data.isPlayerOne)
       setLoading(false)
       showReadyRoom()
     })
@@ -192,7 +213,7 @@ export default function Game() {
       socket.off('ready-player-left')
       if (endGameTimerRef.current) clearTimeout(endGameTimerRef.current)
     }
-  }, [isMyTurn, amIP1])
+  }, [])
 
   const handleGameIdClick = async (gameId?: string) => {
     try {

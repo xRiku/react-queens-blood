@@ -328,8 +328,13 @@ io.on("connection", (socket) => {
         [p2Id]: "waiting",
       };
 
-      io.to(game.playerIds).emit("ready-room", {
+      io.to(p1Id).emit("ready-room", {
         playerNames: game.playerNames,
+        isPlayerOne: true,
+      });
+      io.to(p2Id).emit("ready-room", {
+        playerNames: game.playerNames,
+        isPlayerOne: false,
       });
 
       return;
