@@ -20,21 +20,21 @@ export default function Home() {
       navigate(`/waiting-room/${data.gameIdFound}`)
     })
 
+    socket.on('game-created', (data: { gameId: string }) => {
+      navigate(`/game/${data.gameId}`)
+    })
+
     return () => {
       socket.off('game-found')
       socket.off('game-not-found')
       socket.off('game-busy')
+      socket.off('game-created')
     }
   }, [])
 
   const handleStartGame = () => {
-    const randomGameId = window.crypto.randomUUID()
-    navigate(`/game/${randomGameId}`)
     socket.connect()
-    socket.emit('start-game-info', {
-      playerName,
-      gameId: randomGameId,
-    })
+    socket.emit('create-game', { playerName })
   }
 
   const handleStartBotGame = () => {
@@ -101,7 +101,9 @@ export default function Home() {
           value={gameId}
           onChange={handleChangeGameIdInput}
           className="text-sm flex-1 py-2 px-3 text-center border border-gray-400 rounded-md"
-          placeholder="Game ID"
+          placeholder="Game Code"
+          maxLength={6}
+          inputMode="numeric"
         />
         <button
           onClick={handleJoinGame}

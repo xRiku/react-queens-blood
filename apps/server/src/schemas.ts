@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const playerNameSchema = z.string().min(1).max(30).regex(/^[a-zA-Z0-9 _-]+$/);
-const gameIdSchema = z.string().uuid();
+const gameIdSchema = z.string().regex(/^\d{6}$/);
 
 export const placeCardSchema = z.object({
   cardId: z.number().int().nonnegative(),
@@ -14,9 +14,8 @@ export const skipTurnSchema = z.object({
   gameId: gameIdSchema,
 });
 
-export const startGameInfoSchema = z.object({
+export const createGameSchema = z.object({
   playerName: playerNameSchema,
-  gameId: gameIdSchema,
 });
 
 export const joinGameSchema = z.object({

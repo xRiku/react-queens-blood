@@ -16,7 +16,7 @@ import {
 import {
   placeCardSchema,
   skipTurnSchema,
-  startGameInfoSchema,
+  createGameSchema,
   joinGameSchema,
   attemptToJoinGameSchema,
   rematchRespondSchema,
@@ -56,6 +56,14 @@ function getPlayerIndex(game: ServerGameState, socketId: string): number {
 
 function isPlayerOne(game: ServerGameState, socketId: string): boolean {
   return getPlayerIndex(game, socketId) === 0;
+}
+
+function generateGameCode(): string {
+  let code: string;
+  do {
+    code = String(Math.floor(100000 + Math.random() * 900000));
+  } while (code in currentGames);
+  return code;
 }
 
 function getOpponentId(game: ServerGameState, socketId: string): string {
@@ -257,12 +265,13 @@ io.on("connection", (socket) => {
 
   // rooms
 
-  socket.on("start-game-info", (data: unknown) => {
+  socket.on("create-game", (data: unknown) => {
     if (!checkRateLimit(socket.id)) return;
-    const parsed = validatePayload(socket, startGameInfoSchema, data);
+    const parsed = validatePayload(socket, createGameSchema, data);
     if (!parsed) return;
 
-    currentGames[parsed.gameId] = {
+    const gameId = generateGameCode();
+    currentGames[gameId] = {
       playerIds: [socket.id],
       playerNames: [parsed.playerName],
       playerSkippedTurn: false,
@@ -273,6 +282,7 @@ io.on("connection", (socket) => {
       cardIdCounter: 0,
       rematchStatus: null,
     };
+    io.to(socket.id).emit("game-created", { gameId });
     io.to(socket.id).emit("player-connected", {
       firstPlayer: true,
     });
