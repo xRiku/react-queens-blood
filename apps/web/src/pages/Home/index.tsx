@@ -131,14 +131,16 @@ export default function Home() {
           </span>
         </button>
       </div>
-      {connecting && (
-        <span className="text-gray-500 text-sm animate-pulse">
-          Connecting to server...
-        </span>
-      )}
-      {!!errorMessage && !connecting && (
-        <span className="text-red-500 text-sm">{errorMessage}</span>
-      )}
+      <span className="text-sm h-5">
+        {connecting && (
+          <span className="text-gray-500 animate-pulse">
+            Connecting to server...
+          </span>
+        )}
+        {!!errorMessage && !connecting && (
+          <span className="text-red-500">{errorMessage}</span>
+        )}
+      </span>
 
       <div className="flex gap-4 mt-2">
         <button
