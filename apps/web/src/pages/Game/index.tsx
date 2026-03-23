@@ -28,6 +28,7 @@ export default function Game() {
   const { id: gameId } = useParams<{ id: string }>()
   const location = useLocation()
   const isBotGame = gameId === 'bot'
+  const isJoining = location.state?.joining === true
   const [loading, setLoading] = useState(!isBotGame)
   const [gameBusy, setGameBusy] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
@@ -231,15 +232,19 @@ export default function Game() {
     <BotGameContext.Provider value={botActions}>
       <div className="md:h-full overflow-x-hidden w-full">
         {loading ? (
-          <div className="flex flex-col items-center gap-10">
-            <p className="text-center">Waiting for another player...</p>
-            <div
-              className="flex gap-6" title={isCopied ? 'Copied!' : 'Copy'}
-            >
-              <h1 className="text-5xl ">{gameId}</h1>
-              <button className="cursor-pointer" onClick={() => handleGameIdClick(gameId)}><Copy size={24} /></button>
+          isJoining ? (
+            <p className="text-center">Joining game...</p>
+          ) : (
+            <div className="flex flex-col items-center gap-10">
+              <p className="text-center">Waiting for another player...</p>
+              <div
+                className="flex gap-6" title={isCopied ? 'Copied!' : 'Copy'}
+              >
+                <h1 className="text-5xl ">{gameId}</h1>
+                <button className="cursor-pointer" onClick={() => handleGameIdClick(gameId)}><Copy size={24} /></button>
+              </div>
             </div>
-          </div>
+          )
         ) : null}
         {shouldShowBoard ? (
           <div className="md:h-full flex flex-col">

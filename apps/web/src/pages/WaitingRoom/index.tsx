@@ -8,7 +8,7 @@ export function WaitingRoom() {
   const { id: gameId } = useParams<{ id: string }>()
 
   const handleJoinGame = () => {
-    navigate(`/game/${gameId}`)
+    navigate(`/game/${gameId}`, { state: { joining: true } })
     socket.emit('join-game', {
       playerName,
       gameId,
