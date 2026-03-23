@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router-dom'
-import socket from '../../socket'
+import socket, { connectSocket } from '../../socket'
 import { useEffect, useState } from 'react'
 export default function Home() {
   const navigate = useNavigate()
   const [playerName, setPlayerName] = useState<string>('')
   const [gameId, setGameId] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const [connecting, setConnecting] = useState(false)
 
   useEffect(() => {
     socket.on('game-busy', () => {
@@ -32,9 +33,17 @@ export default function Home() {
     }
   }, [])
 
-  const handleStartGame = () => {
-    socket.connect()
-    socket.emit('create-game', { playerName })
+  const handleStartGame = async () => {
+    setErrorMessage('')
+    setConnecting(true)
+    try {
+      await connectSocket()
+      socket.emit('create-game', { playerName })
+    } catch {
+      setErrorMessage('Could not connect to server. Please try again.')
+    } finally {
+      setConnecting(false)
+    }
   }
 
   const handleStartBotGame = () => {
@@ -43,11 +52,17 @@ export default function Home() {
     })
   }
 
-  const handleJoinGame = () => {
-    socket.connect()
-    socket.emit('attempt-to-join-game', {
-      gameId,
-    })
+  const handleJoinGame = async () => {
+    setErrorMessage('')
+    setConnecting(true)
+    try {
+      await connectSocket()
+      socket.emit('attempt-to-join-game', { gameId })
+    } catch {
+      setErrorMessage('Could not connect to server. Please try again.')
+    } finally {
+      setConnecting(false)
+    }
   }
 
   const handleChangePlayerNameInput = (
@@ -71,7 +86,8 @@ export default function Home() {
         />
         <button
           onClick={handleStartGame}
-          className="rounded-md px-5 py-2 border text-black border-black hover:bg-gray-700 hover:border-gray-700 group active:translate-y-0.5"
+          disabled={connecting}
+          className="rounded-md px-5 py-2 border text-black border-black hover:bg-gray-700 hover:border-gray-700 group active:translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span className="text-base font-medium text-black group-hover:text-white whitespace-nowrap">
             Create Room
@@ -107,14 +123,20 @@ export default function Home() {
         />
         <button
           onClick={handleJoinGame}
-          className="rounded-md px-5 py-2 border text-black border-black hover:bg-gray-700 hover:border-gray-700 group active:translate-y-0.5"
+          disabled={connecting}
+          className="rounded-md px-5 py-2 border text-black border-black hover:bg-gray-700 hover:border-gray-700 group active:translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span className="text-base font-medium text-black group-hover:text-white">
             Join
           </span>
         </button>
       </div>
-      {!!errorMessage && (
+      {connecting && (
+        <span className="text-gray-500 text-sm animate-pulse">
+          Connecting to server...
+        </span>
+      )}
+      {!!errorMessage && !connecting && (
         <span className="text-red-500 text-sm">{errorMessage}</span>
       )}
 
