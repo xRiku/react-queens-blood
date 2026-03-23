@@ -20,6 +20,7 @@ import {
   joinGameSchema,
   attemptToJoinGameSchema,
   rematchRespondSchema,
+  readyRespondSchema,
 } from "./schemas";
 import { checkRateLimit, cleanupRateLimit } from "./rateLimit";
 
@@ -46,6 +47,7 @@ type ServerGameState = {
   hands: Record<string, CardUnity[]>;
   cardIdCounter: number;
   rematchStatus: Record<string, "waiting" | "confirmed" | "refused"> | null;
+  readyStatus: Record<string, "waiting" | "confirmed" | "refused"> | null;
 };
 
 let currentGames: Record<string, ServerGameState> = {};
@@ -241,6 +243,20 @@ io.on("connection", (socket) => {
     if (gameIdForDcedPlayer) {
       const dcGame = currentGames[gameIdForDcedPlayer];
 
+      if (dcGame.readyStatus) {
+        // During ready room — remove disconnected player, keep room open
+        const remainingId = dcGame.playerIds.find((id) => id !== socket.id);
+        const dcIdx = dcGame.playerIds.indexOf(socket.id);
+        dcGame.playerIds.splice(dcIdx, 1);
+        dcGame.playerNames.splice(dcIdx, 1);
+        dcGame.readyStatus = null;
+
+        if (remainingId) {
+          io.to(remainingId).emit("ready-player-left");
+        }
+        return;
+      }
+
       if (dcGame.rematchStatus) {
         // During rematch phase — mark as refused and notify
         dcGame.rematchStatus[socket.id] = "refused";
@@ -281,6 +297,7 @@ io.on("connection", (socket) => {
       hands: {},
       cardIdCounter: 0,
       rematchStatus: null,
+      readyStatus: null,
     };
     io.to(socket.id).emit("game-created", { gameId });
     io.to(socket.id).emit("player-connected", {
@@ -302,35 +319,17 @@ io.on("connection", (socket) => {
         firstPlayer: game.playerNames.length === 1,
       });
 
-      // Both players are in — initialize decks and hands
+      // Both players are in — enter ready room
       const p1Id = game.playerIds[0];
       const p2Id = game.playerIds[1];
 
-      // Shuffle separate decks for each player
-      game.decks[p1Id] = shuffleDeck([...deckCards]);
-      game.decks[p2Id] = shuffleDeck([...deckCards]);
+      game.readyStatus = {
+        [p1Id]: "waiting",
+        [p2Id]: "waiting",
+      };
 
-      // Draw initial hands (5 cards each)
-      const p1Draw = drawCards(game.decks[p1Id], 5, game.cardIdCounter);
-      game.decks[p1Id] = p1Draw.remaining;
-      game.hands[p1Id] = p1Draw.drawn;
-      game.cardIdCounter = p1Draw.nextId;
-
-      const p2Draw = drawCards(game.decks[p2Id], 5, game.cardIdCounter);
-      game.decks[p2Id] = p2Draw.remaining;
-      game.hands[p2Id] = p2Draw.drawn;
-      game.cardIdCounter = p2Draw.nextId;
-
-      // Send game-start to each player individually with their hand
-      io.to(p1Id).emit("game-start", {
+      io.to(game.playerIds).emit("ready-room", {
         playerNames: game.playerNames,
-        initialHand: game.hands[p1Id],
-        isPlayerOne: true,
-      });
-      io.to(p2Id).emit("game-start", {
-        playerNames: game.playerNames,
-        initialHand: game.hands[p2Id],
-        isPlayerOne: false,
       });
 
       return;
@@ -359,6 +358,80 @@ io.on("connection", (socket) => {
       return;
     }
     io.to(socket.id).emit("game-not-found");
+  });
+
+  socket.on("ready-respond", (data: unknown) => {
+    if (!checkRateLimit(socket.id)) return;
+    const parsed = validatePayload(socket, readyRespondSchema, data);
+    if (!parsed) return;
+
+    const game = currentGames[parsed.gameId];
+    if (!game || !game.readyStatus) return;
+    if (!requirePlayer(game, socket.id)) return;
+
+    game.readyStatus[socket.id] = parsed.response;
+
+    const p1Id = game.playerIds[0];
+    const p2Id = game.playerIds[1];
+
+    // Broadcast status update
+    io.to(game.playerIds).emit("ready-status-update", {
+      playerOneStatus: game.readyStatus[p1Id],
+      playerTwoStatus: game.readyStatus[p2Id],
+    });
+
+    // Both confirmed — start the game
+    if (
+      game.readyStatus[p1Id] === "confirmed" &&
+      game.readyStatus[p2Id] === "confirmed"
+    ) {
+      game.readyStatus = null;
+      game.currentTurnPlayerId = p1Id;
+
+      // Shuffle decks and draw initial hands
+      game.decks[p1Id] = shuffleDeck([...deckCards]);
+      game.decks[p2Id] = shuffleDeck([...deckCards]);
+
+      const p1Draw = drawCards(game.decks[p1Id], 5, game.cardIdCounter);
+      game.decks[p1Id] = p1Draw.remaining;
+      game.hands[p1Id] = p1Draw.drawn;
+      game.cardIdCounter = p1Draw.nextId;
+
+      const p2Draw = drawCards(game.decks[p2Id], 5, game.cardIdCounter);
+      game.decks[p2Id] = p2Draw.remaining;
+      game.hands[p2Id] = p2Draw.drawn;
+      game.cardIdCounter = p2Draw.nextId;
+
+      io.to(p1Id).emit("game-start", {
+        playerNames: game.playerNames,
+        initialHand: game.hands[p1Id],
+        isPlayerOne: true,
+      });
+      io.to(p2Id).emit("game-start", {
+        playerNames: game.playerNames,
+        initialHand: game.hands[p2Id],
+        isPlayerOne: false,
+      });
+      return;
+    }
+
+    // Either player refused — remove them, keep room open for the other
+    if (
+      game.readyStatus[p1Id] === "refused" ||
+      game.readyStatus[p2Id] === "refused"
+    ) {
+      const quitterId = game.readyStatus[p1Id] === "refused" ? p1Id : p2Id;
+      const remainingId = quitterId === p1Id ? p2Id : p1Id;
+
+      // Remove the quitter
+      const quitterIdx = game.playerIds.indexOf(quitterId);
+      game.playerIds.splice(quitterIdx, 1);
+      game.playerNames.splice(quitterIdx, 1);
+      game.readyStatus = null;
+
+      io.to(quitterId).emit("ready-cancelled");
+      io.to(remainingId).emit("ready-player-left");
+    }
   });
 
   socket.on("rematch-respond", (data: unknown) => {

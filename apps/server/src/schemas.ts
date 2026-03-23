@@ -31,3 +31,8 @@ export const rematchRespondSchema = z.object({
   gameId: gameIdSchema,
   response: z.enum(["confirmed", "refused"]),
 });
+
+export const readyRespondSchema = z.object({
+  gameId: gameIdSchema,
+  response: z.enum(["confirmed", "refused"]),
+});

@@ -24,6 +24,9 @@ type GameStore = {
   playerOneRematchStatus: RematchStatus;
   playerTwoRematchStatus: RematchStatus;
   setRematchStatuses: (p1: RematchStatus, p2: RematchStatus) => void;
+  playerOneReadyStatus: RematchStatus;
+  playerTwoReadyStatus: RematchStatus;
+  setReadyStatuses: (p1: RematchStatus, p2: RematchStatus) => void;
   resetStore: () => void;
 }
 
@@ -44,6 +47,10 @@ export const useGameStore = create<GameStore>((set) => ({
   playerTwoRematchStatus: 'waiting',
   setRematchStatuses: (p1, p2) =>
     set({ playerOneRematchStatus: p1, playerTwoRematchStatus: p2 }),
+  playerOneReadyStatus: 'waiting',
+  playerTwoReadyStatus: 'waiting',
+  setReadyStatuses: (p1, p2) =>
+    set({ playerOneReadyStatus: p1, playerTwoReadyStatus: p2 }),
   resetStore: () =>
     set({
       gameOver: false,
@@ -54,5 +61,7 @@ export const useGameStore = create<GameStore>((set) => ({
       playerDisconnected: false,
       playerOneRematchStatus: 'waiting',
       playerTwoRematchStatus: 'waiting',
+      playerOneReadyStatus: 'waiting',
+      playerTwoReadyStatus: 'waiting',
     }),
 }))

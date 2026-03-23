@@ -14,6 +14,7 @@ import { TurnModal } from '../../components/Modals/TurnModal'
 import useTurnStore from '../../store/TurnStore'
 import { EndGameModal } from '../../components/Modals/EndGameModal'
 import { RematchDialog } from '../../components/Modals/RematchDialog'
+import { ReadyRoomDialog } from '../../components/Modals/ReadyRoomDialog'
 import useNeoHandStore from '../../store/NeoHandStore'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
@@ -33,7 +34,7 @@ export default function Game() {
 
   const [isMyTurn, toggleTurn, setPlayerSkippedTurn] = useTurnStore((state) => [state.isMyTurn, state.toggleTurn, state.setPlayerSkippedTurn])
   const [setBoard] = useBoardStore((state) => [state.setBoard])
-  const [amIP1, setAmIP1, gameOver, setGameOver, setPlayerOneName, setPlayerTwoName, setPlayerDisconnected, setRematchStatuses] = useGameStore((state) => [state.amIP1, state.setAmIP1, state.gameOver, state.setGameOver, state.setPlayerOneName, state.setPlayerTwoName, state.setPlayerDisconnected, state.setRematchStatuses])
+  const [amIP1, setAmIP1, gameOver, setGameOver, setPlayerOneName, setPlayerTwoName, setPlayerDisconnected, setRematchStatuses, setReadyStatuses] = useGameStore((state) => [state.amIP1, state.setAmIP1, state.gameOver, state.setGameOver, state.setPlayerOneName, state.setPlayerTwoName, state.setPlayerDisconnected, state.setRematchStatuses, state.setReadyStatuses])
   const [setPoints] = usePointStore((state) => [state.setPoints])
   const [setHand, addCard] = useNeoHandStore((state) => [state.setHand, state.addCard])
   const [resetBoardStore] = useBoardStore((state) => [state.resetStore])
@@ -46,7 +47,7 @@ export default function Game() {
   const [showEndGame, setShowEndGame] = useState(false)
   const endGameTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const [gameStartModal, toggleGameStartModal, turnModal, toggleTurnModal, rematchDialog, showRematchDialog, hideRematchDialog] = useModalStore((state) => [state.gameStartModal, state.toggleGameStartModal, state.turnModal, state.toggleTurnModal, state.rematchDialog, state.showRematchDialog, state.hideRematchDialog])
+  const [gameStartModal, toggleGameStartModal, turnModal, toggleTurnModal, rematchDialog, showRematchDialog, hideRematchDialog, readyRoom, showReadyRoom, hideReadyRoom] = useModalStore((state) => [state.gameStartModal, state.toggleGameStartModal, state.turnModal, state.toggleTurnModal, state.rematchDialog, state.showRematchDialog, state.hideRematchDialog, state.readyRoom, state.showReadyRoom, state.hideReadyRoom])
 
   const botPlayerName = location.state?.playerName || 'Player'
   const botActions = useBotGame(isBotGame, botPlayerName, setShowEndGame)
@@ -70,6 +71,7 @@ export default function Game() {
       }
       setShowEndGame(false)
       hideRematchDialog()
+      hideReadyRoom()
       setGameOver(false)
       resetBoardStore()
       resetPointsStore()
@@ -149,6 +151,32 @@ export default function Game() {
       setGameBusy(true)
     })
 
+    socket.on('ready-room', (data: { playerNames: string[] }) => {
+      setPlayerOneName(data.playerNames[0])
+      setPlayerTwoName(data.playerNames[1])
+      setLoading(false)
+      showReadyRoom()
+    })
+
+    socket.on('ready-status-update', (data: {
+      playerOneStatus: RematchStatus;
+      playerTwoStatus: RematchStatus;
+    }) => {
+      setReadyStatuses(data.playerOneStatus, data.playerTwoStatus)
+    })
+
+    socket.on('ready-cancelled', () => {
+      hideReadyRoom()
+      socket.disconnect()
+      navigate('/')
+    })
+
+    socket.on('ready-player-left', () => {
+      hideReadyRoom()
+      setReadyStatuses('waiting', 'waiting')
+      setLoading(true)
+    })
+
     return () => {
       socket.off('player-connected')
       socket.off('game-start')
@@ -158,6 +186,10 @@ export default function Game() {
       socket.off('game-busy')
       socket.off('rematch-status-update')
       socket.off('rematch-cancelled')
+      socket.off('ready-room')
+      socket.off('ready-status-update')
+      socket.off('ready-cancelled')
+      socket.off('ready-player-left')
       if (endGameTimerRef.current) clearTimeout(endGameTimerRef.current)
     }
   }, [isMyTurn, amIP1])
@@ -211,6 +243,7 @@ export default function Game() {
           {gameOver && showEndGame ? <EndGameModal /> : null}
         </AnimatePresence>
         {rematchDialog ? <RematchDialog /> : null}
+        {readyRoom ? <ReadyRoomDialog /> : null}
       </div>
     </BotGameContext.Provider>
   )

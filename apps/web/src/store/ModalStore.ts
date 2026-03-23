@@ -13,6 +13,9 @@ type useModalStoreType = {
   rematchDialog: boolean;
   showRematchDialog: () => void;
   hideRematchDialog: () => void;
+  readyRoom: boolean;
+  showReadyRoom: () => void;
+  hideReadyRoom: () => void;
   resetStore: () => void;
 }
 
@@ -36,6 +39,9 @@ export const useModalStore = create<useModalStoreType>((set) => ({
   rematchDialog: false,
   showRematchDialog: () => set({ rematchDialog: true }),
   hideRematchDialog: () => set({ rematchDialog: false }),
+  readyRoom: false,
+  showReadyRoom: () => set({ readyRoom: true }),
+  hideReadyRoom: () => set({ readyRoom: false }),
   resetStore: () =>
-    set({ gameStartModal: false, endGameModal: false, turnModal: false, rematchDialog: false }),
+    set({ gameStartModal: false, endGameModal: false, turnModal: false, rematchDialog: false, readyRoom: false }),
 }))
