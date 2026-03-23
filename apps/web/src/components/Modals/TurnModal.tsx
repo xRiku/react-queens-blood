@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { useModalStore } from '../../store/ModalStore'
 import useTurnStore from '../../store/TurnStore'
 import { cn } from '../../utils/cn'
@@ -9,7 +9,7 @@ export function TurnModal() {
 
   return (
     <div className="fixed mt-[200px] xl:mt-[260px] 2xl:mt-[320px] top-0 left-0 w-full h-full flex items-start justify-center">
-      <motion.div
+      <m.div
         animate={{ opacity: [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], scaleY: [1, 1, 1, 1, 1, 1, 0.9, 0.8, 0.7, 0.6, 0.0], scaleX: [0, 1, 1, 1, 1, 1, 1, 1.1, 1.2, 1.3] }}
         transition={{ duration: 2, times: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0] }}
         onAnimationComplete={() => {
@@ -22,7 +22,7 @@ export function TurnModal() {
             : 'via-[#b91c1c_33%,_#b91c1c_66%]',
         )}
       >
-        <motion.h2
+        <m.h2
           animate={{ opacity: [0, 0.5, 1, 1, 1, 1, 1, 1, 1, 1, 0], scale: [0.8, 0.9, 1, 1, 1, 1.1, 1.2, 1.3, 1.4, 1.5] }}
           transition={{ duration: 2, times: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0] }}
           className={cn(
@@ -32,8 +32,8 @@ export function TurnModal() {
         >{isMyTurn
           ? 'Your Turn'
           : "Opponent's Turn"}
-        </motion.h2>
-      </motion.div>
+        </m.h2>
+      </m.div>
     </div>
   )
 }

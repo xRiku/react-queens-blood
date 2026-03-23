@@ -2,7 +2,7 @@ import { CardUnity } from '../@types/Card'
 import useCardStore from '../store/CardStore'
 import Card from './Card'
 import useNeoHandStore from '../store/NeoHandStore'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, m } from 'framer-motion'
 import hoverSound from '../assets/sounds/hover.wav'
 import flickSound from '../assets/sounds/cardflick.mp3'
 import { playSound } from '../store/SoundStore'
@@ -35,7 +35,7 @@ export default function Hand() {
   }
 
   return (
-    <motion.ul
+    <m.ul
       className={cn(
         'h-auto w-full gap-3',
         isMobile
@@ -47,7 +47,7 @@ export default function Hand() {
       <AnimatePresence>
         {
           playerCards.map((card) => (
-            <motion.li
+            <m.li
               key={card.id}
               initial={{ opacity: 0, x: isMobile ? 0 : -200, y: isMobile ? -50 : 0 }}
               animate={{
@@ -77,10 +77,10 @@ export default function Hand() {
               }
             >
               <Card card={card} />
-            </motion.li>
+            </m.li>
           ))
         }
       </AnimatePresence>
-    </motion.ul>
+    </m.ul>
   )
 }

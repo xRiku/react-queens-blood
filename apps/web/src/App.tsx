@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom'
+import { LazyMotion, MotionConfig } from 'framer-motion'
 import Home from './pages/Home'
 import DefaultLayout from './layout/DefaultLayout'
 import Game from './pages/Game'
@@ -7,19 +8,24 @@ import Rules from './pages/Rules'
 import Cards from './pages/Cards'
 import DeckBuilder from './pages/DeckBuilder'
 
+const loadFeatures = () => import('framer-motion').then(mod => mod.domAnimation)
+
 function App() {
   return (
-
-    <Routes>
-      <Route path="/" element={<DefaultLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/rules" element={<Rules />} />
-        <Route path="/cards" element={<Cards />} />
-        <Route path="/deck-builder" element={<DeckBuilder />} />
-        <Route path="/game/:id" element={<Game />} />
-        <Route path="/waiting-room/:id" element={<WaitingRoom />} />
-      </Route>
-    </Routes>
+    <MotionConfig reducedMotion="user">
+      <LazyMotion features={loadFeatures} strict>
+        <Routes>
+          <Route path="/" element={<DefaultLayout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/rules" element={<Rules />} />
+            <Route path="/cards" element={<Cards />} />
+            <Route path="/deck-builder" element={<DeckBuilder />} />
+            <Route path="/game/:id" element={<Game />} />
+            <Route path="/waiting-room/:id" element={<WaitingRoom />} />
+          </Route>
+        </Routes>
+      </LazyMotion>
+    </MotionConfig>
   )
 }
 

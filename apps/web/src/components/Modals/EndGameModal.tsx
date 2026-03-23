@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { Fireworks } from '@fireworks-js/react'
 import type { FireworksHandlers } from '@fireworks-js/react'
 import { Result, useGameStore } from '../../store/GameStore'
@@ -14,7 +14,7 @@ export function EndGameModal() {
   const ref = useRef<FireworksHandlers>(null)
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
@@ -23,7 +23,7 @@ export function EndGameModal() {
       {gameResult === Result.WIN ? (
         <>
           <div className="px-10 py-6 xl:px-16 xl:py-10 2xl:px-20 2xl:py-12 mb-48 xl:mb-72 2xl:mb-96">
-            <motion.h2
+            <m.h2
               initial={{
                 opacity: 0,
                 translateY: -100,
@@ -34,7 +34,7 @@ export function EndGameModal() {
               }}
               className="text-5xl xl:text-6xl 2xl:text-8xl font-medium text-yellow-300 drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]"
             >You Win!
-            </motion.h2>
+            </m.h2>
           </div>
           <Fireworks
             ref={ref}
@@ -59,6 +59,6 @@ export function EndGameModal() {
           <h2 className="text-5xl xl:text-6xl 2xl:text-8xl font-semibold bg-gradient-to-t text-transparent bg-clip-text from-blue-600 via-blue-500 to-white inline-block">It's a Draw!</h2>
         </div>
       ) : null}
-    </motion.div>
+    </m.div>
   )
 }

@@ -48,7 +48,11 @@ export default function DefaultLayout() {
           : <Volume2 size={24} />}
       </button>
       <div className="flex flex-col justify-center items-center mt-2 md:h-full w-full">
-        <h1 className="font-light z-50 text-2xl md:text-5xl xl:text-6xl 2xl:text-7xl hover:cursor-pointer font-title" onClick={handleTitleClick}>Queen's Blood</h1>
+        <h1 className="font-light z-50 text-2xl md:text-5xl xl:text-6xl 2xl:text-7xl font-title">
+          <button onClick={handleTitleClick} className="hover:cursor-pointer bg-transparent border-none p-0 font-[inherit] text-[inherit]">
+            Queen's Blood
+          </button>
+        </h1>
         <Outlet />
       </div>
     </div>

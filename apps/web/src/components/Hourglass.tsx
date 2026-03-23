@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 
 // Single-phase cycle: sand falls, hold, flip, hold → seamless restart.
 // The glass is symmetric, so resetting rotation from 180° to 0° while
@@ -12,7 +12,7 @@ import { motion } from 'framer-motion'
 
 export default function Hourglass() {
   return (
-    <motion.div
+    <m.div
       animate={{ rotate: [0, 0, 0, 180, 180] }}
       transition={{
         duration: 3,
@@ -23,7 +23,7 @@ export default function Hourglass() {
     >
       <svg width="20" height="20" viewBox="0 0 100 100">
         {/* Top sand — drains */}
-        <motion.polygon
+        <m.polygon
           fill="#9ca3af"
           animate={{
             points: [
@@ -40,7 +40,7 @@ export default function Hourglass() {
           }}
         />
         {/* Bottom sand — fills */}
-        <motion.polygon
+        <m.polygon
           fill="#9ca3af"
           animate={{
             points: [
@@ -57,7 +57,7 @@ export default function Hourglass() {
           }}
         />
         {/* Falling stream — thin line from neck to bottom */}
-        <motion.line
+        <m.line
           x1="50" y1="48" x2="50" y2="88"
           stroke="#9ca3af"
           strokeWidth="2"
@@ -81,6 +81,6 @@ export default function Hourglass() {
         <line x1="15" y1="10" x2="85" y2="10" stroke="#6b7280" strokeWidth="5" strokeLinecap="round" />
         <line x1="15" y1="90" x2="85" y2="90" stroke="#6b7280" strokeWidth="5" strokeLinecap="round" />
       </svg>
-    </motion.div>
+    </m.div>
   )
 }

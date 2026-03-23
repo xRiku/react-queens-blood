@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { useGameStore, RematchStatus } from '../../store/GameStore'
 import { useModalStore } from '../../store/ModalStore'
 import socket from '../../socket'
@@ -70,13 +70,13 @@ export function ReadyRoomDialog() {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      <motion.div
+      <m.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
         className="bg-white border border-black rounded-lg p-8 w-80"
       >
-        <motion.div
+        <m.div
           initial={{ opacity: 0, translateY: -20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
@@ -85,7 +85,7 @@ export function ReadyRoomDialog() {
           <span className="text-lg font-medium">{myName}</span>
           <span className="text-gray-400 text-sm my-1">vs</span>
           <span className="text-lg font-medium">{opponentName}</span>
-        </motion.div>
+        </m.div>
 
         <div className="flex items-center justify-between mb-6">
           <span className="text-base">{opponentName}</span>
@@ -111,7 +111,7 @@ export function ReadyRoomDialog() {
             Quit
           </button>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   )
 }

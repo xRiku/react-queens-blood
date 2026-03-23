@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 import { Result, useGameStore, RematchStatus } from '../../store/GameStore'
 import { useModalStore } from '../../store/ModalStore'
 import { usePointStore } from '../../store/PointsStore'
@@ -102,14 +102,14 @@ export function RematchDialog() {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      <motion.div
+      <m.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
         className="bg-white border border-black rounded-lg p-8 w-80"
       >
         <div className="flex flex-col items-center mb-4">
-          <motion.h2
+          <m.h2
             initial={{ opacity: 0, translateY: -40 }}
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -121,8 +121,8 @@ export function RematchDialog() {
             )}
           >
             {gameResult === Result.WIN ? 'You Win!' : gameResult === Result.LOSE ? 'You Lose!' : "It's a Draw!"}
-          </motion.h2>
-          <motion.div
+          </m.h2>
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.3 }}
@@ -133,7 +133,7 @@ export function RematchDialog() {
             <span className="text-gray-400">-</span>
             <span className="text-xl font-bold text-black">{scores[1]}</span>
             <span className="font-medium">{opponentName}</span>
-          </motion.div>
+          </m.div>
         </div>
 
         <h2 className="text-2xl font-medium text-center mb-6">
@@ -170,7 +170,7 @@ export function RematchDialog() {
             Quit
           </button>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   )
 }

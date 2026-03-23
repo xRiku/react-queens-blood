@@ -1,6 +1,6 @@
 import useCardStore from '../store/CardStore'
 import { useGameStore } from '../store/GameStore'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, m } from 'framer-motion'
 import useTurnStore from '../store/TurnStore'
 import { usePlaceCard } from '../hooks/usePlaceCard'
 import { useIsMobile } from '../hooks/useIsMobile'
@@ -26,7 +26,7 @@ export default function PlaceCardButton() {
   return (
     <AnimatePresence>
       {shouldShow && (
-        <motion.span
+        <m.span
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -35,7 +35,7 @@ export default function PlaceCardButton() {
           onClick={handlePlaceCard}
         >
           Place card
-        </motion.span>
+        </m.span>
       )}
     </AnimatePresence>
   )

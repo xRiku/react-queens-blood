@@ -259,7 +259,15 @@ export default function Board({
               : 'cursor-not-allowed hover:border-red-400'),
             isAffected && !isPlacementTile && 'border-blue-400',
           )}
+          role="button"
+          tabIndex={0}
           onClick={() => handleCellClick(tiles[i][boardCol], i, boardCol)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              handleCellClick(tiles[i][boardCol], i, boardCol)
+            }
+          }}
           onMouseEnter={!isMobile ? () => {
             if (selectedCard && canPlace(tiles[i][boardCol])) {
               setPreviewTile([i, boardCol])

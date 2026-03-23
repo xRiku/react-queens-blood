@@ -1,7 +1,7 @@
 import socket from '../socket'
 import useCardStore from '../store/CardStore'
 import { useGameStore } from '../store/GameStore'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, m } from 'framer-motion'
 import useTurnStore from '../store/TurnStore'
 import { useParams } from 'react-router-dom'
 import { useBotGameActions } from '../contexts/BotGameContext'
@@ -29,7 +29,7 @@ export default function SkipTurn() {
   return (
     <AnimatePresence>
       {isMyTurn && !gameOver && (
-        <motion.span
+        <m.span
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -40,7 +40,7 @@ export default function SkipTurn() {
           {playerSkippedTurn
             ? 'End game'
             : 'Skip turn'}
-        </motion.span>
+        </m.span>
       )}
     </AnimatePresence>
   )
