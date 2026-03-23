@@ -34,11 +34,15 @@ export default function Home() {
   }, [])
 
   const handleStartGame = async () => {
+    if (!playerName.trim()) {
+      setErrorMessage('Please enter your name')
+      return
+    }
     setErrorMessage('')
     setConnecting(true)
     try {
       await connectSocket()
-      socket.emit('create-game', { playerName })
+      socket.emit('create-game', { playerName: playerName.trim() })
     } catch {
       setErrorMessage('Could not connect to server. Please try again.')
     } finally {
