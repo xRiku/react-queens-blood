@@ -141,13 +141,11 @@ export default function Board({
         const cur = tiles[r][c]
         const prev = previewBoard[r][c]
         if (
-          !cur.card && (
-            cur.playerOnePawns !== prev.playerOnePawns ||
-            cur.playerTwoPawns !== prev.playerTwoPawns ||
-            cur.playerOnePoints !== prev.playerOnePoints ||
-            cur.playerTwoPoints !== prev.playerTwoPoints ||
-            cur.card !== prev.card
-          )
+          cur.playerOnePawns !== prev.playerOnePawns ||
+          cur.playerTwoPawns !== prev.playerTwoPawns ||
+          cur.playerOnePoints !== prev.playerOnePoints ||
+          cur.playerTwoPoints !== prev.playerTwoPoints ||
+          cur.card !== prev.card
         ) {
           affectedTiles.add(`${r}-${c}`)
         }
@@ -247,6 +245,7 @@ export default function Board({
         ? previewData!.previewBoard[i][boardCol]
         : null
       const isPlacementTile = previewTileData !== null && previewTileData.card !== null && !tiles[i][boardCol].card
+      const isBuffedOrDebuffed = isAffected && tiles[i][boardCol].card !== null
 
       tilesElements[i][j] = (
         <div
@@ -257,7 +256,8 @@ export default function Board({
             selectedCard && (canPlace(tiles[i][boardCol])
               ? 'cursor-pointer border-green-400 hover:border-green-300'
               : 'cursor-not-allowed hover:border-red-400'),
-            isAffected && !isPlacementTile && 'border-blue-400',
+            isAffected && !isPlacementTile && !isBuffedOrDebuffed && 'border-blue-400',
+            isBuffedOrDebuffed && 'border-yellow-400',
           )}
           role="button"
           tabIndex={0}
@@ -303,8 +303,21 @@ export default function Board({
                   </div>
                   )
                 : (
-                  <div className="flex justify-center p-0.5 md:p-1 h-full items-center">
-                    <Card placed card={tiles[i][boardCol].card} amIP1={amIP1} />
+                  <div className={cn(
+                    'flex justify-center p-0.5 md:p-1 h-full items-center',
+                    isBuffedOrDebuffed && 'animate-pulse',
+                  )}
+                  >
+                    <Card
+                      placed
+                      card={tiles[i][boardCol].card}
+                      amIP1={amIP1}
+                      effectivePoints={isBuffedOrDebuffed && previewTileData
+                        ? (tiles[i][boardCol].card?.placedByPlayerOne
+                            ? previewTileData.playerOnePoints
+                            : previewTileData.playerTwoPoints)
+                        : undefined}
+                    />
                   </div>
                   )}
         </div>

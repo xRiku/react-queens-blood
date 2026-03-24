@@ -6,6 +6,7 @@ type CardProps = {
   card: CardInfo | null
   placed?: boolean
   amIP1?: boolean
+  effectivePoints?: number
 }
 
 function getPlacedBgColor(amIP1: boolean | undefined, placedByPlayerOne: boolean | undefined) {
@@ -15,7 +16,7 @@ function getPlacedBgColor(amIP1: boolean | undefined, placedByPlayerOne: boolean
   return placedByPlayerOne ? 'bg-red-400' : 'bg-green-400'
 }
 
-export default function Card({ card, placed = false, amIP1 }: CardProps) {
+export default function Card({ card, placed = false, amIP1, effectivePoints }: CardProps) {
   function fillMonsterPositions(points: number[][]) {
     const positions: number[] = new Array(25).fill(0)
     const startingNumber = 12
@@ -63,13 +64,18 @@ export default function Card({ card, placed = false, amIP1 }: CardProps) {
           </span>
         </span>
         <span className={cn(
-          'flex items-center justify-center border font-semibold border-solid bg-white border-yellow-400 rounded-full',
+          'flex items-center justify-center border font-semibold border-solid rounded-full',
           placed
             ? 'p-0 md:p-1 w-4 h-4 text-[8px] md:w-8 md:h-8 md:text-sm xl:w-10 xl:h-10 xl:text-base 2xl:w-12 2xl:h-12 2xl:text-xl'
             : 'p-0.5 md:p-2 w-7 h-7 text-sm md:w-14 md:h-14 md:text-3xl',
+          effectivePoints !== undefined && effectivePoints > card!.points
+            ? 'bg-green-200 border-green-500'
+            : effectivePoints !== undefined && effectivePoints < card!.points
+              ? 'bg-red-200 border-red-500'
+              : 'bg-white border-yellow-400',
         )}
         >
-          {card!.points}
+          {effectivePoints !== undefined ? effectivePoints : card!.points}
         </span>
       </div>
       <div className="flex justify-center items-center">
@@ -107,7 +113,7 @@ export default function Card({ card, placed = false, amIP1 }: CardProps) {
         </div>
       </div>
       <div className={cn(
-        'flex items-center justify-center rounded-b-md font-medium w-full bg-black border-t-2 border-t-yellow-400 text-yellow-400 leading-tight text-center',
+        'flex items-center justify-center gap-0.5 rounded-b-md font-medium w-full bg-black border-t-2 border-t-yellow-400 text-yellow-400 leading-tight text-center',
         placed
           ? 'text-[7px] md:text-xs xl:text-sm 2xl:text-base px-0.5 md:px-1 py-0 md:py-0.5'
           : 'text-[10px] md:text-sm xl:text-base 2xl:text-xl px-1 md:px-4 py-0.5 md:py-2',
@@ -116,6 +122,14 @@ export default function Card({ card, placed = false, amIP1 }: CardProps) {
           : 'text-[8px] md:text-xs xl:text-sm 2xl:text-base'),
       )}
       >
+        {card!.effect && (
+          <span className={cn(
+            card!.effect.type === 'buff' ? 'text-green-400' : 'text-red-400',
+          )}
+          >
+            {card!.effect.type === 'buff' ? '\u25B2' : '\u25BC'}
+          </span>
+        )}
         {card!.name}
       </div>
     </div>

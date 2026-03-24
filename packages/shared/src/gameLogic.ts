@@ -127,7 +127,46 @@ export function mapPawns(
     }
   }
 
+  applyCardEffects(newTiles, card, rowIndex, correctColIndex, isPlayerOne)
+
   return newTiles
+}
+
+const ADJACENT_OFFSETS = [[0, 1], [0, -1], [1, 0], [-1, 0]] as const
+
+function applyCardEffects(
+  board: Tile[][],
+  card: CardInfo,
+  rowIndex: number,
+  colIndex: number,
+  isPlayerOne: boolean
+): void {
+  if (!card.effect) return
+
+  for (const [dr, dc] of ADJACENT_OFFSETS) {
+    const r = rowIndex + dr
+    const c = colIndex + dc
+    if (r < 0 || r >= BOARD_ROWS || c < 0 || c >= BOARD_COLS) continue
+
+    const tile = board[r][c]
+    if (!tile.card) continue
+
+    const isAlliedCard = tile.card.placedByPlayerOne === isPlayerOne
+
+    if (card.effect.target === 'ally' && isAlliedCard) {
+      if (isPlayerOne) {
+        tile.playerOnePoints = Math.max(0, tile.playerOnePoints + card.effect.value)
+      } else {
+        tile.playerTwoPoints = Math.max(0, tile.playerTwoPoints + card.effect.value)
+      }
+    } else if (card.effect.target === 'enemy' && !isAlliedCard) {
+      if (isPlayerOne) {
+        tile.playerTwoPoints = Math.max(0, tile.playerTwoPoints + card.effect.value)
+      } else {
+        tile.playerOnePoints = Math.max(0, tile.playerOnePoints + card.effect.value)
+      }
+    }
+  }
 }
 
 export function findAllValidMoves(

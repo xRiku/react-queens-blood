@@ -184,6 +184,28 @@ export const allCards: CardInfo[] = [
     points: 5,
     pawnsCost: 2,
   },
+  {
+    name: "Crystalline Crab",
+    pawnsPositions: [
+      [1, 0],
+      [0, 1],
+      [0, -1],
+    ],
+    points: 1,
+    pawnsCost: 1,
+    effect: { type: 'buff', value: 1, target: 'ally' },
+  },
+  {
+    name: "Mu",
+    pawnsPositions: [
+      [1, 0],
+      [0, 1],
+      [0, -1],
+    ],
+    points: 1,
+    pawnsCost: 1,
+    effect: { type: 'debuff', value: -1, target: 'enemy' },
+  },
 ]
 
 function findCard(name: string): CardInfo {
@@ -203,8 +225,8 @@ export const deckCards: CardInfo[] = [
   findCard("Flan"),
   findCard("Levrikon"),
   findCard("Quetzalcoatl"),
-  findCard("Screamer"),
-  findCard("Crab"),
+  findCard("Crystalline Crab"),
+  findCard("Mu"),
   findCard("Ogre"),
   findCard("Riot Trooper"),
   findCard("Riot Trooper"),

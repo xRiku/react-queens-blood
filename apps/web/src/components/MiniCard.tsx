@@ -55,7 +55,12 @@ export default function MiniCard({ card, className }: MiniCardProps) {
       </div>
 
       {/* Name */}
-      <div className="bg-black text-yellow-400 text-[7px] leading-tight text-center px-0.5 py-0.5 rounded-b font-medium truncate">
+      <div className="bg-black text-yellow-400 text-[7px] leading-tight text-center px-0.5 py-0.5 rounded-b font-medium truncate flex items-center justify-center gap-0.5">
+        {card.effect && (
+          <span className={card.effect.type === 'buff' ? 'text-green-400' : 'text-red-400'}>
+            {card.effect.type === 'buff' ? '\u25B2' : '\u25BC'}
+          </span>
+        )}
         {card.name}
       </div>
     </div>

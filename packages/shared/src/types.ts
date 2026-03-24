@@ -1,9 +1,16 @@
+export type CardEffect = {
+  type: 'buff' | 'debuff'
+  value: number
+  target: 'ally' | 'enemy'
+}
+
 export type CardInfo = {
   name: string
   pawnsPositions: number[][]
   points: number
   pawnsCost: number
   placedByPlayerOne?: boolean
+  effect?: CardEffect
 }
 
 export type CardUnity = CardInfo & { id: number }
