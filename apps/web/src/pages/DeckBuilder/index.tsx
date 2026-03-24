@@ -74,7 +74,7 @@ export default function DeckBuilder() {
             'shrink-0 mb-3',
             isMobile
               ? 'border-b border-gray-300 pb-2'
-              : 'border border-gray-300 rounded-lg p-4 bg-gray-50',
+              : 'border border-gray-300 rounded-lg px-4 py-3 bg-gray-50',
           )}
         >
           <div
@@ -109,10 +109,10 @@ export default function DeckBuilder() {
                   </div>
                   <span
                     className={cn(
-                      'mt-1 rounded-full px-1.5 text-[8px] font-semibold leading-relaxed whitespace-nowrap',
+                      'mt-1 rounded-full px-1.5 text-[8px] font-semibold leading-relaxed whitespace-nowrap border',
                       entry
-                        ? 'bg-black text-yellow-400 border border-yellow-400'
-                        : 'invisible',
+                        ? 'bg-black text-yellow-400 border-yellow-400'
+                        : 'border-transparent text-transparent',
                     )}
                   >
                     ×{entry?.count ?? 0}
