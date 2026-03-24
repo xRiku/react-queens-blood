@@ -14,7 +14,8 @@ function fillPositions(pawns: number[][], effects?: number[][]) {
   }
   if (effects) {
     for (const [x, y] of effects) {
-      positions[12 + x + -y * 5] = 2
+      const idx = 12 + x + -y * 5
+      positions[idx] = positions[idx] === 1 ? 3 : 2
     }
   }
   return positions
@@ -50,11 +51,13 @@ export default function MiniCard({ card, className }: MiniCardProps) {
                 'h-2 w-2 border-solid border-[0.5px] border-black',
                 index === 12
                   ? 'bg-white'
-                  : pawn === 2
-                    ? 'bg-yellow-400 border-red-400'
-                    : pawn === 1
-                      ? 'bg-yellow-400'
-                      : 'bg-gray-400',
+                  : pawn === 3
+                    ? 'bg-yellow-400 border-[1.5px] border-red-400'
+                    : pawn === 2
+                      ? 'bg-gray-400 border-[1.5px] border-red-400'
+                      : pawn === 1
+                        ? 'bg-yellow-400'
+                        : 'bg-gray-400',
               )}
             />
           ))}

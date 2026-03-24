@@ -27,7 +27,9 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
 
     if (effects) {
       for (const [x, y] of effects) {
-        positions[startingNumber + x + -y * 5] = 2
+        const idx = startingNumber + x + -y * 5
+        // 3 = pawn + effect, 2 = effect only
+        positions[idx] = positions[idx] === 1 ? 3 : 2
       }
     }
 
@@ -98,11 +100,24 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
               )
             }
 
+            const effectBorder = placed
+              ? 'border-solid border-[1.5px] md:border-[2.5px] border-red-400'
+              : 'border-solid border-[1.5px] md:border-[2.5px] border-red-400'
+
+            if (pawn === 3) {
+              return (
+                <div
+                  key={index}
+                  className={cn(cellSize, effectBorder, 'bg-yellow-400')}
+                />
+              )
+            }
+
             if (pawn === 2) {
               return (
                 <div
                   key={index}
-                  className={cn(cellSize, borderClass, 'bg-yellow-400 border-red-400')}
+                  className={cn(cellSize, effectBorder, 'bg-gray-400')}
                 />
               )
             }

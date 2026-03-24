@@ -16,7 +16,8 @@ function fillPositions(pawns: number[][], effects?: number[][]) {
   }
   if (effects) {
     for (const [x, y] of effects) {
-      positions[12 + x + -y * 5] = 2
+      const idx = 12 + x + -y * 5
+      positions[idx] = positions[idx] === 1 ? 3 : 2
     }
   }
   return positions
@@ -62,11 +63,13 @@ export default function DeckBuilderCard({
                   'h-2.5 w-2.5 md:h-3.5 md:w-3.5 border-[0.5px] border-gray-600',
                   index === 12
                     ? 'bg-white'
-                    : pawn === 2
-                      ? 'bg-yellow-400 border-red-400'
-                      : pawn === 1
-                        ? 'bg-yellow-400'
-                        : 'bg-gray-700',
+                    : pawn === 3
+                      ? 'bg-yellow-400 border-[1.5px] border-red-400'
+                      : pawn === 2
+                        ? 'bg-gray-700 border-[1.5px] border-red-400'
+                        : pawn === 1
+                          ? 'bg-yellow-400'
+                          : 'bg-gray-700',
                 )}
               />
             ))}
