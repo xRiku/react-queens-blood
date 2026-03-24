@@ -100,15 +100,13 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
               )
             }
 
-            const effectBorder = placed
-              ? 'border-solid border-[1.5px] md:border-[2.5px] border-red-500'
-              : 'border-solid border-[1.5px] md:border-[2.5px] border-red-500'
+            const effectOutline = 'outline outline-[1.5px] -outline-offset-[1.5px] outline-red-500'
 
             if (pawn === 3) {
               return (
                 <div
                   key={index}
-                  className={cn(cellSize, effectBorder, 'bg-yellow-400')}
+                  className={cn(cellSize, borderClass, effectOutline, 'bg-yellow-400')}
                 />
               )
             }
@@ -117,7 +115,7 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
               return (
                 <div
                   key={index}
-                  className={cn(cellSize, effectBorder, 'bg-gray-400')}
+                  className={cn(cellSize, borderClass, effectOutline, 'bg-gray-400')}
                 />
               )
             }
