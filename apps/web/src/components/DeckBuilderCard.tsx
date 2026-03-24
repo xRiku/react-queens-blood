@@ -9,10 +9,15 @@ type DeckBuilderCardProps = {
   onClick: () => void
 }
 
-function fillPositions(points: number[][]) {
+function fillPositions(pawns: number[][], effects?: number[][]) {
   const positions = new Array(25).fill(0)
-  for (const [x, y] of points) {
+  for (const [x, y] of pawns) {
     positions[12 + x + -y * 5] = 1
+  }
+  if (effects) {
+    for (const [x, y] of effects) {
+      positions[12 + x + -y * 5] = 2
+    }
   }
   return positions
 }
@@ -50,16 +55,18 @@ export default function DeckBuilderCard({
         {/* Grid */}
         <div className="flex justify-center items-center py-1 md:py-2">
           <div className="grid grid-cols-5 border border-gray-600">
-            {fillPositions(card.pawnsPositions).map((pawn, index) => (
+            {fillPositions(card.pawnsPositions, card.effectPositions).map((pawn, index) => (
               <div
                 key={index}
                 className={cn(
                   'h-2.5 w-2.5 md:h-3.5 md:w-3.5 border-[0.5px] border-gray-600',
                   index === 12
                     ? 'bg-white'
-                    : pawn === 1
+                    : pawn === 2
                       ? 'bg-yellow-400'
-                      : 'bg-gray-700',
+                      : pawn === 1
+                        ? 'bg-gray-500'
+                        : 'bg-gray-700',
                 )}
               />
             ))}
@@ -67,7 +74,7 @@ export default function DeckBuilderCard({
         </div>
 
         {/* Name */}
-        <div className="text-yellow-400 text-[8px] md:text-[10px] leading-tight text-center font-medium truncate">
+        <div title={card.description} className="text-yellow-400 text-[8px] md:text-[10px] leading-tight text-center font-medium truncate">
           {card.name}
         </div>
       </div>

@@ -17,14 +17,18 @@ function getPlacedBgColor(amIP1: boolean | undefined, placedByPlayerOne: boolean
 }
 
 export default function Card({ card, placed = false, amIP1, effectivePoints }: CardProps) {
-  function fillMonsterPositions(points: number[][]) {
+  function fillMonsterPositions(pawns: number[][], effects?: number[][]) {
     const positions: number[] = new Array(25).fill(0)
     const startingNumber = 12
 
-    for (const i in points) {
-      const x: number = Number(points[i][0])
-      const y: number = Number(points[i][1])
+    for (const [x, y] of pawns) {
       positions[startingNumber + x + -y * 5] = 1
+    }
+
+    if (effects) {
+      for (const [x, y] of effects) {
+        positions[startingNumber + x + -y * 5] = 2
+      }
     }
 
     return positions
@@ -80,7 +84,7 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
       </div>
       <div className="flex justify-center items-center">
         <div className="grid grid-cols-5 border-black border">
-          {fillMonsterPositions(card!.pawnsPositions).map((pawn, index) => {
+          {fillMonsterPositions(card!.pawnsPositions, card!.effectPositions).map((pawn, index) => {
             const borderClass = placed
               ? 'border-solid border-[0.5px] md:border-[1.5px] border-black'
               : 'border-solid border md:border-2 border-black'
@@ -94,11 +98,20 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
               )
             }
 
-            if (pawn === 1) {
+            if (pawn === 2) {
               return (
                 <div
                   key={index}
                   className={cn(cellSize, borderClass, 'bg-yellow-400')}
+                />
+              )
+            }
+
+            if (pawn === 1) {
+              return (
+                <div
+                  key={index}
+                  className={cn(cellSize, borderClass, 'bg-gray-300')}
                 />
               )
             }
@@ -112,7 +125,7 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
           })}
         </div>
       </div>
-      <div className={cn(
+      <div title={card!.description} className={cn(
         'flex items-center justify-center gap-0.5 rounded-b-md font-medium w-full bg-black border-t-2 border-t-yellow-400 text-yellow-400 leading-tight text-center',
         placed
           ? 'text-[7px] md:text-xs xl:text-sm 2xl:text-base px-0.5 md:px-1 py-0 md:py-0.5'

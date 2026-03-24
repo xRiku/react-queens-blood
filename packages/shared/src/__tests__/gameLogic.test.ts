@@ -26,6 +26,7 @@ const simpleCard: CardInfo = {
   pawnsPositions: [[0, 1], [0, -1]],
   points: 3,
   pawnsCost: 1,
+  description: 'This card has no abilities.',
 }
 
 // -- createInitialBoard --
@@ -129,6 +130,7 @@ describe('mapPawns', () => {
       pawnsPositions: [[0, 1], [1, 0], [-1, 0], [0, -1]],
       points: 1,
       pawnsCost: 1,
+      description: 'This card has no abilities.',
     }
     const result = mapPawns(board, securityOfficer, 1, 0, true)
 
@@ -149,6 +151,7 @@ describe('mapPawns', () => {
       pawnsPositions: [[1, 0]],
       points: 2,
       pawnsCost: 1,
+      description: 'This card has no abilities.',
     }
     const result = mapPawns(board, card, 1, 0, true)
 
@@ -237,7 +240,7 @@ describe('drawCards', () => {
 // -- applyCardEffects (tested via mapPawns) --
 
 describe('applyCardEffects', () => {
-  it('buff increases ally card points in adjacent tile', () => {
+  it('buff increases ally card points on effect tile', () => {
     const board = createInitialBoard()
 
     // Place a simple card at (1, 0) for player one
@@ -246,6 +249,7 @@ describe('applyCardEffects', () => {
       pawnsPositions: [],
       points: 3,
       pawnsCost: 1,
+      description: 'This card has no abilities.',
     }
     let result = mapPawns(board, allyCard, 1, 0, true)
     expect(result[1][0].playerOnePoints).toBe(3)
@@ -253,21 +257,23 @@ describe('applyCardEffects', () => {
     // Give player one a pawn at (1, 1) so we can place there
     result[1][1].playerOnePawns = 1
 
-    // Place Crystalline Crab (buff ally +1) adjacent at (1, 1)
+    // Place buff card at (1, 1) with effectPositions targeting left [-1, 0]
     const buffCard: CardInfo = {
-      name: 'Crystalline Crab',
+      name: 'Buff Card',
       pawnsPositions: [],
       points: 1,
       pawnsCost: 1,
-      effect: { type: 'buff', value: 1, target: 'ally' },
+      description: 'Test buff card.',
+      effect: { type: 'buff', value: 2, target: 'ally' },
+      effectPositions: [[-1, 0]],
     }
     result = mapPawns(result, buffCard, 1, 1, true)
 
-    // The ally card at (1, 0) should have been buffed by +1
-    expect(result[1][0].playerOnePoints).toBe(4)
+    // The ally card at (1, 0) should have been buffed by +2
+    expect(result[1][0].playerOnePoints).toBe(5)
   })
 
-  it('debuff decreases enemy card points in adjacent tile', () => {
+  it('debuff decreases enemy card points on effect tile', () => {
     const board = createInitialBoard()
 
     // Place a card for player two at (1, 4)
@@ -276,6 +282,7 @@ describe('applyCardEffects', () => {
       pawnsPositions: [],
       points: 3,
       pawnsCost: 1,
+      description: 'This card has no abilities.',
     }
     let result = mapPawns(board, enemyCard, 1, 4, false)
     expect(result[1][4].playerTwoPoints).toBe(3)
@@ -283,13 +290,15 @@ describe('applyCardEffects', () => {
     // Give player one a pawn at (1, 3)
     result[1][3].playerOnePawns = 1
 
-    // Place Mu (debuff enemy -1) adjacent at (1, 3) for player one
+    // Place debuff card at (1, 3) with effectPositions targeting right [1, 0]
     const debuffCard: CardInfo = {
-      name: 'Mu',
+      name: 'Debuff Card',
       pawnsPositions: [],
       points: 1,
       pawnsCost: 1,
+      description: 'Test debuff card.',
       effect: { type: 'debuff', value: -1, target: 'enemy' },
+      effectPositions: [[1, 0]],
     }
     result = mapPawns(result, debuffCard, 1, 3, true)
 
@@ -306,23 +315,26 @@ describe('applyCardEffects', () => {
       pawnsPositions: [],
       points: 3,
       pawnsCost: 1,
+      description: 'This card has no abilities.',
     }
     let result = mapPawns(board, enemyCard, 1, 4, false)
 
     // Give player one a pawn at (1, 3)
     result[1][3].playerOnePawns = 1
 
-    // Place a buff card for player one at (1, 3) - should NOT buff enemy
+    // Place a buff card for player one at (1, 3) targeting right [1, 0]
     const buffCard: CardInfo = {
       name: 'Buff Card',
       pawnsPositions: [],
       points: 1,
       pawnsCost: 1,
+      description: 'Test buff card.',
       effect: { type: 'buff', value: 1, target: 'ally' },
+      effectPositions: [[1, 0]],
     }
     result = mapPawns(result, buffCard, 1, 3, true)
 
-    // Enemy card should be unchanged
+    // Enemy card should be unchanged (buff only affects allies)
     expect(result[1][4].playerTwoPoints).toBe(3)
   })
 
@@ -335,22 +347,89 @@ describe('applyCardEffects', () => {
       pawnsPositions: [],
       points: 1,
       pawnsCost: 1,
+      description: 'This card has no abilities.',
     }
     let result = mapPawns(board, enemyCard, 1, 4, false)
 
     // Give player one a pawn at (1, 3)
     result[1][3].playerOnePawns = 1
 
-    // Place a heavy debuff card
+    // Place a heavy debuff card targeting right [1, 0]
     const debuffCard: CardInfo = {
       name: 'Heavy Debuff',
       pawnsPositions: [],
       points: 1,
       pawnsCost: 1,
+      description: 'Test debuff card.',
       effect: { type: 'debuff', value: -5, target: 'enemy' },
+      effectPositions: [[1, 0]],
     }
     result = mapPawns(result, debuffCard, 1, 3, true)
 
     expect(result[1][4].playerTwoPoints).toBe(0)
+  })
+
+  it('card without effectPositions applies no effects', () => {
+    const board = createInitialBoard()
+
+    // Place a card at (1, 0) for player one
+    const allyCard: CardInfo = {
+      name: 'Ally',
+      pawnsPositions: [],
+      points: 3,
+      pawnsCost: 1,
+      description: 'This card has no abilities.',
+    }
+    let result = mapPawns(board, allyCard, 1, 0, true)
+
+    result[1][1].playerOnePawns = 1
+
+    // Card has effect but NO effectPositions — should not apply
+    const noPositionsCard: CardInfo = {
+      name: 'No Positions',
+      pawnsPositions: [],
+      points: 1,
+      pawnsCost: 1,
+      description: 'Test card.',
+      effect: { type: 'buff', value: 5, target: 'ally' },
+    }
+    result = mapPawns(result, noPositionsCard, 1, 1, true)
+
+    expect(result[1][0].playerOnePoints).toBe(3)
+  })
+
+  it('effect only applies to effectPositions, not adjacent tiles', () => {
+    const board = createInitialBoard()
+
+    // Place ally cards at (1, 0) and (0, 1) for player one
+    const allyCard: CardInfo = {
+      name: 'Ally',
+      pawnsPositions: [],
+      points: 3,
+      pawnsCost: 1,
+      description: 'This card has no abilities.',
+    }
+    let result = mapPawns(board, allyCard, 1, 0, true)
+    result = mapPawns(result, { ...allyCard, name: 'Ally2' }, 0, 1, true)
+
+    result[1][1].playerOnePawns = 1
+
+    // Buff card at (1, 1) with effectPositions targeting only left [-1, 0]
+    // The card at (0, 1) is adjacent (above) but NOT in effectPositions
+    const buffCard: CardInfo = {
+      name: 'Selective Buff',
+      pawnsPositions: [],
+      points: 1,
+      pawnsCost: 1,
+      description: 'Test buff card.',
+      effect: { type: 'buff', value: 2, target: 'ally' },
+      effectPositions: [[-1, 0]],
+    }
+    result = mapPawns(result, buffCard, 1, 1, true)
+
+    // (1, 0) should be buffed
+    expect(result[1][0].playerOnePoints).toBe(5)
+    // (0, 1) should NOT be buffed (adjacent but not in effectPositions)
+    expect(result[0][1].playerOnePoints).toBe(3)
   })
 })

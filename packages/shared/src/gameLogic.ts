@@ -132,8 +132,6 @@ export function mapPawns(
   return newTiles
 }
 
-const ADJACENT_OFFSETS = [[0, 1], [0, -1], [1, 0], [-1, 0]] as const
-
 function applyCardEffects(
   board: Tile[][],
   card: CardInfo,
@@ -141,11 +139,17 @@ function applyCardEffects(
   colIndex: number,
   isPlayerOne: boolean
 ): void {
-  if (!card.effect) return
+  if (!card.effect || !card.effectPositions) return
 
-  for (const [dr, dc] of ADJACENT_OFFSETS) {
-    const r = rowIndex + dr
-    const c = colIndex + dc
+  const transformedRowIndex = colIndex
+  const transformedColIndex = -rowIndex
+
+  for (const [ex, ey] of card.effectPositions) {
+    const r = -(transformedColIndex + ey)
+    const c = isPlayerOne
+      ? transformedRowIndex + ex
+      : Math.abs(-transformedRowIndex + ex)
+
     if (r < 0 || r >= BOARD_ROWS || c < 0 || c >= BOARD_COLS) continue
 
     const tile = board[r][c]

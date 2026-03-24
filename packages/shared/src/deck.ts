@@ -11,6 +11,7 @@ export const allCards: CardInfo[] = [
     ],
     points: 1,
     pawnsCost: 1,
+    description: 'This card has no abilities.',
   },
   {
     name: "Riot Trooper",
@@ -23,6 +24,7 @@ export const allCards: CardInfo[] = [
     ],
     points: 3,
     pawnsCost: 2,
+    description: 'This card has no abilities.',
   },
   {
     name: "J-Unit Sweeper",
@@ -34,6 +36,7 @@ export const allCards: CardInfo[] = [
     ],
     points: 2,
     pawnsCost: 2,
+    description: 'This card has no abilities.',
   },
   {
     name: "Queen Bee",
@@ -43,6 +46,7 @@ export const allCards: CardInfo[] = [
     ],
     points: 1,
     pawnsCost: 1,
+    description: 'This card has no abilities.',
   },
   {
     name: "Levrikon",
@@ -52,6 +56,7 @@ export const allCards: CardInfo[] = [
     ],
     points: 2,
     pawnsCost: 1,
+    description: 'This card has no abilities.',
   },
   {
     name: "Grasslands Wolf",
@@ -61,6 +66,7 @@ export const allCards: CardInfo[] = [
     ],
     points: 2,
     pawnsCost: 1,
+    description: 'This card has no abilities.',
   },
   {
     name: "Elphadunk",
@@ -71,6 +77,7 @@ export const allCards: CardInfo[] = [
     ],
     points: 4,
     pawnsCost: 2,
+    description: 'This card has no abilities.',
   },
   {
     name: "Quetzalcoatl",
@@ -82,6 +89,7 @@ export const allCards: CardInfo[] = [
     ],
     points: 3,
     pawnsCost: 2,
+    description: 'This card has no abilities.',
   },
   {
     name: "Zu",
@@ -93,6 +101,7 @@ export const allCards: CardInfo[] = [
     ],
     points: 2,
     pawnsCost: 2,
+    description: 'This card has no abilities.',
   },
   {
     name: "Devil Rider",
@@ -104,6 +113,7 @@ export const allCards: CardInfo[] = [
     ],
     points: 4,
     pawnsCost: 2,
+    description: 'This card has no abilities.',
   },
   {
     name: "Flan",
@@ -114,6 +124,7 @@ export const allCards: CardInfo[] = [
     ],
     points: 2,
     pawnsCost: 1,
+    description: 'This card has no abilities.',
   },
   {
     name: "Crawler",
@@ -125,6 +136,7 @@ export const allCards: CardInfo[] = [
     ],
     points: 2,
     pawnsCost: 1,
+    description: 'This card has no abilities.',
   },
   {
     name: "Fleetwing",
@@ -136,6 +148,7 @@ export const allCards: CardInfo[] = [
     ],
     points: 3,
     pawnsCost: 1,
+    description: 'This card has no abilities.',
   },
   {
     name: "Thug",
@@ -147,6 +160,7 @@ export const allCards: CardInfo[] = [
     ],
     points: 4,
     pawnsCost: 2,
+    description: 'This card has no abilities.',
   },
   {
     name: "Screamer",
@@ -162,16 +176,7 @@ export const allCards: CardInfo[] = [
     ],
     points: 1,
     pawnsCost: 3,
-  },
-  {
-    name: "Crab",
-    pawnsPositions: [
-      [-1, 0],
-      [0, 1],
-      [1, 0],
-    ],
-    points: 1,
-    pawnsCost: 1,
+    description: 'This card has no abilities.',
   },
   {
     name: "Ogre",
@@ -183,28 +188,36 @@ export const allCards: CardInfo[] = [
     ],
     points: 5,
     pawnsCost: 2,
+    description: 'This card has no abilities.',
   },
   {
     name: "Crystalline Crab",
     pawnsPositions: [
-      [1, 0],
+      [-1, 0],
       [0, 1],
-      [0, -1],
+      [1, 0],
     ],
     points: 1,
     pawnsCost: 1,
-    effect: { type: 'buff', value: 1, target: 'ally' },
+    description: 'Raise the power of allied cards on affected tiles by 2 while this card is in play.',
+    effect: { type: 'buff', value: 2, target: 'ally' },
+    effectPositions: [
+      [0, 1],
+    ],
   },
   {
     name: "Mu",
     pawnsPositions: [
+      [1, 1],
       [1, 0],
-      [0, 1],
-      [0, -1],
     ],
     points: 1,
-    pawnsCost: 1,
-    effect: { type: 'debuff', value: -1, target: 'enemy' },
+    pawnsCost: 2,
+    description: 'Raise the power of allied cards on affected tiles by 1 while this card is in play.',
+    effect: { type: 'buff', value: 1, target: 'ally' },
+    effectPositions: [
+      [0, -1],
+    ],
   },
 ]
 

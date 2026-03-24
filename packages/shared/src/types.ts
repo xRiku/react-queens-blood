@@ -9,8 +9,10 @@ export type CardInfo = {
   pawnsPositions: number[][]
   points: number
   pawnsCost: number
+  description: string
   placedByPlayerOne?: boolean
   effect?: CardEffect
+  effectPositions?: number[][]
 }
 
 export type CardUnity = CardInfo & { id: number }
