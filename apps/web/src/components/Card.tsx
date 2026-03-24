@@ -148,14 +148,6 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
           : 'text-[8px] md:text-xs xl:text-sm 2xl:text-base'),
       )}
       >
-        {card!.effect && (
-          <span className={cn(
-            card!.effect.type === 'buff' ? 'text-green-400' : 'text-red-400',
-          )}
-          >
-            {card!.effect.type === 'buff' ? '\u25B2' : '\u25BC'}
-          </span>
-        )}
         {card!.name}
       </div>
     </div>
