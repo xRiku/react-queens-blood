@@ -102,7 +102,7 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
               return (
                 <div
                   key={index}
-                  className={cn(cellSize, borderClass, 'bg-yellow-400')}
+                  className={cn(cellSize, borderClass, 'bg-yellow-400 border-red-400')}
                 />
               )
             }
@@ -111,7 +111,7 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
               return (
                 <div
                   key={index}
-                  className={cn(cellSize, borderClass, 'bg-gray-300')}
+                  className={cn(cellSize, borderClass, 'bg-yellow-400')}
                 />
               )
             }
