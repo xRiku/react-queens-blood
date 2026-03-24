@@ -74,7 +74,7 @@ export default function DeckBuilder() {
             'shrink-0 mb-3',
             isMobile
               ? 'border-b border-gray-300 pb-2'
-              : 'border border-gray-300 rounded-lg p-4 bg-gray-50 min-h-[140px]',
+              : 'border border-gray-300 rounded-lg p-4 bg-gray-50 h-[170px] overflow-hidden',
           )}
         >
           <div
@@ -102,10 +102,7 @@ export default function DeckBuilder() {
                       </span>
                     </button>
                   ) : (
-                    <div className="w-full flex flex-col items-center">
-                      <div className="w-full aspect-[2/3] border border-dashed border-gray-300 rounded" />
-                      <span className="mt-1 px-1.5 text-[8px] font-semibold leading-relaxed invisible">×0</span>
-                    </div>
+                    <div className="w-full aspect-[2/3] border border-dashed border-gray-300 rounded" />
                   )}
                 </div>
               )
