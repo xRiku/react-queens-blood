@@ -102,7 +102,10 @@ export default function DeckBuilder() {
                       </span>
                     </button>
                   ) : (
-                    <div className="w-full aspect-[2/3] border border-dashed border-gray-300 rounded" />
+                    <div className="w-full flex flex-col items-center">
+                      <div className="w-full aspect-[2/3] border border-dashed border-gray-300 rounded" />
+                      <span className="mt-1 px-1.5 text-[8px] font-semibold leading-relaxed invisible">×0</span>
+                    </div>
                   )}
                 </div>
               )
