@@ -86,16 +86,19 @@ export default function DeckBuilder() {
           >
             {Array.from({ length: 15 }).map((_, i) => {
               const entry = i < deckEntries.length ? deckEntries[i] : null
+
               return (
-                <button
+                <div
                   key={i}
+                  role={entry ? 'button' : undefined}
+                  tabIndex={entry ? 0 : undefined}
                   onClick={entry ? () => removeCard(entry.card.name) : undefined}
-                  disabled={!entry}
+                  onKeyDown={entry ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); removeCard(entry.card.name) } } : undefined}
+                  title={entry ? `Remove ${entry.card.name}` : undefined}
                   className={cn(
                     'w-full flex flex-col items-center',
-                    entry ? 'group cursor-pointer' : 'cursor-default',
+                    entry && 'group cursor-pointer',
                   )}
-                  title={entry ? `Remove ${entry.card.name}` : undefined}
                 >
                   <div
                     className={cn(
@@ -117,7 +120,7 @@ export default function DeckBuilder() {
                   >
                     ×{entry?.count ?? 0}
                   </span>
-                </button>
+                </div>
               )
             })}
           </div>
