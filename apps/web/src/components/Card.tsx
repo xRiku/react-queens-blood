@@ -101,8 +101,8 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
             }
 
             const effectBorder = placed
-              ? 'border-solid border-[1.5px] md:border-[2.5px] border-red-400'
-              : 'border-solid border-[1.5px] md:border-[2.5px] border-red-400'
+              ? 'border-solid border-[1.5px] md:border-[2.5px] border-red-500'
+              : 'border-solid border-[1.5px] md:border-[2.5px] border-red-500'
 
             if (pawn === 3) {
               return (
