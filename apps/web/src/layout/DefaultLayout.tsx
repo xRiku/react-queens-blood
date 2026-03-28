@@ -8,9 +8,11 @@ import useTurnStore from '../store/TurnStore'
 import useNeoHandStore from '../store/NeoHandStore'
 import useSoundStore from '../store/SoundStore'
 import { Volume2, VolumeOff } from 'lucide-react'
+import { useServerHealth } from '../hooks/useServerHealth'
 
 export default function DefaultLayout() {
   const navigate = useNavigate()
+  const { isChecking, isWaking, isOffline, retryCount } = useServerHealth()
   const [resetBoardStore] = useBoardStore((state) => [state.resetStore])
   const [resetGameStore] = useGameStore((state) => [state.resetStore])
   const [resetPointsStore] = usePointStore((state) => [state.resetStore])
@@ -53,6 +55,19 @@ export default function DefaultLayout() {
             Queen's Blood
           </button>
         </h1>
+        <div role="status" aria-live="polite" className="h-6 flex items-center justify-center">
+          {isChecking && (
+            <span className="text-xs text-gray-400 animate-pulse">Checking server status…</span>
+          )}
+          {isWaking && (
+            <span className="text-xs text-amber-500 animate-pulse">
+              Server is starting up, please wait… ({retryCount}/30)
+            </span>
+          )}
+          {isOffline && (
+            <span className="text-xs text-red-500">Server appears to be offline. Please try again later.</span>
+          )}
+        </div>
         <Outlet />
       </div>
     </div>

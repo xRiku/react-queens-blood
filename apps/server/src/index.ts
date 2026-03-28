@@ -1,5 +1,6 @@
 import fastify from "fastify";
 import helmet from "@fastify/helmet";
+import cors from "@fastify/cors";
 import { Server as SocketIOServer, Socket } from "socket.io";
 import { z } from "zod";
 import {
@@ -511,8 +512,15 @@ io.on("connection", (socket) => {
   });
 });
 
+app.get('/health', async (_req, reply) => {
+  reply.send({ status: 'ok' })
+})
+
 async function start() {
   await app.register(helmet, { contentSecurityPolicy: false });
+  await app.register(cors, {
+    origin: [...CORS_ORIGIN.split(","), ...PRODUCTION_ORIGINS],
+  });
 
   const PORT = parseInt(process.env.PORT || "4000", 10);
   app.listen({ port: PORT, host: "0.0.0.0" }, (err, address) => {
