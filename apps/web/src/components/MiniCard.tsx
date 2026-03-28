@@ -39,9 +39,9 @@ export default function MiniCard({ card, className }: MiniCardProps) {
                 index === 12
                   ? 'bg-white'
                   : pawn === 3
-                    ? 'bg-orange-400'
+                    ? 'bg-yellow-400 border-red-500'
                     : pawn === 2
-                      ? 'bg-red-300'
+                      ? 'bg-gray-400 border-red-500'
                       : pawn === 1
                         ? 'bg-yellow-400'
                         : 'bg-gray-400',

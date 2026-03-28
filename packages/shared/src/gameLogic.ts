@@ -170,6 +170,25 @@ function applyCardEffects(
   }
 }
 
+export function getActiveEffectPositions(board: Tile[][]): Set<string> {
+  const affected = new Set<string>()
+  for (let r = 0; r < BOARD_ROWS; r++) {
+    for (let c = 0; c < BOARD_COLS; c++) {
+      const tile = board[r][c]
+      if (!tile.card?.effect || !tile.card.effectPositions) continue
+      const isPlayerOne = tile.card.placedByPlayerOne === true
+      for (const [offsetX, offsetY] of tile.card.effectPositions) {
+        const targetRow = r - offsetY
+        const targetCol = isPlayerOne ? c + offsetX : Math.abs(c - offsetX)
+        if (targetRow >= 0 && targetRow < BOARD_ROWS && targetCol >= 0 && targetCol < BOARD_COLS) {
+          affected.add(`${targetRow}-${targetCol}`)
+        }
+      }
+    }
+  }
+  return affected
+}
+
 export function findAllValidMoves(
   board: Tile[][],
   hand: CardUnity[],

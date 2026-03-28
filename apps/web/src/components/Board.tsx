@@ -1,5 +1,5 @@
 import { Tile } from '../@types/Tile'
-import { canAddCardToPosition, mapPawns } from '@queens-blood/shared'
+import { canAddCardToPosition, mapPawns, getActiveEffectPositions } from '@queens-blood/shared'
 import useCardStore from '../store/CardStore'
 import useBoardStore from '../store/BoardStore'
 import Card from './Card'
@@ -155,6 +155,8 @@ export default function Board({
     return { previewBoard, previewP1Points, previewP2Points, affectedTiles }
   }, [previewTile, tiles, selectedCard, amIP1])
 
+  const activeEffectTiles = useMemo(() => getActiveEffectPositions(tiles), [tiles])
+
   const sumOfPlayersPoints = useMemo(() => {
     if (!gameOver || playerDisconnected) return [0, 0] as [number, number]
     return calcPlayerScores(playerOnePointsArray, playerTwoPointsArray, amIP1)
@@ -246,6 +248,7 @@ export default function Board({
         : null
       const isPlacementTile = previewTileData !== null && previewTileData.card !== null && !tiles[i][boardCol].card
       const isBuffedOrDebuffed = isAffected && tiles[i][boardCol].card !== null
+      const isActiveEffect = !previewData && activeEffectTiles.has(`${i}-${boardCol}`)
 
       tilesElements[i][j] = (
         <div
@@ -258,6 +261,7 @@ export default function Board({
               : 'cursor-not-allowed hover:border-red-400'),
             isAffected && !isPlacementTile && !isBuffedOrDebuffed && 'border-blue-400',
             isBuffedOrDebuffed && 'border-yellow-400',
+            isActiveEffect && tiles[i][boardCol].card && 'border-green-400 animate-pulse',
           )}
           role="button"
           tabIndex={0}
@@ -287,6 +291,7 @@ export default function Board({
                   <div className={cn(
                     'text-center',
                     isAffected && 'opacity-60',
+                    isActiveEffect && 'animate-pulse',
                   )}
                   >
                     {(() => {

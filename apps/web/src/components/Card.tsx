@@ -72,6 +72,9 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
             const borderClass = placed
               ? 'border-solid border-[0.5px] md:border-[1.5px] border-black'
               : 'border-solid border md:border-2 border-black'
+            const effectBorderClass = placed
+              ? 'border-solid border-[0.5px] md:border-[1.5px] border-red-500'
+              : 'border-solid border md:border-2 border-red-500'
 
             if (index === 12) {
               return (
@@ -86,7 +89,7 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
               return (
                 <div
                   key={index}
-                  className={cn(cellSize, borderClass, 'bg-orange-400')}
+                  className={cn(cellSize, effectBorderClass, 'bg-yellow-400')}
                 />
               )
             }
@@ -95,7 +98,7 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
               return (
                 <div
                   key={index}
-                  className={cn(cellSize, borderClass, 'bg-red-300')}
+                  className={cn(cellSize, effectBorderClass, 'bg-gray-400')}
                 />
               )
             }

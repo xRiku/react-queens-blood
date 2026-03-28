@@ -7,4 +7,5 @@ export {
   shuffleDeck,
   drawCards,
   findAllValidMoves,
+  getActiveEffectPositions,
 } from './gameLogic'
