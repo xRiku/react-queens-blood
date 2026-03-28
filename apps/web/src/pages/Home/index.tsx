@@ -1,12 +1,16 @@
 import { useNavigate } from 'react-router-dom'
 import socket, { connectSocket } from '../../socket'
 import { useEffect, useState } from 'react'
+import { useServerHealth } from '../../hooks/useServerHealth'
+
 export default function Home() {
   const navigate = useNavigate()
   const [playerName, setPlayerName] = useState<string>('')
   const [gameId, setGameId] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string>('')
   const [connecting, setConnecting] = useState(false)
+  const { isOnline } = useServerHealth()
+  const multiplayerDisabled = connecting || !isOnline
 
   useEffect(() => {
     socket.on('game-busy', () => {
@@ -90,7 +94,7 @@ export default function Home() {
         />
         <button
           onClick={handleStartGame}
-          disabled={connecting}
+          disabled={multiplayerDisabled}
           className="rounded-md px-5 py-2 border text-black border-black hover:bg-gray-700 hover:border-gray-700 group active:translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span className="text-base font-medium text-black group-hover:text-white whitespace-nowrap">
@@ -127,7 +131,7 @@ export default function Home() {
         />
         <button
           onClick={handleJoinGame}
-          disabled={connecting}
+          disabled={multiplayerDisabled}
           className="rounded-md px-5 py-2 border text-black border-black hover:bg-gray-700 hover:border-gray-700 group active:translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span className="text-base font-medium text-black group-hover:text-white">

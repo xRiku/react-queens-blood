@@ -12,7 +12,10 @@ import { useServerHealth } from '../hooks/useServerHealth'
 
 export default function DefaultLayout() {
   const navigate = useNavigate()
-  const { isChecking, isWaking, isOffline, retryCount } = useServerHealth()
+  const { isWaking, isOnline, isOffline, retryCount } = useServerHealth()
+
+  const dotClass = isOnline ? 'bg-green-500' : isWaking ? 'bg-amber-400 animate-pulse' : isOffline ? 'bg-red-500' : 'bg-gray-300 animate-pulse'
+  const label = isOnline ? 'Server online' : isWaking ? `Starting up… (${retryCount}/30)` : isOffline ? 'Server offline' : 'Checking server…'
   const [resetBoardStore] = useBoardStore((state) => [state.resetStore])
   const [resetGameStore] = useGameStore((state) => [state.resetStore])
   const [resetPointsStore] = usePointStore((state) => [state.resetStore])
@@ -38,6 +41,10 @@ export default function DefaultLayout() {
 
   return (
     <div className="min-h-full md:h-full overflow-x-hidden overflow-y-auto md:overflow-y-hidden relative">
+      <div role="status" aria-live="polite" className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-white border border-gray-200 shadow-md rounded-full px-3 py-1.5">
+        <span className={`w-2 h-2 rounded-full ${dotClass}`} />
+        <span className="text-xs text-gray-600 whitespace-nowrap">{label}</span>
+      </div>
       <button
         onClick={toggleMute}
         className="absolute top-4 right-6 z-50 p-2 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-all cursor-pointer"
@@ -55,19 +62,6 @@ export default function DefaultLayout() {
             Queen's Blood
           </button>
         </h1>
-        <div role="status" aria-live="polite" className="h-6 flex items-center justify-center">
-          {isChecking && (
-            <span className="text-xs text-gray-400 animate-pulse">Checking server status…</span>
-          )}
-          {isWaking && (
-            <span className="text-xs text-amber-500 animate-pulse">
-              Server is starting up, please wait… ({retryCount}/30)
-            </span>
-          )}
-          {isOffline && (
-            <span className="text-xs text-red-500">Server appears to be offline. Please try again later.</span>
-          )}
-        </div>
         <Outlet />
       </div>
     </div>
