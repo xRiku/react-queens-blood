@@ -128,6 +128,7 @@ export function mapPawns(
   }
 
   applyCardEffects(newTiles, card, rowIndex, colIndex, isPlayerOne)
+  applyEffectsFromExistingCards(newTiles, rowIndex, colIndex, isPlayerOne)
 
   return newTiles
 }
@@ -165,6 +166,47 @@ function applyCardEffects(
         tile.playerTwoPoints = Math.max(0, tile.playerTwoPoints + card.effect.value)
       } else {
         tile.playerOnePoints = Math.max(0, tile.playerOnePoints + card.effect.value)
+      }
+    }
+  }
+}
+
+function applyEffectsFromExistingCards(
+  board: Tile[][],
+  placedRow: number,
+  placedCol: number,
+  isPlayerOne: boolean
+): void {
+  for (let r = 0; r < BOARD_ROWS; r++) {
+    for (let c = 0; c < BOARD_COLS; c++) {
+      if (r === placedRow && c === placedCol) continue
+      const tile = board[r][c]
+      if (!tile.card?.effect || !tile.card.effectPositions) continue
+
+      const effectCardIsP1 = tile.card.placedByPlayerOne === true
+
+      for (const [offsetX, offsetY] of tile.card.effectPositions) {
+        const targetRow = r - offsetY
+        const targetCol = effectCardIsP1 ? c + offsetX : Math.abs(c - offsetX)
+        if (targetRow !== placedRow || targetCol !== placedCol) continue
+
+        const newTile = board[placedRow][placedCol]
+        if (!newTile.card) continue
+        const isAllied = newTile.card.placedByPlayerOne === effectCardIsP1
+
+        if (tile.card.effect.target === 'ally' && isAllied) {
+          if (effectCardIsP1) {
+            newTile.playerOnePoints = Math.max(0, newTile.playerOnePoints + tile.card.effect.value)
+          } else {
+            newTile.playerTwoPoints = Math.max(0, newTile.playerTwoPoints + tile.card.effect.value)
+          }
+        } else if (tile.card.effect.target === 'enemy' && !isAllied) {
+          if (effectCardIsP1) {
+            newTile.playerTwoPoints = Math.max(0, newTile.playerTwoPoints + tile.card.effect.value)
+          } else {
+            newTile.playerOnePoints = Math.max(0, newTile.playerOnePoints + tile.card.effect.value)
+          }
+        }
       }
     }
   }

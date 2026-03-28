@@ -432,4 +432,34 @@ describe('applyCardEffects', () => {
     // (0, 1) should NOT be buffed (adjacent but not in effectPositions)
     expect(result[0][1].playerOnePoints).toBe(3)
   })
+
+  it('already-placed buff card applies to ally placed into its effect zone', () => {
+    const board = createInitialBoard()
+    board[1][1].playerOnePawns = 1
+    board[0][1].playerOnePawns = 1
+
+    // Place buff card first at (1, 1) — effect zone is directly above at (0, 1)
+    const buffCard: CardInfo = {
+      name: 'Buff Card',
+      pawnsPositions: [],
+      points: 1,
+      pawnsCost: 1,
+      description: '',
+      effect: { value: 2, target: 'ally' },
+      effectPositions: [[0, 1]],
+    }
+    let result = mapPawns(board, buffCard, 1, 1, true)
+
+    // Now place ally into the effect zone — should receive +2 retroactively
+    const ally: CardInfo = {
+      name: 'Ally',
+      pawnsPositions: [],
+      points: 3,
+      pawnsCost: 1,
+      description: '',
+    }
+    result = mapPawns(result, ally, 0, 1, true)
+
+    expect(result[0][1].playerOnePoints).toBe(5)
+  })
 })
