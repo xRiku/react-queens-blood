@@ -175,7 +175,7 @@ function applyEffectsFromExistingCards(
   board: Tile[][],
   placedRow: number,
   placedCol: number,
-  isPlayerOne: boolean
+  _isPlayerOne: boolean
 ): void {
   for (let r = 0; r < BOARD_ROWS; r++) {
     for (let c = 0; c < BOARD_COLS; c++) {

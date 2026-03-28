@@ -7,6 +7,7 @@ import { WaitingRoom } from './pages/WaitingRoom'
 import Rules from './pages/Rules'
 import Cards from './pages/Cards'
 import DeckBuilder from './pages/DeckBuilder'
+import Playground from './pages/Playground'
 
 const loadFeatures = () => import('framer-motion').then(mod => mod.domAnimation)
 
@@ -22,6 +23,7 @@ function App() {
             <Route path="/deck-builder" element={<DeckBuilder />} />
             <Route path="/game/:id" element={<Game />} />
             <Route path="/waiting-room/:id" element={<WaitingRoom />} />
+            <Route path="/playground" element={<Playground />} />
           </Route>
         </Routes>
       </LazyMotion>
