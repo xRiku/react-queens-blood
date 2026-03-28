@@ -261,7 +261,7 @@ export default function Board({
               : 'cursor-not-allowed hover:border-red-400'),
             isAffected && !isPlacementTile && !isBuffedOrDebuffed && 'border-blue-400',
             isBuffedOrDebuffed && 'border-yellow-400',
-            isActiveEffect && tiles[i][boardCol].card && 'border-green-400 animate-pulse',
+            isActiveEffect && tiles[i][boardCol].card && 'border-green-400',
           )}
           role="button"
           tabIndex={0}
@@ -321,7 +321,11 @@ export default function Board({
                         ? (tiles[i][boardCol].card?.placedByPlayerOne
                             ? previewTileData.playerOnePoints
                             : previewTileData.playerTwoPoints)
-                        : undefined}
+                        : isActiveEffect && tiles[i][boardCol].card
+                          ? (tiles[i][boardCol].card!.placedByPlayerOne
+                              ? tiles[i][boardCol].playerOnePoints
+                              : tiles[i][boardCol].playerTwoPoints)
+                          : undefined}
                     />
                   </div>
                   )}

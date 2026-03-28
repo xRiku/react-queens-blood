@@ -25,11 +25,24 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
   return (
     <div
       className={cn(
-        'flex flex-col justify-between w-full h-full rounded-lg',
+        'relative flex flex-col justify-between w-full h-full rounded-lg',
         placed ? 'border border-gray-400 overflow-hidden' : 'bg-white',
         placed && getPlacedBgColor(amIP1, card?.placedByPlayerOne),
       )}
     >
+      {effectivePoints !== undefined && effectivePoints !== card!.points && (
+        <span className={cn(
+          'absolute top-0 right-0 z-10 font-bold leading-tight rounded-bl rounded-tr-md px-0.5',
+          placed
+            ? 'text-[5px] md:text-[7px] xl:text-[9px]'
+            : 'text-[7px] md:text-[10px]',
+          effectivePoints > card!.points
+            ? 'bg-green-500 text-white'
+            : 'bg-red-500 text-white',
+        )}>
+          {effectivePoints > card!.points ? '+' : ''}{effectivePoints - card!.points}
+        </span>
+      )}
       <div className="flex justify-between items-center">
         <span className={cn(
           placed
@@ -52,19 +65,19 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
           </span>
         </span>
         <span className={cn(
-          'flex items-center justify-center border font-semibold border-solid rounded-full',
-          placed
-            ? 'p-0 md:p-1 w-4 h-4 text-[8px] md:w-8 md:h-8 md:text-sm xl:w-10 xl:h-10 xl:text-base 2xl:w-12 2xl:h-12 2xl:text-xl'
-            : 'p-0.5 md:p-2 w-7 h-7 text-sm md:w-14 md:h-14 md:text-3xl',
-          effectivePoints !== undefined && effectivePoints > card!.points
-            ? 'bg-green-200 border-green-500'
-            : effectivePoints !== undefined && effectivePoints < card!.points
-              ? 'bg-red-200 border-red-500'
-              : 'bg-white border-yellow-400',
-        )}
-        >
-          {effectivePoints !== undefined ? effectivePoints : card!.points}
-        </span>
+            'flex items-center justify-center border font-semibold border-solid rounded-full',
+            placed
+              ? 'p-0 md:p-1 w-4 h-4 text-[8px] md:w-8 md:h-8 md:text-sm xl:w-10 xl:h-10 xl:text-base 2xl:w-12 2xl:h-12 2xl:text-xl'
+              : 'p-0.5 md:p-2 w-7 h-7 text-sm md:w-14 md:h-14 md:text-3xl',
+            effectivePoints !== undefined && effectivePoints > card!.points
+              ? 'bg-green-200 border-green-500'
+              : effectivePoints !== undefined && effectivePoints < card!.points
+                ? 'bg-red-200 border-red-500'
+                : 'bg-white border-yellow-400',
+          )}
+          >
+            {effectivePoints !== undefined ? effectivePoints : card!.points}
+          </span>
       </div>
       <div className="flex justify-center items-center">
         <div className="grid grid-cols-5 border-black border">

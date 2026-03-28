@@ -72,7 +72,7 @@ export function mapPawns(
               ? newTiles[newRow][newCol].playerTwoPawns
               : newTiles[newRow][newCol].playerOnePawns + 1
             : newTiles[newRow][newCol].playerOnePawns,
-        playerTwoPawns: 0,
+        playerTwoPawns: newTiles[newRow][newCol].playerTwoPawns === -1 ? -1 : 0,
         card:
           newTiles[newRow][newCol].playerOnePawns === -1
             ? newTiles[newRow][newCol].card
@@ -92,7 +92,7 @@ export function mapPawns(
         newTiles[newRow][newCol].playerTwoPawns === -1
           ? newTiles[newRow][newCol].playerTwoPoints
           : 0,
-      playerOnePawns: 0,
+      playerOnePawns: newTiles[newRow][newCol].playerOnePawns === -1 ? -1 : 0,
       playerTwoPawns:
         newTiles[newRow][newCol].playerTwoPawns !== -1 &&
           newTiles[newRow][newCol].playerTwoPawns < 3

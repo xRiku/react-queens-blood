@@ -175,6 +175,49 @@ describe('mapPawns', () => {
     expect(tile.card!.placedByPlayerOne).toBe(false)
     expect(tile.playerTwoPoints).toBe(simpleCard.points)
   })
+
+  it('P1 card points survive a P2 pawn spread followed by a P1 pawn spread to the same tile', () => {
+    const board = createInitialBoard()
+    board[0][1].playerOnePawns = 1  // P1 can place at (0,1)
+    board[0][0].playerOnePawns = 2  // P1 can place at (0,0)
+
+    // P1 places Ogre-like card (5pt) at (0,0)
+    const ogre: CardInfo = {
+      name: 'Ogre', pawnsPositions: [], points: 5, pawnsCost: 2, description: '',
+    }
+    let result = mapPawns(board, ogre, 0, 0, true)
+
+    // P1 places a 2pt card at (0,1)
+    const p1Card: CardInfo = {
+      name: 'P1 Card', pawnsPositions: [], points: 2, pawnsCost: 1, description: '',
+    }
+    result = mapPawns(result, p1Card, 0, 1, true)
+
+    // P2 places a card at (1,1) whose pawn spreads UP to (0,1) — P1's card tile
+    result[1][1].playerTwoPawns = 1
+    const p2Card: CardInfo = {
+      name: 'P2 Card',
+      pawnsPositions: [[0, 1]], // [x=0, y=1] → row-1, same col = (0,1)
+      points: 1, pawnsCost: 1, description: '',
+    }
+    result = mapPawns(result, p2Card, 1, 1, false)
+
+    // P1 places a card at (0,2) whose pawn spreads LEFT to (0,1)
+    result[0][2].playerOnePawns = 1
+    const p1Card2: CardInfo = {
+      name: 'P1 Card 2',
+      pawnsPositions: [[-1, 0]], // [x=-1, y=0] → same row, col-1 = (0,1)
+      points: 1, pawnsCost: 1, description: '',
+    }
+    result = mapPawns(result, p1Card2, 0, 2, true)
+
+    // P1 Card at (0,1) must still have 2 points — must not be zeroed
+    expect(result[0][1].playerOnePoints).toBe(2)
+
+    // Row 0 total: 5 (Ogre) + 2 (P1 Card) + 1 (P1 Card 2) = 8
+    const row0Total = result[0].reduce((sum, t) => sum + t.playerOnePoints, 0)
+    expect(row0Total).toBe(8)
+  })
 })
 
 // -- shuffleDeck --
