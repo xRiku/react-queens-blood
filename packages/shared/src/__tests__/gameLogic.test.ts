@@ -264,7 +264,7 @@ describe('applyCardEffects', () => {
       points: 1,
       pawnsCost: 1,
       description: 'Test buff card.',
-      effect: { type: 'buff', value: 2, target: 'ally' },
+      effect: { value: 2, target: 'ally' },
       effectPositions: [[-1, 0]],
     }
     result = mapPawns(result, buffCard, 1, 1, true)
@@ -297,7 +297,7 @@ describe('applyCardEffects', () => {
       points: 1,
       pawnsCost: 1,
       description: 'Test debuff card.',
-      effect: { type: 'debuff', value: -1, target: 'enemy' },
+      effect: { value: -1, target: 'enemy' },
       effectPositions: [[1, 0]],
     }
     result = mapPawns(result, debuffCard, 1, 3, true)
@@ -329,7 +329,7 @@ describe('applyCardEffects', () => {
       points: 1,
       pawnsCost: 1,
       description: 'Test buff card.',
-      effect: { type: 'buff', value: 1, target: 'ally' },
+      effect: { value: 1, target: 'ally' },
       effectPositions: [[1, 0]],
     }
     result = mapPawns(result, buffCard, 1, 3, true)
@@ -361,7 +361,7 @@ describe('applyCardEffects', () => {
       points: 1,
       pawnsCost: 1,
       description: 'Test debuff card.',
-      effect: { type: 'debuff', value: -5, target: 'enemy' },
+      effect: { value: -5, target: 'enemy' },
       effectPositions: [[1, 0]],
     }
     result = mapPawns(result, debuffCard, 1, 3, true)
@@ -391,7 +391,7 @@ describe('applyCardEffects', () => {
       points: 1,
       pawnsCost: 1,
       description: 'Test card.',
-      effect: { type: 'buff', value: 5, target: 'ally' },
+      effect: { value: 5, target: 'ally' },
     }
     result = mapPawns(result, noPositionsCard, 1, 1, true)
 
@@ -422,7 +422,7 @@ describe('applyCardEffects', () => {
       points: 1,
       pawnsCost: 1,
       description: 'Test buff card.',
-      effect: { type: 'buff', value: 2, target: 'ally' },
+      effect: { value: 2, target: 'ally' },
       effectPositions: [[-1, 0]],
     }
     result = mapPawns(result, buffCard, 1, 1, true)

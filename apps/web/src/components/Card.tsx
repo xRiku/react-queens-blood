@@ -1,6 +1,7 @@
 import { CardInfo } from '../@types/Card'
 import Pawn from './Pawn'
 import { cn } from '../utils/cn'
+import { fillCardGrid } from '../utils/cardGrid'
 
 type CardProps = {
   card: CardInfo | null
@@ -17,25 +18,6 @@ function getPlacedBgColor(amIP1: boolean | undefined, placedByPlayerOne: boolean
 }
 
 export default function Card({ card, placed = false, amIP1, effectivePoints }: CardProps) {
-  function fillMonsterPositions(pawns: number[][], effects?: number[][]) {
-    const positions: number[] = new Array(25).fill(0)
-    const startingNumber = 12
-
-    for (const [x, y] of pawns) {
-      positions[startingNumber + x + -y * 5] = 1
-    }
-
-    if (effects) {
-      for (const [x, y] of effects) {
-        const idx = startingNumber + x + -y * 5
-        // 3 = pawn + effect, 2 = effect only
-        positions[idx] = positions[idx] === 1 ? 3 : 2
-      }
-    }
-
-    return positions
-  }
-
   const cellSize = placed
     ? 'h-1 w-1 md:h-2 md:w-2 xl:h-3 xl:w-3'
     : 'h-2 w-2 md:h-3 md:w-3 2xl:h-4 2xl:w-4'
@@ -86,7 +68,7 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
       </div>
       <div className="flex justify-center items-center">
         <div className="grid grid-cols-5 border-black border">
-          {fillMonsterPositions(card!.pawnsPositions, card!.effectPositions).map((pawn, index) => {
+          {fillCardGrid(card!.pawnsPositions, card!.effectPositions).map((pawn, index) => {
             const borderClass = placed
               ? 'border-solid border-[0.5px] md:border-[1.5px] border-black'
               : 'border-solid border md:border-2 border-black'

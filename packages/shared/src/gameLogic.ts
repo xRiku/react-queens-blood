@@ -41,15 +41,15 @@ export function mapPawns(
   isPlayerOne: boolean
 ): Tile[][] {
   const newTiles = deepCopyBoard(board)
-  const correctColIndex = colIndex
-  const transformedRowIndex = correctColIndex
-  const transformedColIndex = -rowIndex
 
-  for (let i = 0; i < card.pawnsPositions.length; i++) {
-    const newRow = -(transformedColIndex + card.pawnsPositions[i][1])
+  // Card coordinates: x = right, y = up. Board: row = down, col = right.
+  // targetRow = placedRow - cardY,  targetCol = placedCol + cardX (player one)
+  // Player two's board is mirrored horizontally, so cardX is negated.
+  for (const [cardX, cardY] of card.pawnsPositions) {
+    const newRow = rowIndex - cardY
     const newCol = isPlayerOne
-      ? transformedRowIndex + card.pawnsPositions[i][0]
-      : Math.abs(-transformedRowIndex + card.pawnsPositions[i][0])
+      ? colIndex + cardX
+      : Math.abs(colIndex - cardX)
 
     if (newRow < 0 || newRow >= BOARD_ROWS || newCol < 0 || newCol >= BOARD_COLS) {
       continue
@@ -110,7 +110,7 @@ export function mapPawns(
   }
 
   if (isPlayerOne) {
-    newTiles[rowIndex][correctColIndex] = {
+    newTiles[rowIndex][colIndex] = {
       playerOnePoints: card.points,
       playerTwoPoints: 0,
       playerOnePawns: -1,
@@ -118,7 +118,7 @@ export function mapPawns(
       card: { ...card, placedByPlayerOne: true },
     }
   } else {
-    newTiles[rowIndex][correctColIndex] = {
+    newTiles[rowIndex][colIndex] = {
       playerOnePoints: 0,
       playerTwoPoints: card.points,
       playerOnePawns: -1,
@@ -127,7 +127,7 @@ export function mapPawns(
     }
   }
 
-  applyCardEffects(newTiles, card, rowIndex, correctColIndex, isPlayerOne)
+  applyCardEffects(newTiles, card, rowIndex, colIndex, isPlayerOne)
 
   return newTiles
 }
@@ -141,14 +141,11 @@ function applyCardEffects(
 ): void {
   if (!card.effect || !card.effectPositions) return
 
-  const transformedRowIndex = colIndex
-  const transformedColIndex = -rowIndex
-
-  for (const [ex, ey] of card.effectPositions) {
-    const r = -(transformedColIndex + ey)
+  for (const [offsetX, offsetY] of card.effectPositions) {
+    const r = rowIndex - offsetY
     const c = isPlayerOne
-      ? transformedRowIndex + ex
-      : Math.abs(-transformedRowIndex + ex)
+      ? colIndex + offsetX
+      : Math.abs(colIndex - offsetX)
 
     if (r < 0 || r >= BOARD_ROWS || c < 0 || c >= BOARD_COLS) continue
 

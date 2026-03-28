@@ -1,5 +1,4 @@
 export type CardEffect = {
-  type: 'buff' | 'debuff'
   value: number
   target: 'ally' | 'enemy'
 }

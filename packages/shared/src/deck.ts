@@ -200,7 +200,7 @@ export const allCards: CardInfo[] = [
     points: 1,
     pawnsCost: 1,
     description: 'Raise the power of allied cards on affected tiles by 2 while this card is in play.',
-    effect: { type: 'buff', value: 2, target: 'ally' },
+    effect: { value: 2, target: 'ally' },
     effectPositions: [
       [0, 1],
     ],
@@ -214,7 +214,7 @@ export const allCards: CardInfo[] = [
     points: 1,
     pawnsCost: 2,
     description: 'Raise the power of allied cards on affected tiles by 1 while this card is in play.',
-    effect: { type: 'buff', value: 1, target: 'ally' },
+    effect: { value: 1, target: 'ally' },
     effectPositions: [
       [0, -1],
     ],
