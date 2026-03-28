@@ -41,15 +41,15 @@ export function mapPawns(
   isPlayerOne: boolean
 ): Tile[][] {
   const newTiles = deepCopyBoard(board)
-  const correctColIndex = colIndex
-  const transformedRowIndex = correctColIndex
-  const transformedColIndex = -rowIndex
 
-  for (let i = 0; i < card.pawnsPositions.length; i++) {
-    const newRow = -(transformedColIndex + card.pawnsPositions[i][1])
+  // Card coordinates: x = right, y = up. Board: row = down, col = right.
+  // targetRow = placedRow - cardY,  targetCol = placedCol + cardX (player one)
+  // Player two's board is mirrored horizontally, so cardX is negated.
+  for (const [cardX, cardY] of card.pawnsPositions) {
+    const newRow = rowIndex - cardY
     const newCol = isPlayerOne
-      ? transformedRowIndex + card.pawnsPositions[i][0]
-      : Math.abs(-transformedRowIndex + card.pawnsPositions[i][0])
+      ? colIndex + cardX
+      : Math.abs(colIndex - cardX)
 
     if (newRow < 0 || newRow >= BOARD_ROWS || newCol < 0 || newCol >= BOARD_COLS) {
       continue
@@ -72,7 +72,7 @@ export function mapPawns(
               ? newTiles[newRow][newCol].playerTwoPawns
               : newTiles[newRow][newCol].playerOnePawns + 1
             : newTiles[newRow][newCol].playerOnePawns,
-        playerTwoPawns: 0,
+        playerTwoPawns: newTiles[newRow][newCol].playerTwoPawns === -1 ? -1 : 0,
         card:
           newTiles[newRow][newCol].playerOnePawns === -1
             ? newTiles[newRow][newCol].card
@@ -92,7 +92,7 @@ export function mapPawns(
         newTiles[newRow][newCol].playerTwoPawns === -1
           ? newTiles[newRow][newCol].playerTwoPoints
           : 0,
-      playerOnePawns: 0,
+      playerOnePawns: newTiles[newRow][newCol].playerOnePawns === -1 ? -1 : 0,
       playerTwoPawns:
         newTiles[newRow][newCol].playerTwoPawns !== -1 &&
           newTiles[newRow][newCol].playerTwoPawns < 3
@@ -110,7 +110,7 @@ export function mapPawns(
   }
 
   if (isPlayerOne) {
-    newTiles[rowIndex][correctColIndex] = {
+    newTiles[rowIndex][colIndex] = {
       playerOnePoints: card.points,
       playerTwoPoints: 0,
       playerOnePawns: -1,
@@ -118,7 +118,7 @@ export function mapPawns(
       card: { ...card, placedByPlayerOne: true },
     }
   } else {
-    newTiles[rowIndex][correctColIndex] = {
+    newTiles[rowIndex][colIndex] = {
       playerOnePoints: 0,
       playerTwoPoints: card.points,
       playerOnePawns: -1,
@@ -127,7 +127,108 @@ export function mapPawns(
     }
   }
 
+  applyCardEffects(newTiles, card, rowIndex, colIndex, isPlayerOne)
+  applyEffectsFromExistingCards(newTiles, rowIndex, colIndex, isPlayerOne)
+
   return newTiles
+}
+
+function applyCardEffects(
+  board: Tile[][],
+  card: CardInfo,
+  rowIndex: number,
+  colIndex: number,
+  isPlayerOne: boolean
+): void {
+  if (!card.effect || !card.effectPositions) return
+
+  for (const [offsetX, offsetY] of card.effectPositions) {
+    const r = rowIndex - offsetY
+    const c = isPlayerOne
+      ? colIndex + offsetX
+      : Math.abs(colIndex - offsetX)
+
+    if (r < 0 || r >= BOARD_ROWS || c < 0 || c >= BOARD_COLS) continue
+
+    const tile = board[r][c]
+    if (!tile.card) continue
+
+    const isAlliedCard = tile.card.placedByPlayerOne === isPlayerOne
+
+    if (card.effect.target === 'ally' && isAlliedCard) {
+      if (isPlayerOne) {
+        tile.playerOnePoints = Math.max(0, tile.playerOnePoints + card.effect.value)
+      } else {
+        tile.playerTwoPoints = Math.max(0, tile.playerTwoPoints + card.effect.value)
+      }
+    } else if (card.effect.target === 'enemy' && !isAlliedCard) {
+      if (isPlayerOne) {
+        tile.playerTwoPoints = Math.max(0, tile.playerTwoPoints + card.effect.value)
+      } else {
+        tile.playerOnePoints = Math.max(0, tile.playerOnePoints + card.effect.value)
+      }
+    }
+  }
+}
+
+function applyEffectsFromExistingCards(
+  board: Tile[][],
+  placedRow: number,
+  placedCol: number,
+  _isPlayerOne: boolean
+): void {
+  for (let r = 0; r < BOARD_ROWS; r++) {
+    for (let c = 0; c < BOARD_COLS; c++) {
+      if (r === placedRow && c === placedCol) continue
+      const tile = board[r][c]
+      if (!tile.card?.effect || !tile.card.effectPositions) continue
+
+      const effectCardIsP1 = tile.card.placedByPlayerOne === true
+
+      for (const [offsetX, offsetY] of tile.card.effectPositions) {
+        const targetRow = r - offsetY
+        const targetCol = effectCardIsP1 ? c + offsetX : Math.abs(c - offsetX)
+        if (targetRow !== placedRow || targetCol !== placedCol) continue
+
+        const newTile = board[placedRow][placedCol]
+        if (!newTile.card) continue
+        const isAllied = newTile.card.placedByPlayerOne === effectCardIsP1
+
+        if (tile.card.effect.target === 'ally' && isAllied) {
+          if (effectCardIsP1) {
+            newTile.playerOnePoints = Math.max(0, newTile.playerOnePoints + tile.card.effect.value)
+          } else {
+            newTile.playerTwoPoints = Math.max(0, newTile.playerTwoPoints + tile.card.effect.value)
+          }
+        } else if (tile.card.effect.target === 'enemy' && !isAllied) {
+          if (effectCardIsP1) {
+            newTile.playerTwoPoints = Math.max(0, newTile.playerTwoPoints + tile.card.effect.value)
+          } else {
+            newTile.playerOnePoints = Math.max(0, newTile.playerOnePoints + tile.card.effect.value)
+          }
+        }
+      }
+    }
+  }
+}
+
+export function getActiveEffectPositions(board: Tile[][]): Set<string> {
+  const affected = new Set<string>()
+  for (let r = 0; r < BOARD_ROWS; r++) {
+    for (let c = 0; c < BOARD_COLS; c++) {
+      const tile = board[r][c]
+      if (!tile.card?.effect || !tile.card.effectPositions) continue
+      const isPlayerOne = tile.card.placedByPlayerOne === true
+      for (const [offsetX, offsetY] of tile.card.effectPositions) {
+        const targetRow = r - offsetY
+        const targetCol = isPlayerOne ? c + offsetX : Math.abs(c - offsetX)
+        if (targetRow >= 0 && targetRow < BOARD_ROWS && targetCol >= 0 && targetCol < BOARD_COLS) {
+          affected.add(`${targetRow}-${targetCol}`)
+        }
+      }
+    }
+  }
+  return affected
 }
 
 export function findAllValidMoves(

@@ -1,18 +1,11 @@
 import type { CardInfo } from '../@types/Card'
 import Pawn from './Pawn'
 import { cn } from '../utils/cn'
+import { fillCardGrid } from '../utils/cardGrid'
 
 type MiniCardProps = {
   card: CardInfo
   className?: string
-}
-
-function fillPositions(points: number[][]) {
-  const positions = new Array(25).fill(0)
-  for (const [x, y] of points) {
-    positions[12 + x + -y * 5] = 1
-  }
-  return positions
 }
 
 export default function MiniCard({ card, className }: MiniCardProps) {
@@ -38,16 +31,20 @@ export default function MiniCard({ card, className }: MiniCardProps) {
       {/* Grid */}
       <div className="flex-1 flex justify-center items-center">
         <div className="grid grid-cols-5 border-black border">
-          {fillPositions(card.pawnsPositions).map((pawn, index) => (
+          {fillCardGrid(card.pawnsPositions, card.effectPositions).map((pawn, index) => (
             <div
               key={index}
               className={cn(
                 'h-2 w-2 border-solid border-[0.5px] border-black',
                 index === 12
                   ? 'bg-white'
-                  : pawn === 1
-                    ? 'bg-yellow-400'
-                    : 'bg-gray-400',
+                  : pawn === 3
+                    ? 'bg-yellow-400 border-red-500'
+                    : pawn === 2
+                      ? 'bg-gray-400 border-red-500'
+                      : pawn === 1
+                        ? 'bg-yellow-400'
+                        : 'bg-gray-400',
               )}
             />
           ))}
@@ -55,7 +52,7 @@ export default function MiniCard({ card, className }: MiniCardProps) {
       </div>
 
       {/* Name */}
-      <div className="bg-black text-yellow-400 text-[7px] leading-tight text-center px-0.5 py-0.5 rounded-b font-medium truncate">
+      <div title={card.description} className="bg-black text-yellow-400 text-[7px] leading-tight text-center px-0.5 py-0.5 rounded-b font-medium truncate flex items-center justify-center gap-0.5">
         {card.name}
       </div>
     </div>

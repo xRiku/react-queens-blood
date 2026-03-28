@@ -1,4 +1,4 @@
-export type { CardInfo, CardUnity, Tile } from './types'
+export type { CardEffect, CardInfo, CardUnity, Tile } from './types'
 export { allCards, deckCards } from './deck'
 export {
   createInitialBoard,
@@ -7,4 +7,5 @@ export {
   shuffleDeck,
   drawCards,
   findAllValidMoves,
+  getActiveEffectPositions,
 } from './gameLogic'

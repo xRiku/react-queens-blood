@@ -74,7 +74,7 @@ export default function DeckBuilder() {
             'shrink-0 mb-3',
             isMobile
               ? 'border-b border-gray-300 pb-2'
-              : 'border border-gray-300 rounded-lg p-4 bg-gray-50 min-h-[140px]',
+              : 'border border-gray-300 rounded-lg px-4 py-3 bg-gray-50',
           )}
         >
           <div
@@ -86,24 +86,40 @@ export default function DeckBuilder() {
           >
             {Array.from({ length: 15 }).map((_, i) => {
               const entry = i < deckEntries.length ? deckEntries[i] : null
+
               return (
-                <div key={i}>
-                  {entry ? (
-                    <button
-                      onClick={() => removeCard(entry.card.name)}
-                      className="group cursor-pointer w-full flex flex-col items-center"
-                      title={`Remove ${entry.card.name}`}
-                    >
-                      <div className="w-full aspect-[2/3] border border-gray-700 rounded overflow-hidden group-hover:opacity-60 transition-opacity">
-                        <MiniCard card={entry.card} />
-                      </div>
-                      <span className="mt-1 bg-black text-yellow-400 border border-yellow-400 rounded-full px-1.5 text-[8px] font-semibold leading-relaxed whitespace-nowrap">
-                        ×{entry.count}
-                      </span>
-                    </button>
-                  ) : (
-                    <div className="w-full aspect-[2/3] border border-dashed border-gray-300 rounded" />
+                <div
+                  key={i}
+                  role={entry ? 'button' : undefined}
+                  tabIndex={entry ? 0 : undefined}
+                  onClick={entry ? () => removeCard(entry.card.name) : undefined}
+                  onKeyDown={entry ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); removeCard(entry.card.name) } } : undefined}
+                  title={entry ? `Remove ${entry.card.name}` : undefined}
+                  className={cn(
+                    'w-full flex flex-col items-center',
+                    entry && 'group cursor-pointer',
                   )}
+                >
+                  <div
+                    className={cn(
+                      'w-full aspect-[2/3] rounded overflow-hidden',
+                      entry
+                        ? 'border border-gray-700 group-hover:opacity-60 transition-opacity'
+                        : 'border border-dashed border-gray-300',
+                    )}
+                  >
+                    {entry && <MiniCard card={entry.card} />}
+                  </div>
+                  <span
+                    className={cn(
+                      'mt-1 rounded-full px-1.5 text-[8px] font-semibold leading-relaxed whitespace-nowrap border',
+                      entry
+                        ? 'bg-black text-yellow-400 border-yellow-400'
+                        : 'border-transparent text-transparent',
+                    )}
+                  >
+                    ×{entry?.count ?? 0}
+                  </span>
                 </div>
               )
             })}
