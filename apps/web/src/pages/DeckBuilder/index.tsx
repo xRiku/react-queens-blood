@@ -43,7 +43,7 @@ export default function DeckBuilder() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-80px)] px-3 md:px-6 pt-2 overflow-hidden">
+    <div className="w-full flex flex-col h-[calc(100vh-80px)] px-3 md:px-6 pt-2 overflow-hidden">
       <div className="w-full mx-auto flex flex-col h-full min-h-0">
         {/* Header row */}
         <div className="flex items-center justify-between mb-2 shrink-0">
@@ -102,13 +102,17 @@ export default function DeckBuilder() {
                 >
                   <div
                     className={cn(
-                      'w-full aspect-[2/3] rounded overflow-hidden',
+                      'w-full aspect-[2/3] rounded overflow-hidden border',
                       entry
-                        ? 'border border-gray-700 group-hover:opacity-60 transition-opacity'
-                        : 'border border-dashed border-gray-300',
+                        ? 'border-gray-700 bg-white group-hover:opacity-60 transition-opacity'
+                        : 'border-dashed border-gray-300 bg-gray-50',
                     )}
                   >
-                    {entry && <MiniCard card={entry.card} />}
+                    {entry ? (
+                      <MiniCard card={entry.card} />
+                    ) : (
+                      <div className="h-full w-full" />
+                    )}
                   </div>
                   <span
                     className={cn(
