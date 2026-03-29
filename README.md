@@ -6,7 +6,7 @@ React Queen's Blood is a simplified multiplayer web version of the card game _Qu
 
 <img src=".github/game.png"/>
 
-Disclaimer: The game is currently designed specifically for 1080p monitors. I do not own the Intellectual Property of Queen's Blood. I only implemented a simplistic version of the game.
+Disclaimer: I do not own the Intellectual Property of Queen's Blood. I only implemented a simplistic version of the game.
 
 ## 🖥️ Technologies used
 
@@ -43,9 +43,9 @@ $ npm run dev -w @queens-blood/web
 
 Optional environment variables:
 
-- `PORT` (server port, default `4000`)
-- `CORS_ORIGIN` (comma-separated allowed origins)
-- `VITE_SOCKET_URL` (client socket URL)
+- `PORT` — server port (default `4000`)
+- `CORS_ORIGIN` — comma-separated allowed origins
+- `VITE_SOCKET_URL` — socket URL used by the client
 
 ### 🌟 Optimal way to play
 
@@ -95,7 +95,7 @@ To start a new game, type your name and click the `Create Room` button. A random
 
 <img src=".github/game_ID.png">
 
-This game ID is used by the second player. To join, enter the code in the join input and click `Join`, then enter your player name.
+This 6-digit room code is used by the second player. To join, enter the code in the join input and click `Join`, then enter your player name.
 
 <img src=".github/join_game.png">
 
