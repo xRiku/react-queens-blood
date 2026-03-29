@@ -10,6 +10,15 @@ import { useIsMobile } from '../../hooks/useIsMobile'
 
 type DeckEntry = { card: CardInfo; count: number }
 
+const emptySlotCard: CardInfo = {
+  name: 'Empty slot',
+  pawnsPositions: [],
+  points: 0,
+  pawnsCost: 0,
+  description: '',
+  effectPositions: [],
+}
+
 function deduplicateDeck(deck: CardInfo[]): DeckEntry[] {
   const map = new Map<string, DeckEntry>()
   for (const card of deck) {
@@ -43,7 +52,7 @@ export default function DeckBuilder() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-80px)] px-3 md:px-6 pt-2 overflow-hidden">
+    <div className="w-full flex flex-col h-[calc(100vh-80px)] px-3 md:px-6 pt-2 overflow-hidden">
       <div className="w-full mx-auto flex flex-col h-full min-h-0">
         {/* Header row */}
         <div className="flex items-center justify-between mb-2 shrink-0">
@@ -111,28 +120,7 @@ export default function DeckBuilder() {
                     {entry ? (
                       <MiniCard card={entry.card} />
                     ) : (
-                      <div className="flex h-full w-full flex-col justify-between rounded bg-white p-0.5">
-                        <div className="flex items-center justify-between pt-0.5">
-                          <div className="h-3 w-8 rounded bg-gray-200" />
-                          <div className="h-3.5 w-3.5 rounded-full border border-yellow-300 bg-yellow-100" />
-                        </div>
-                        <div className="flex flex-1 items-center justify-center">
-                          <div className="grid grid-cols-5 border border-gray-300">
-                            {Array.from({ length: 15 }).map((_, gridIndex) => (
-                              <div
-                                key={gridIndex}
-                                className={cn(
-                                  'h-2 w-2 border border-gray-300',
-                                  gridIndex === 7 ? 'bg-gray-100' : 'bg-gray-200',
-                                )}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                        <div className="rounded-b bg-gray-900 px-0.5 py-0.5 text-center text-[7px] font-medium leading-tight text-yellow-200">
-                          Empty slot
-                        </div>
-                      </div>
+                      <MiniCard card={emptySlotCard} className="opacity-70" />
                     )}
                   </div>
                   <span
