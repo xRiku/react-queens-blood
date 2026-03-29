@@ -227,6 +227,7 @@ export function getActiveEffectPositions(board: Tile[][]): Set<string> {
     for (let c = 0; c < BOARD_COLS; c++) {
       const tile = board[r][c]
       if (!tile.card?.effect || !tile.card.effectPositions) continue
+      if (tile.card.effect.trigger !== 'continuous') continue
       const isPlayerOne = tile.card.placedByPlayerOne === true
       for (const [offsetX, offsetY] of tile.card.effectPositions) {
         const targetRow = r - offsetY
