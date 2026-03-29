@@ -10,15 +10,6 @@ import { useIsMobile } from '../../hooks/useIsMobile'
 
 type DeckEntry = { card: CardInfo; count: number }
 
-const emptySlotCard: CardInfo = {
-  name: 'Empty slot',
-  pawnsPositions: [],
-  points: 0,
-  pawnsCost: 0,
-  description: '',
-  effectPositions: [],
-}
-
 function deduplicateDeck(deck: CardInfo[]): DeckEntry[] {
   const map = new Map<string, DeckEntry>()
   for (const card of deck) {
@@ -111,16 +102,16 @@ export default function DeckBuilder() {
                 >
                   <div
                     className={cn(
-                      'w-full aspect-[2/3] rounded overflow-hidden border border-gray-700 bg-white',
+                      'w-full aspect-[2/3] rounded overflow-hidden border',
                       entry
-                        ? 'group-hover:opacity-60 transition-opacity'
-                        : 'opacity-70',
+                        ? 'border-gray-700 bg-white group-hover:opacity-60 transition-opacity'
+                        : 'border-dashed border-gray-300 bg-gray-50',
                     )}
                   >
                     {entry ? (
                       <MiniCard card={entry.card} />
                     ) : (
-                      <MiniCard card={emptySlotCard} className="opacity-70" />
+                      <div className="h-full w-full" />
                     )}
                   </div>
                   <span
