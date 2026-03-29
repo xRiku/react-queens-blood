@@ -102,13 +102,38 @@ export default function DeckBuilder() {
                 >
                   <div
                     className={cn(
-                      'w-full aspect-[2/3] rounded overflow-hidden',
+                      'w-full aspect-[2/3] rounded overflow-hidden border border-gray-700 bg-white',
                       entry
-                        ? 'border border-gray-700 group-hover:opacity-60 transition-opacity'
-                        : 'border border-dashed border-gray-300',
+                        ? 'group-hover:opacity-60 transition-opacity'
+                        : 'opacity-70',
                     )}
                   >
-                    {entry && <MiniCard card={entry.card} />}
+                    {entry ? (
+                      <MiniCard card={entry.card} />
+                    ) : (
+                      <div className="flex h-full w-full flex-col justify-between rounded bg-white p-0.5">
+                        <div className="flex items-center justify-between pt-0.5">
+                          <div className="h-3 w-8 rounded bg-gray-200" />
+                          <div className="h-3.5 w-3.5 rounded-full border border-yellow-300 bg-yellow-100" />
+                        </div>
+                        <div className="flex flex-1 items-center justify-center">
+                          <div className="grid grid-cols-5 border border-gray-300">
+                            {Array.from({ length: 15 }).map((_, gridIndex) => (
+                              <div
+                                key={gridIndex}
+                                className={cn(
+                                  'h-2 w-2 border border-gray-300',
+                                  gridIndex === 7 ? 'bg-gray-100' : 'bg-gray-200',
+                                )}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                        <div className="rounded-b bg-gray-900 px-0.5 py-0.5 text-center text-[7px] font-medium leading-tight text-yellow-200">
+                          Empty slot
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <span
                     className={cn(
