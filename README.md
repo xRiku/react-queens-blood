@@ -25,7 +25,7 @@ In your terminal, run:
 ```sh
 $ git clone https://github.com/xRiku/react-queens-blood.git
 $ cd react-queens-blood
-$ npm i
+$ npm install
 $ npm run dev
 ```
 
