@@ -248,7 +248,7 @@ export default function Board({
         : null
       const isPlacementTile = previewTileData !== null && previewTileData.card !== null && !tiles[i][boardCol].card
       const isBuffedOrDebuffed = isAffected && tiles[i][boardCol].card !== null
-      const isActiveEffect = !previewData && activeEffectTiles.has(`${i}-${boardCol}`)
+      const isActiveEffect = activeEffectTiles.has(`${i}-${boardCol}`)
 
       tilesElements[i][j] = (
         <div
