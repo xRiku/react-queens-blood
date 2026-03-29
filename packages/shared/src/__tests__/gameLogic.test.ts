@@ -17,6 +17,7 @@ function makeTile(overrides: Partial<Tile> = {}): Tile {
     playerOnePawns: 0,
     playerTwoPawns: 0,
     card: null,
+    permanentBuffs: 0,
     ...overrides,
   }
 }
@@ -307,7 +308,7 @@ describe('applyCardEffects', () => {
       points: 1,
       pawnsCost: 1,
       description: 'Test buff card.',
-      effect: { value: 2, target: 'ally' },
+      effect: { value: 2, target: 'ally', trigger: 'continuous' },
       effectPositions: [[-1, 0]],
     }
     result = mapPawns(result, buffCard, 1, 1, true)
@@ -340,7 +341,7 @@ describe('applyCardEffects', () => {
       points: 1,
       pawnsCost: 1,
       description: 'Test debuff card.',
-      effect: { value: -1, target: 'enemy' },
+      effect: { value: -1, target: 'enemy', trigger: 'continuous' },
       effectPositions: [[1, 0]],
     }
     result = mapPawns(result, debuffCard, 1, 3, true)
@@ -372,7 +373,7 @@ describe('applyCardEffects', () => {
       points: 1,
       pawnsCost: 1,
       description: 'Test buff card.',
-      effect: { value: 1, target: 'ally' },
+      effect: { value: 1, target: 'ally', trigger: 'continuous' },
       effectPositions: [[1, 0]],
     }
     result = mapPawns(result, buffCard, 1, 3, true)
@@ -404,7 +405,7 @@ describe('applyCardEffects', () => {
       points: 1,
       pawnsCost: 1,
       description: 'Test debuff card.',
-      effect: { value: -5, target: 'enemy' },
+      effect: { value: -5, target: 'enemy', trigger: 'continuous' },
       effectPositions: [[1, 0]],
     }
     result = mapPawns(result, debuffCard, 1, 3, true)
@@ -434,7 +435,7 @@ describe('applyCardEffects', () => {
       points: 1,
       pawnsCost: 1,
       description: 'Test card.',
-      effect: { value: 5, target: 'ally' },
+      effect: { value: 5, target: 'ally', trigger: 'continuous' },
     }
     result = mapPawns(result, noPositionsCard, 1, 1, true)
 
@@ -465,7 +466,7 @@ describe('applyCardEffects', () => {
       points: 1,
       pawnsCost: 1,
       description: 'Test buff card.',
-      effect: { value: 2, target: 'ally' },
+      effect: { value: 2, target: 'ally', trigger: 'continuous' },
       effectPositions: [[-1, 0]],
     }
     result = mapPawns(result, buffCard, 1, 1, true)
@@ -488,7 +489,7 @@ describe('applyCardEffects', () => {
       points: 1,
       pawnsCost: 1,
       description: '',
-      effect: { value: 2, target: 'ally' },
+      effect: { value: 2, target: 'ally', trigger: 'continuous' },
       effectPositions: [[0, 1]],
     }
     let result = mapPawns(board, buffCard, 1, 1, true)
@@ -504,5 +505,245 @@ describe('applyCardEffects', () => {
     result = mapPawns(result, ally, 0, 1, true)
 
     expect(result[0][1].playerOnePoints).toBe(5)
+  })
+})
+
+// -- onPlace vs continuous trigger --
+
+describe('effect triggers', () => {
+  it('onPlace: buff is stored in permanentBuffs and reflected in ally points', () => {
+    const board = createInitialBoard()
+    board[1][0].playerOnePawns = 1
+    board[0][0].playerOnePawns = 1
+
+    // Place an ally first at (0, 0)
+    const ally: CardInfo = {
+      name: 'Ally', pawnsPositions: [], points: 3, pawnsCost: 1, description: '',
+    }
+    let result = mapPawns(board, ally, 0, 0, true)
+
+    // Place an onPlace buff card at (1, 0) targeting above [0, 1]
+    const onPlaceBuffCard: CardInfo = {
+      name: 'OnPlace Buff',
+      pawnsPositions: [],
+      points: 1,
+      pawnsCost: 1,
+      description: '',
+      effect: { value: 2, target: 'ally', trigger: 'onPlace' },
+      effectPositions: [[0, 1]],
+    }
+    result = mapPawns(result, onPlaceBuffCard, 1, 0, true)
+
+    // Ally at (0, 0) should have permanentBuffs = 2 and points = 5
+    expect(result[0][0].permanentBuffs).toBe(2)
+    expect(result[0][0].playerOnePoints).toBe(5)
+  })
+
+  it('onPlace: buff in permanentBuffs survives subsequent board mutations', () => {
+    const board = createInitialBoard()
+    board[1][0].playerOnePawns = 1
+    board[0][0].playerOnePawns = 1
+    board[2][0].playerOnePawns = 1
+
+    // Place ally at (0, 0), then onPlace buff at (1, 0) targeting above
+    const ally: CardInfo = {
+      name: 'Ally', pawnsPositions: [], points: 3, pawnsCost: 1, description: '',
+    }
+    let result = mapPawns(board, ally, 0, 0, true)
+
+    const onPlaceBuffCard: CardInfo = {
+      name: 'OnPlace Buff',
+      pawnsPositions: [],
+      points: 1,
+      pawnsCost: 1,
+      description: '',
+      effect: { value: 2, target: 'ally', trigger: 'onPlace' },
+      effectPositions: [[0, 1]],
+    }
+    result = mapPawns(result, onPlaceBuffCard, 1, 0, true)
+    expect(result[0][0].playerOnePoints).toBe(5)
+
+    // Place an unrelated card at (2, 0) — should not affect the buff
+    const other: CardInfo = {
+      name: 'Other', pawnsPositions: [], points: 4, pawnsCost: 1, description: '',
+    }
+    result = mapPawns(result, other, 2, 0, true)
+
+    // Ally at (0, 0) should still have the permanent buff applied
+    expect(result[0][0].permanentBuffs).toBe(2)
+    expect(result[0][0].playerOnePoints).toBe(5)
+  })
+
+  it('onPlace: permanentBuffs resets to 0 when a new card is placed on the buffed tile', () => {
+    const board = createInitialBoard()
+    board[1][0].playerOnePawns = 1
+    board[0][0].playerOnePawns = 1
+
+    // Place ally at (0, 0), then onPlace buff at (1, 0)
+    const ally: CardInfo = {
+      name: 'Ally', pawnsPositions: [], points: 3, pawnsCost: 1, description: '',
+    }
+    let result = mapPawns(board, ally, 0, 0, true)
+
+    const onPlaceBuffCard: CardInfo = {
+      name: 'OnPlace Buff',
+      pawnsPositions: [],
+      points: 1,
+      pawnsCost: 1,
+      description: '',
+      effect: { value: 2, target: 'ally', trigger: 'onPlace' },
+      effectPositions: [[0, 1]],
+    }
+    result = mapPawns(result, onPlaceBuffCard, 1, 0, true)
+    expect(result[0][0].permanentBuffs).toBe(2)
+
+    // Place a new card directly on (0, 0) — permanentBuffs must reset
+    const replacement: CardInfo = {
+      name: 'Replacement', pawnsPositions: [], points: 2, pawnsCost: 1, description: '',
+    }
+    result[0][0].playerOnePawns = 1  // re-enable placement
+    result = mapPawns(result, replacement, 0, 0, true)
+
+    expect(result[0][0].permanentBuffs).toBe(0)
+    expect(result[0][0].playerOnePoints).toBe(2)
+  })
+
+  it('continuous: effect does not write to permanentBuffs', () => {
+    const board = createInitialBoard()
+    board[1][0].playerOnePawns = 1
+    board[0][0].playerOnePawns = 1
+
+    const ally: CardInfo = {
+      name: 'Ally', pawnsPositions: [], points: 3, pawnsCost: 1, description: '',
+    }
+    let result = mapPawns(board, ally, 0, 0, true)
+
+    const continuousBuffCard: CardInfo = {
+      name: 'Continuous Buff',
+      pawnsPositions: [],
+      points: 1,
+      pawnsCost: 1,
+      description: '',
+      effect: { value: 2, target: 'ally', trigger: 'continuous' },
+      effectPositions: [[0, 1]],
+    }
+    result = mapPawns(result, continuousBuffCard, 1, 0, true)
+
+    // Points should be buffed but permanentBuffs should remain 0
+    expect(result[0][0].playerOnePoints).toBe(5)
+    expect(result[0][0].permanentBuffs).toBe(0)
+  })
+})
+
+// -- card destruction --
+
+describe('card destruction', () => {
+  // debuffCard: no pawn spreading, so destroyed tiles get NO automatic pawn
+  const debuffCard: CardInfo = {
+    name: 'Debuffer',
+    pawnsPositions: [],
+    points: 3,
+    pawnsCost: 1,
+    description: '',
+    effect: { value: -3, target: 'enemy', trigger: 'onPlace' },
+    effectPositions: [[1, 0]],
+  }
+
+  // debuffCardWithPawns: also spreads a pawn to [1,0] (same position as effect)
+  const debuffCardWithPawns: CardInfo = {
+    name: 'Debuffer With Pawns',
+    pawnsPositions: [[1, 0]],
+    points: 3,
+    pawnsCost: 1,
+    description: '',
+    effect: { value: -3, target: 'enemy', trigger: 'onPlace' },
+    effectPositions: [[1, 0]],
+  }
+
+  it('destroys an enemy card reduced to exactly 0', () => {
+    const board = createInitialBoard()
+    const enemyCard: CardInfo = { name: 'Enemy', pawnsPositions: [], points: 3, pawnsCost: 1, description: '' }
+    let result = mapPawns(board, enemyCard, 1, 4, false)
+
+    result[1][3].playerOnePawns = 1
+    result = mapPawns(result, debuffCard, 1, 3, true)
+
+    expect(result[1][4].card).toBeNull()
+    expect(result[1][4].playerTwoPoints).toBe(0)
+  })
+
+  it('destroys an enemy card reduced below 0', () => {
+    const board = createInitialBoard()
+    const enemyCard: CardInfo = { name: 'Enemy', pawnsPositions: [], points: 2, pawnsCost: 1, description: '' }
+    let result = mapPawns(board, enemyCard, 1, 4, false)
+
+    result[1][3].playerOnePawns = 1
+    result = mapPawns(result, debuffCard, 1, 3, true)
+
+    expect(result[1][4].card).toBeNull()
+    expect(result[1][4].playerTwoPoints).toBe(0)
+  })
+
+  it('destroyed tile has no pawns when card has no pawn spreading there', () => {
+    const board = createInitialBoard()
+    const enemyCard: CardInfo = { name: 'Enemy', pawnsPositions: [], points: 2, pawnsCost: 1, description: '' }
+    let result = mapPawns(board, enemyCard, 1, 4, false)
+
+    result[1][3].playerOnePawns = 1
+    result = mapPawns(result, debuffCard, 1, 3, true)
+
+    // No pawnsPositions targeting (1,4) — tile is simply empty
+    expect(result[1][4].playerOnePawns).toBe(0)
+    expect(result[1][4].playerTwoPawns).toBe(0)
+    expect(result[1][4].card).toBeNull()
+  })
+
+  it('destroyer gets pawn on cleared tile when pawn spreading reaches it', () => {
+    const board = createInitialBoard()
+    const enemyCard: CardInfo = { name: 'Enemy', pawnsPositions: [], points: 2, pawnsCost: 1, description: '' }
+    let result = mapPawns(board, enemyCard, 1, 4, false)
+
+    result[1][3].playerOnePawns = 1
+    result = mapPawns(result, debuffCardWithPawns, 1, 3, true)
+
+    // pawnsPositions [[1,0]] spreads to (1,4) after destruction clears it
+    expect(result[1][4].playerOnePawns).toBe(1)
+    expect(result[1][4].playerTwoPawns).toBe(0)
+    expect(result[1][4].card).toBeNull()
+  })
+
+  it('does not destroy a card whose points stay above 0', () => {
+    const board = createInitialBoard()
+    const enemyCard: CardInfo = { name: 'Tough', pawnsPositions: [], points: 5, pawnsCost: 1, description: '' }
+    let result = mapPawns(board, enemyCard, 1, 4, false)
+
+    result[1][3].playerOnePawns = 1
+    result = mapPawns(result, debuffCard, 1, 3, true)
+
+    // 5 - 3 = 2, card survives
+    expect(result[1][4].card).not.toBeNull()
+    expect(result[1][4].playerTwoPoints).toBe(2)
+  })
+
+  it('continuous debuff alone does not destroy a card', () => {
+    const board = createInitialBoard()
+    const enemyCard: CardInfo = { name: 'Enemy', pawnsPositions: [], points: 2, pawnsCost: 1, description: '' }
+    let result = mapPawns(board, enemyCard, 1, 4, false)
+
+    const continuousDebuffer: CardInfo = {
+      name: 'Continuous Debuffer',
+      pawnsPositions: [],
+      points: 1,
+      pawnsCost: 1,
+      description: '',
+      effect: { value: -3, target: 'enemy', trigger: 'continuous' },
+      effectPositions: [[1, 0]],
+    }
+    result[1][3].playerOnePawns = 1
+    result = mapPawns(result, continuousDebuffer, 1, 3, true)
+
+    // Continuous debuff shows 0 points (clamped) but card is NOT destroyed
+    expect(result[1][4].card).not.toBeNull()
+    expect(result[1][4].playerTwoPoints).toBe(0)
   })
 })

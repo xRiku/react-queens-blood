@@ -1,6 +1,7 @@
 export type CardEffect = {
   value: number
   target: 'ally' | 'enemy'
+  trigger: 'onPlace' | 'continuous'
 }
 
 export type CardInfo = {
@@ -22,4 +23,5 @@ export type Tile = {
   playerOnePawns: number
   playerTwoPawns: number
   card: CardInfo | null
+  permanentBuffs: number
 }

@@ -1,13 +1,13 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { CardInfo } from '@queens-blood/shared'
 import { deckCards } from '@queens-blood/shared'
+import type { CardInfo } from '@queens-blood/shared'
 
 type DeckStoreType = {
   deck: CardInfo[]
   addCard: (card: CardInfo) => void
   removeCard: (cardName: string) => void
-  resetToDefault: () => void
+  clearDeck: () => void
 }
 
 const useDeckStore = create<DeckStoreType>()(
@@ -35,7 +35,7 @@ const useDeckStore = create<DeckStoreType>()(
         set({ deck: newDeck })
       },
 
-      resetToDefault: () => set({ deck: [...deckCards] }),
+      clearDeck: () => set({ deck: [] }),
     }),
     {
       name: 'queens-blood-deck',
