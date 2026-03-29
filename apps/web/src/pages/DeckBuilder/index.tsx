@@ -25,12 +25,12 @@ function deduplicateDeck(deck: CardInfo[]): DeckEntry[] {
 
 export default function DeckBuilder() {
   const navigate = useNavigate()
-  const { deck, addCard, removeCard, resetToDefault } = useDeckStore(
+  const { deck, addCard, removeCard, clearDeck } = useDeckStore(
     useShallow((s) => ({
       deck: s.deck,
       addCard: s.addCard,
       removeCard: s.removeCard,
-      resetToDefault: s.resetToDefault,
+      clearDeck: s.clearDeck,
     })),
   )
 
@@ -50,7 +50,7 @@ export default function DeckBuilder() {
           <h2 className="text-xl xl:text-2xl font-title">Deck Builder</h2>
           <div className="flex items-center gap-3">
             <button
-              onClick={resetToDefault}
+              onClick={clearDeck}
               className="text-xs text-gray-500 hover:text-black underline underline-offset-2"
             >
               Reset

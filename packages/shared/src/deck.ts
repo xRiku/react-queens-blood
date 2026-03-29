@@ -200,7 +200,7 @@ export const allCards: CardInfo[] = [
     points: 1,
     pawnsCost: 1,
     description: 'Raise the power of allied cards on affected tiles by 2 while this card is in play.',
-    effect: { value: 2, target: 'ally' },
+    effect: { value: 2, target: 'ally', trigger: 'continuous' },
     effectPositions: [
       [0, 1],
     ],
@@ -214,9 +214,38 @@ export const allCards: CardInfo[] = [
     points: 1,
     pawnsCost: 2,
     description: 'Raise the power of allied cards on affected tiles by 1 while this card is in play.',
-    effect: { value: 1, target: 'ally' },
+    effect: { value: 1, target: 'ally', trigger: 'continuous' },
     effectPositions: [
       [0, -1],
+    ],
+  },
+  {
+    name: "Cactuar",
+    pawnsPositions: [
+      [1, 0],
+      [0, -1],
+    ],
+    points: 1,
+    pawnsCost: 1,
+    description: 'Raise the power of allied cards on affected tiles by 3 while this card is in play.',
+    effect: { value: 3, target: 'ally', trigger: 'continuous' },
+    effectPositions: [
+      [1, -2],
+    ],
+  },
+  {
+    name: "Archdragon",
+    pawnsPositions: [
+      [-1, 1],
+      [-1, -1],
+      [1, 0],
+    ],
+    points: 3,
+    pawnsCost: 1,
+    description: 'When played, lower the power of enemy cards on affected tiles by 3.',
+    effect: { value: -3, target: 'enemy', trigger: 'onPlace' },
+    effectPositions: [
+      [1, 0],
     ],
   },
 ]
