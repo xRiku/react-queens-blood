@@ -283,7 +283,14 @@ export default function Board({
           {isPlacementTile
             ? (
               <div className="flex justify-center p-0.5 md:p-1 h-full items-center opacity-50">
-                <Card placed card={previewTileData!.card} amIP1={amIP1} />
+                <Card
+                  placed
+                  card={previewTileData!.card}
+                  amIP1={amIP1}
+                  effectivePoints={previewTileData!.card?.placedByPlayerOne
+                    ? previewTileData!.playerOnePoints
+                    : previewTileData!.playerTwoPoints}
+                />
               </div>
               )
             : !tiles[i][boardCol].card
