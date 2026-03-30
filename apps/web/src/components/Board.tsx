@@ -1,5 +1,10 @@
 import { Tile } from '../@types/Tile'
-import { canAddCardToPosition, mapPawns, getActiveEffectPositions } from '@queens-blood/shared'
+import {
+  canAddCardToPosition,
+  mapPawns,
+  getActiveEffectPositions,
+  getActiveEffectIndicators,
+} from '@queens-blood/shared'
 import useCardStore from '../store/CardStore'
 import useBoardStore from '../store/BoardStore'
 import Card from './Card'
@@ -15,6 +20,7 @@ import Pawn from './Pawn'
 import { cn } from '../utils/cn'
 import { useShallow } from 'zustand/react/shallow'
 import { calcPlayerScores } from '../utils/calcPlayerScores'
+import { TileEffectBadge } from './TileIndicator'
 
 function ScoreCell({
   score,
@@ -156,6 +162,7 @@ export default function Board({
   }, [previewTile, tiles, selectedCard, amIP1])
 
   const activeEffectTiles = useMemo(() => getActiveEffectPositions(tiles), [tiles])
+  const activeEffectIndicators = useMemo(() => getActiveEffectIndicators(tiles), [tiles])
 
   const sumOfPlayersPoints = useMemo(() => {
     if (!gameOver || playerDisconnected) return [0, 0] as [number, number]
@@ -249,6 +256,8 @@ export default function Board({
       const isPlacementTile = previewTileData !== null && previewTileData.card !== null && !tiles[i][boardCol].card
       const isBuffedOrDebuffed = isAffected && tiles[i][boardCol].card !== null
       const isActiveEffect = activeEffectTiles.has(`${i}-${boardCol}`)
+      const effectIndicator = activeEffectIndicators.get(`${i}-${boardCol}`)
+      const showEffectIndicator = Boolean(effectIndicator) && !isPlacementTile
 
       tilesElements[i][j] = (
         <div
@@ -280,6 +289,12 @@ export default function Board({
           onMouseLeave={!isMobile ? () => setPreviewTile(null) : undefined}
           key={`${i}-${j}`}
         >
+          {showEffectIndicator && (
+            <div className="pointer-events-none absolute top-0.5 right-0.5 z-10">
+              <TileEffectBadge indicator={effectIndicator!} />
+            </div>
+          )}
+
           {isPlacementTile
             ? (
               <div className="flex justify-center p-0.5 md:p-1 h-full items-center opacity-50">
@@ -298,8 +313,7 @@ export default function Board({
                   <div className={cn(
                     'text-center',
                     isAffected && 'opacity-60',
-                    isActiveEffect && 'animate-pulse',
-                  )}
+                    )}
                   >
                     {(() => {
                       const displayTile = isAffected && previewTileData

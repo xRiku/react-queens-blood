@@ -2,8 +2,158 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes tile-indicator-float {
+  0%,
+  100% {
+    transform: translateY(var(--tile-indicator-distance, 2px));
+  }
+  50% {
+    transform: translateY(calc(var(--tile-indicator-distance, 2px) * -1));
+  }
+}
+
+.tile-indicator-float {
+  animation: tile-indicator-float var(--tile-indicator-duration, 1.6s)
+    ease-in-out infinite;
+}
+
+@keyframes tile-indicator-ring {
+  0% {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+.tile-indicator-ring {
+  animation: tile-indicator-ring 1.4s ease-out infinite;
+}
+
+/* Sparkle animation — 4-pointed star made of CSS rays, no icon */
+@keyframes sparkle-ray-anim {
+  0%,
+  100% {
+    transform: scaleY(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scaleY(0.1);
+    opacity: 0.2;
+  }
+}
+
+@keyframes sparkle-ray-diag-anim {
+  0%,
+  100% {
+    transform: scaleY(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scaleY(0.1);
+    opacity: 0.1;
+  }
+}
+
+@keyframes sparkle-core-anim {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.35);
+    opacity: 0.5;
+  }
+}
+
+.sparkle-ray-main {
+  animation: sparkle-ray-anim 1.4s ease-in-out infinite;
+}
+
+.sparkle-ray-diag {
+  /* Offset so diagonals are bright when main rays are dim — creates twinkling */
+  animation: sparkle-ray-diag-anim 1.4s ease-in-out infinite 0.35s;
+}
+
+.sparkle-core-dot {
+  animation: sparkle-core-anim 1.4s ease-in-out infinite;
+}
+
+/* Drip — drops falling, gravity feel */
+@keyframes drip-fall {
+  0% { transform: translateY(-6px); opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 0.85; }
+  100% { transform: translateY(18px); opacity: 0; }
+}
+.drip-drop {
+  animation: drip-fall 1.1s ease-in infinite;
+}
+
+/* Void ring — dark ring expands outward and fades */
+@keyframes void-ring-anim {
+  0% { transform: scale(0.3); opacity: 1; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+.void-ring {
+  animation: void-ring-anim 1.5s ease-out infinite;
+}
+
+/* X mark — two crossed lines pulse in/out */
+@keyframes x-mark-anim {
+  0%, 100% { transform: scaleY(1); opacity: 0.85; }
+  50% { transform: scaleY(0.45); opacity: 0.25; }
+}
+.x-mark-ray {
+  animation: x-mark-anim 1.1s ease-in-out infinite;
+}
+
+/* Omen — single dot breathes very slowly */
+@keyframes omen-anim {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(0.2); opacity: 0.15; }
+}
+.omen-dot {
+  animation: omen-anim 2.4s ease-in-out infinite;
+}
+
+/* Swirl — container rotates, dots orbit the center */
+@keyframes swirl-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.swirl-orbit {
+  animation: swirl-rotate 2s linear infinite;
+}
+
+/* Glitch — sparkle rays that flicker erratically */
+@keyframes glitch-ray-anim {
+  0%, 14%, 16%, 49%, 51%, 84%, 86%, 100% { transform: scaleY(1); opacity: 0.85; }
+  15%, 50%, 85% { transform: scaleY(0.04); opacity: 0; }
+}
+.glitch-ray {
+  animation: glitch-ray-anim 2.6s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-pulse {
+    animation: none;
+  }
+
+  .tile-indicator-float,
+  .tile-indicator-ring,
+  .sparkle-ray-main,
+  .sparkle-ray-diag,
+  .sparkle-core-dot,
+  .drip-drop,
+  .void-ring,
+  .x-mark-ray,
+  .omen-dot,
+  .swirl-orbit,
+  .glitch-ray {
     animation: none;
   }
 }
