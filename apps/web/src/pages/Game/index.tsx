@@ -32,6 +32,7 @@ export default function Game() {
   const [loading, setLoading] = useState(!isBotGame)
   const [gameBusy, setGameBusy] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
+  const [handRenderVersion, setHandRenderVersion] = useState(0)
 
   const toggleTurn = useTurnStore((s) => s.toggleTurn)
   const setPlayerSkippedTurn = useTurnStore((s) => s.setPlayerSkippedTurn)
@@ -71,7 +72,12 @@ export default function Game() {
   const hideReadyRoom = useModalStore((s) => s.hideReadyRoom)
 
   const botPlayerName = location.state?.playerName || 'Player'
-  const botActions = useBotGame(isBotGame, botPlayerName, setShowEndGame)
+  const botActions = useBotGame(
+    isBotGame,
+    botPlayerName,
+    setShowEndGame,
+    () => setHandRenderVersion((v) => v + 1),
+  )
 
   useEffect(() => {
     if (isBotGame) return
@@ -102,6 +108,7 @@ export default function Game() {
       setRematchStatuses('waiting', 'waiting')
 
       setLoading(false)
+      setHandRenderVersion((v) => v + 1)
       setAmIP1(data.isPlayerOne)
       setHand(data.initialHand)
       toggleGameStartModal()
@@ -256,7 +263,7 @@ export default function Game() {
               <PlaceCardButton />
             </div>
             <div className="min-h-0">
-              <Hand />
+              <Hand key={handRenderVersion} />
             </div>
           </div>
         ) : null}

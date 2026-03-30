@@ -45,6 +45,7 @@ export function useBotGame(
   enabled: boolean,
   playerName: string,
   setShowEndGame?: (show: boolean) => void,
+  onNewMatchStart?: () => void,
 ): BotGameActions | null {
   const stateRef = useRef<BotGameState | null>(null)
 
@@ -106,6 +107,7 @@ export function useBotGame(
     setPlayerOneName(playerName)
     setPlayerTwoName('Bot')
     setHand(humanDraw.drawn)
+    onNewMatchStart?.()
     setBoard(board)
     setPoints(board)
     toggleGameStartModal()
