@@ -2,8 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { cn } from '../../utils/cn'
 
 type IndicatorTone = 'buff' | 'debuff' | null
-
-type DebuffStyle = 'penta' | 'spike' | 'tri' | 'comet' | 'oct' | 'hex'
+type AnimStyle = 'bounce' | 'pulse' | 'elastic' | 'jolt' | 'drift' | 'chase'
 
 const ROWS = 3
 const COLS = 5
@@ -20,152 +19,147 @@ const indicatorMap: Record<string, IndicatorTone> = {
 
 const occupiedTiles = ['0-1', '1-2', '1-4', '2-2']
 
-type RayDef = { angle: number; length: number; width?: number; delay?: number; duration?: number }
+const animVariants: { style: AnimStyle; label: string; description: string; feel: string }[] = [
+  {
+    style: 'bounce',
+    label: 'A. Bounce',
+    description: 'Smooth translateY oscillation in the arrow\'s direction.',
+    feel: 'Playful, energetic — like a buff ready to fire',
+  },
+  {
+    style: 'pulse',
+    label: 'B. Pulse',
+    description: 'Scales down and fades, no movement. Rhythmic breathing.',
+    feel: 'Calm, sustained — passive aura effect',
+  },
+  {
+    style: 'elastic',
+    label: 'C. Elastic',
+    description: 'Shoots past the target, overshoots back, settles. Spring physics.',
+    feel: 'Powerful, emphatic — just gained an advantage',
+  },
+  {
+    style: 'jolt',
+    label: 'D. Jolt',
+    description: 'Three decreasing bumps then a long rest before repeating.',
+    feel: 'Urgent, active — drawing attention to a volatile effect',
+  },
+  {
+    style: 'drift',
+    label: 'E. Drift',
+    description: 'Floats continuously in its direction, fades out, resets. Looping particle.',
+    feel: 'Ethereal, magical — an enchantment bleeding energy',
+  },
+  {
+    style: 'chase',
+    label: 'F. Chase',
+    description: 'Two arrows drifting in sequence, half a cycle apart. Endless parade.',
+    feel: 'Accumulating, overwhelming — a stacking or multiplying effect',
+  },
+]
 
-// ─── Buff (settled) ───────────────────────────────────────────────────────────
+// ─── Arrow shape (no animation) ───────────────────────────────────────────────
 
-function SparkleAnim({ size = 'md' }: { size?: 'sm' | 'md' }) {
-  const mainH = size === 'sm' ? 'h-3' : 'h-[18px]'
-  const diagH = size === 'sm' ? 'h-2' : 'h-[13px]'
-  const coreWH = size === 'sm' ? 'w-[5px] h-[5px]' : 'w-[7px] h-[7px]'
-  const container = size === 'sm' ? 'w-3 h-3' : 'w-[18px] h-[18px]'
+function ArrowShape({
+  direction,
+  color,
+}: {
+  direction: 'up' | 'down'
+  color: string
+}) {
+  const head = 'w-[9px] h-[7px]'
+  const stem = 'w-[3px] h-[5px]'
+  if (direction === 'up') {
+    return (
+      <div className="flex flex-col items-center">
+        <div className={cn(head, color)} style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }} />
+        <div className={cn(stem, color, 'rounded-sm')} />
+      </div>
+    )
+  }
   return (
-    <div className={cn('relative flex items-center justify-center shrink-0', container)}>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className={cn('w-px rounded-full sparkle-ray-main bg-amber-400', mainH)} />
-      </div>
-      <div className="absolute inset-0 flex items-center justify-center rotate-90">
-        <div className={cn('w-px rounded-full sparkle-ray-main bg-amber-400', mainH)} />
-      </div>
-      <div className="absolute inset-0 flex items-center justify-center rotate-45">
-        <div className={cn('w-px rounded-full sparkle-ray-diag bg-amber-400', diagH)} />
-      </div>
-      <div className="absolute inset-0 flex items-center justify-center -rotate-45">
-        <div className={cn('w-px rounded-full sparkle-ray-diag bg-amber-400', diagH)} />
-      </div>
-      <div className={cn('absolute rounded-full sparkle-core-dot bg-amber-200', coreWH)} />
+    <div className="flex flex-col items-center">
+      <div className={cn(stem, color, 'rounded-sm')} />
+      <div className={cn(head, color)} style={{ clipPath: 'polygon(0% 0%, 100% 0%, 50% 100%)' }} />
     </div>
   )
 }
 
-// ─── Star shape primitive ─────────────────────────────────────────────────────
+// ─── Animated arrow — applies the right CSS class per variant ─────────────────
 
-function StarShape({ rays, size }: { rays: RayDef[]; size: 'sm' | 'md' }) {
-  const scale = size === 'sm' ? 0.68 : 1
-  const container = size === 'sm' ? 'w-3 h-3' : 'w-[18px] h-[18px]'
-  return (
-    <div className={cn('relative flex items-center justify-center shrink-0', container)}>
-      {rays.map((ray, i) => (
-        <div
-          key={i}
-          className="absolute inset-0 flex items-center justify-center"
-          style={{ transform: `rotate(${ray.angle}deg)` }}
-        >
-          <div
-            className="rounded-full x-mark-ray bg-purple-700"
-            style={{
-              width: Math.max(1, Math.round((ray.width ?? 1) * scale)),
-              height: Math.max(3, Math.round(ray.length * scale)),
-              animationDelay: `${ray.delay ?? 0}s`,
-              animationDuration: `${ray.duration ?? 1.1}s`,
-            }}
-          />
+function AnimatedArrow({
+  direction,
+  animStyle,
+}: {
+  direction: 'up' | 'down'
+  animStyle: AnimStyle
+}) {
+  const color = direction === 'up' ? 'bg-green-500' : 'bg-red-500'
+  const shape = <ArrowShape direction={direction} color={color} />
+
+  if (animStyle === 'bounce') {
+    return (
+      <div className={direction === 'up' ? 'arrow-up-bounce' : 'arrow-down-bounce'}>
+        {shape}
+      </div>
+    )
+  }
+
+  if (animStyle === 'pulse') {
+    return <div className="arrow-pulse">{shape}</div>
+  }
+
+  if (animStyle === 'elastic') {
+    return (
+      <div className={direction === 'up' ? 'arrow-elastic-up' : 'arrow-elastic-down'}>
+        {shape}
+      </div>
+    )
+  }
+
+  if (animStyle === 'jolt') {
+    return (
+      <div className={direction === 'up' ? 'arrow-jolt-up' : 'arrow-jolt-down'}>
+        {shape}
+      </div>
+    )
+  }
+
+  if (animStyle === 'drift') {
+    return (
+      <div className={direction === 'up' ? 'arrow-drift-up' : 'arrow-drift-down'}>
+        {shape}
+      </div>
+    )
+  }
+
+  // Chase — two arrows at same position, second offset by half the drift duration
+  if (animStyle === 'chase') {
+    const driftClass = direction === 'up' ? 'arrow-drift-up' : 'arrow-drift-down'
+    return (
+      <div className="relative" style={{ width: 9, height: 16 }}>
+        <div className={cn('absolute inset-0 flex flex-col items-center justify-center', driftClass)}>
+          {shape}
         </div>
-      ))}
-    </div>
-  )
-}
+        <div
+          className={cn('absolute inset-0 flex flex-col items-center justify-center', driftClass)}
+          style={{ animationDelay: '0.55s' }}
+        >
+          {shape}
+        </div>
+      </div>
+    )
+  }
 
-// ─── Debuff star variants ─────────────────────────────────────────────────────
-
-// A. Penta — 5 points at irregular angles and lengths
-const pentaRays: RayDef[] = [
-  { angle: 0,   length: 15, width: 1, delay: 0,    duration: 1.0  },
-  { angle: 68,  length: 10, width: 1, delay: 0.12, duration: 1.2  },
-  { angle: 138, length: 13, width: 1, delay: 0.22, duration: 0.92 },
-  { angle: 208, length: 8,  width: 2, delay: 0.30, duration: 1.15 },
-  { angle: 295, length: 12, width: 1, delay: 0.08, duration: 1.05 },
-]
-
-// B. Spike — 6 points alternating long thin / short thick
-const spikeRays: RayDef[] = [
-  { angle: 0,   length: 16, width: 1, delay: 0,    duration: 1.0  },
-  { angle: 60,  length: 7,  width: 2, delay: 0.10, duration: 0.85 },
-  { angle: 120, length: 15, width: 1, delay: 0.20, duration: 1.05 },
-  { angle: 180, length: 6,  width: 2, delay: 0.30, duration: 0.82 },
-  { angle: 240, length: 14, width: 1, delay: 0.15, duration: 1.0  },
-  { angle: 300, length: 7,  width: 2, delay: 0.25, duration: 0.88 },
-]
-
-// C. Tri — 3 elongated rays, aggressive and uneven
-const triRays: RayDef[] = [
-  { angle: 5,   length: 17, width: 1, delay: 0,    duration: 1.15 },
-  { angle: 128, length: 13, width: 2, delay: 0.25, duration: 0.95 },
-  { angle: 252, length: 16, width: 1, delay: 0.45, duration: 1.05 },
-]
-
-// D. Comet — one dominant arm + 4 shorter minor rays
-const cometRays: RayDef[] = [
-  { angle: 0,   length: 17, width: 1, delay: 0,    duration: 1.1  },
-  { angle: 110, length: 8,  width: 1, delay: 0.12, duration: 0.9  },
-  { angle: 162, length: 6,  width: 2, delay: 0.22, duration: 1.0  },
-  { angle: 218, length: 9,  width: 1, delay: 0.18, duration: 1.2  },
-  { angle: 290, length: 7,  width: 1, delay: 0.30, duration: 0.88 },
-]
-
-// E. Oct — 8 thin rays at irregular angles, dense and chaotic
-const octRays: RayDef[] = [
-  { angle: 0,   length: 14, width: 1, delay: 0,    duration: 1.0  },
-  { angle: 38,  length: 9,  width: 1, delay: 0.08, duration: 1.15 },
-  { angle: 85,  length: 12, width: 1, delay: 0.16, duration: 0.9  },
-  { angle: 128, length: 7,  width: 1, delay: 0.24, duration: 1.05 },
-  { angle: 170, length: 13, width: 1, delay: 0.32, duration: 0.95 },
-  { angle: 218, length: 8,  width: 1, delay: 0.40, duration: 1.2  },
-  { angle: 265, length: 11, width: 1, delay: 0.48, duration: 1.0  },
-  { angle: 310, length: 6,  width: 1, delay: 0.56, duration: 0.88 },
-]
-
-// F. Hex — 6 rays at roughly 60° but with varied widths and lengths
-const hexRays: RayDef[] = [
-  { angle: 0,   length: 15, width: 1, delay: 0,    duration: 1.05 },
-  { angle: 55,  length: 11, width: 2, delay: 0.10, duration: 0.9  },
-  { angle: 120, length: 13, width: 1, delay: 0.20, duration: 1.1  },
-  { angle: 175, length: 9,  width: 2, delay: 0.30, duration: 0.85 },
-  { angle: 240, length: 16, width: 1, delay: 0.15, duration: 1.0  },
-  { angle: 298, length: 10, width: 1, delay: 0.25, duration: 0.95 },
-]
-
-const debuffVariants: {
-  style: DebuffStyle
-  label: string
-  description: string
-  rays: RayDef[]
-}[] = [
-  { style: 'penta', label: 'A. Penta', rays: pentaRays,
-    description: '5 points at uneven angles and unequal lengths. Off-balance.' },
-  { style: 'spike', label: 'B. Spike', rays: spikeRays,
-    description: '6 points alternating long+thin and short+thick. Jagged.' },
-  { style: 'tri',   label: 'C. Tri',   rays: triRays,
-    description: '3 elongated rays at irregular angles. Aggressive and minimal.' },
-  { style: 'comet', label: 'D. Comet', rays: cometRays,
-    description: 'One dominant arm, four minor rays. Asymmetric weight.' },
-  { style: 'oct',   label: 'E. Oct',   rays: octRays,
-    description: '8 thin rays at irregular angles with staggered timing. Dense.' },
-  { style: 'hex',   label: 'F. Hex',   rays: hexRays,
-    description: '6 rays near 60° apart but with varied widths and lengths.' },
-]
-
-const debuffRaysMap: Record<DebuffStyle, RayDef[]> = {
-  penta: pentaRays, spike: spikeRays, tri: triRays,
-  comet: cometRays, oct: octRays,    hex: hexRays,
+  return <div>{shape}</div>
 }
 
 // ─── Board ────────────────────────────────────────────────────────────────────
 
 function Tile({
-  tone, occupied, index, debuffStyle,
+  tone, occupied, index, animStyle,
 }: {
-  tone: IndicatorTone; occupied: boolean; index: number; debuffStyle: DebuffStyle
+  tone: IndicatorTone; occupied: boolean; index: number; animStyle: AnimStyle
 }) {
   return (
     <div className={cn(
@@ -175,29 +169,31 @@ function Tile({
       {occupied && (
         <div className="absolute inset-1 rounded-sm border border-yellow-500 bg-yellow-200/90 z-10" />
       )}
-      {tone === 'buff' && (
+      {tone && (
         <div className="pointer-events-none absolute top-0.5 right-0.5 z-20">
-          <SparkleAnim size="sm" />
-        </div>
-      )}
-      {tone === 'debuff' && (
-        <div className="pointer-events-none absolute top-0.5 right-0.5 z-20">
-          <StarShape rays={debuffRaysMap[debuffStyle]} size="sm" />
+          <AnimatedArrow
+            direction={tone === 'buff' ? 'up' : 'down'}
+            animStyle={animStyle}
+          />
         </div>
       )}
     </div>
   )
 }
 
-function VariantCard({ style, label, description, rays }: typeof debuffVariants[number]) {
+function VariantCard({ style, label, description, feel }: typeof animVariants[number]) {
   return (
     <div className="rounded-lg border border-black bg-white p-4 flex flex-col gap-3">
       <div>
-        <div className="flex items-center gap-2 mb-1">
+        <div className="flex items-center gap-3 mb-1">
           <h3 className="text-sm font-bold font-title">{label}</h3>
-          <StarShape rays={rays} size="sm" />
+          <div className="flex items-center gap-2">
+            <AnimatedArrow direction="up" animStyle={style} />
+            <AnimatedArrow direction="down" animStyle={style} />
+          </div>
         </div>
-        <p className="text-xs text-gray-500">{description}</p>
+        <p className="text-xs text-gray-600">{description}</p>
+        <p className="text-xs text-gray-400 italic mt-0.5">{feel}</p>
       </div>
       <div className="grid grid-cols-5 gap-1">
         {Array.from({ length: ROWS * COLS }).map((_, idx) => {
@@ -208,7 +204,7 @@ function VariantCard({ style, label, description, rays }: typeof debuffVariants[
               index={idx}
               tone={indicatorMap[key] ?? null}
               occupied={occupiedTiles.includes(key)}
-              debuffStyle={style}
+              animStyle={style}
             />
           )
         })}
@@ -224,26 +220,13 @@ export default function Playground() {
 
   return (
     <div className="w-full max-w-5xl px-5 py-8 md:py-10">
-      <h2 className="text-2xl md:text-3xl font-title">Issue #16 — Irregular Star Shapes</h2>
+      <h2 className="text-2xl md:text-3xl font-title">Issue #16 — Arrow Animation Styles</h2>
       <p className="mt-1 text-sm text-gray-500">
-        Star-like debuff indicators with uneven points, varied angles, and staggered pulse timing.
-        Buff sparkle is settled.
+        Same shape, six different animations. Colors fixed (green up / red down) so the motion is the focus.
       </p>
 
-      <div className="mt-4 flex flex-wrap items-center gap-5 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-xs text-gray-600">
-        <span className="font-semibold text-gray-700">Legend:</span>
-        <span className="inline-flex items-center gap-2">
-          <SparkleAnim size="sm" />
-          Buff (settled)
-        </span>
-        <span className="inline-flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-sm border border-yellow-500 bg-yellow-200" />
-          Occupied tile
-        </span>
-      </div>
-
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {debuffVariants.map(v => (
+        {animVariants.map(v => (
           <VariantCard key={v.style} {...v} />
         ))}
       </div>

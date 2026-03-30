@@ -257,7 +257,7 @@ export default function Board({
       const isBuffedOrDebuffed = isAffected && tiles[i][boardCol].card !== null
       const isActiveEffect = activeEffectTiles.has(`${i}-${boardCol}`)
       const effectIndicator = activeEffectIndicators.get(`${i}-${boardCol}`)
-      const showEffectIndicator = Boolean(effectIndicator) && !isPlacementTile
+      const showEffectIndicator = Boolean(effectIndicator) && !isPlacementTile && !tiles[i][boardCol].card
 
       tilesElements[i][j] = (
         <div

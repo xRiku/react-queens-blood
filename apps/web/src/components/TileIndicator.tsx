@@ -1,60 +1,56 @@
 import { cn } from '../utils/cn'
 
-// ─── Buff — amber 4-pointed sparkle ──────────────────────────────────────────
+// ─── Arrow shape (no animation) ───────────────────────────────────────────────
 
-export function SparkleAnim({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
-  const mainH = size === 'sm' ? 'h-3' : size === 'md' ? 'h-[18px]' : 'h-[26px]'
-  const diagH = size === 'sm' ? 'h-2' : size === 'md' ? 'h-[13px]' : 'h-[19px]'
-  const coreWH = size === 'sm' ? 'w-[5px] h-[5px]' : size === 'md' ? 'w-[7px] h-[7px]' : 'w-[10px] h-[10px]'
-  const container = size === 'sm' ? 'w-3 h-3' : size === 'md' ? 'w-[18px] h-[18px]' : 'w-[26px] h-[26px]'
+function ArrowShape({
+  direction,
+  headColor,
+  stemColor,
+  size,
+}: {
+  direction: 'up' | 'down'
+  headColor: string
+  stemColor: string
+  size: 'sm' | 'lg'
+}) {
+  const head = size === 'sm' ? 'w-[9px] h-[7px]'  : 'w-[13px] h-[10px]'
+  const stem = size === 'sm' ? 'w-[3px] h-[5px]'  : 'w-[4px]  h-[8px]'
+  if (direction === 'up') {
+    return (
+      <div className="flex flex-col items-center">
+        <div className={cn(head, headColor)} style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }} />
+        <div className={cn(stem, stemColor, 'rounded-sm')} />
+      </div>
+    )
+  }
   return (
-    <div className={cn('relative flex items-center justify-center shrink-0', container)}>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className={cn('w-px rounded-full sparkle-ray-main bg-amber-400', mainH)} />
-      </div>
-      <div className="absolute inset-0 flex items-center justify-center rotate-90">
-        <div className={cn('w-px rounded-full sparkle-ray-main bg-amber-400', mainH)} />
-      </div>
-      <div className="absolute inset-0 flex items-center justify-center rotate-45">
-        <div className={cn('w-px rounded-full sparkle-ray-diag bg-amber-400', diagH)} />
-      </div>
-      <div className="absolute inset-0 flex items-center justify-center -rotate-45">
-        <div className={cn('w-px rounded-full sparkle-ray-diag bg-amber-400', diagH)} />
-      </div>
-      <div className={cn('absolute rounded-full sparkle-core-dot bg-amber-200', coreWH)} />
+    <div className="flex flex-col items-center">
+      <div className={cn(stem, stemColor, 'rounded-sm')} />
+      <div className={cn(head, headColor)} style={{ clipPath: 'polygon(0% 0%, 100% 0%, 50% 100%)' }} />
     </div>
   )
 }
 
-// ─── Debuff — purple 3-pointed irregular star (Tri) ──────────────────────────
+// ─── Drift arrow — floats continuously in its direction, fades, resets ────────
 
-export function TriStarAnim({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
-  const scale = size === 'sm' ? 0.68 : size === 'md' ? 1 : 1.45
-  const container = size === 'sm' ? 'w-3 h-3' : size === 'md' ? 'w-[18px] h-[18px]' : 'w-[26px] h-[26px]'
-  const rays = [
-    { angle: 5,   length: 17, width: 1, delay: 0,    duration: 1.15 },
-    { angle: 128, length: 13, width: 2, delay: 0.25, duration: 0.95 },
-    { angle: 252, length: 16, width: 1, delay: 0.45, duration: 1.05 },
-  ]
+function DriftArrow({
+  direction,
+  size = 'lg',
+}: {
+  direction: 'up' | 'down'
+  size?: 'sm' | 'lg'
+}) {
+  const driftClass = direction === 'up' ? 'arrow-drift-up' : 'arrow-drift-down'
+  const headColor  = direction === 'up' ? 'bg-green-500'   : 'bg-purple-700'
+  const stemColor  = direction === 'up' ? 'bg-green-400'   : 'bg-purple-600'
+  const w = size === 'sm' ? 9  : 13
+  const h = size === 'sm' ? 16 : 22
+
   return (
-    <div className={cn('relative flex items-center justify-center shrink-0', container)}>
-      {rays.map((ray, i) => (
-        <div
-          key={i}
-          className="absolute inset-0 flex items-center justify-center"
-          style={{ transform: `rotate(${ray.angle}deg)` }}
-        >
-          <div
-            className="rounded-full x-mark-ray bg-purple-700"
-            style={{
-              width: Math.max(1, Math.round(ray.width * scale)),
-              height: Math.max(3, Math.round(ray.length * scale)),
-              animationDelay: `${ray.delay}s`,
-              animationDuration: `${ray.duration}s`,
-            }}
-          />
-        </div>
-      ))}
+    <div className="relative shrink-0" style={{ width: w, height: h }}>
+      <div className={cn('absolute inset-0 flex flex-col items-center justify-center', driftClass)}>
+        <ArrowShape direction={direction} headColor={headColor} stemColor={stemColor} size={size} />
+      </div>
     </div>
   )
 }
@@ -64,12 +60,12 @@ export function TriStarAnim({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
 export function TileEffectBadge({ indicator }: { indicator: 'up' | 'down' | 'mixed' }) {
   return (
     <span className="flex items-center justify-center">
-      {indicator === 'up'    && <SparkleAnim size="lg" />}
-      {indicator === 'down'  && <TriStarAnim size="lg" />}
+      {indicator === 'up'    && <DriftArrow direction="up" />}
+      {indicator === 'down'  && <DriftArrow direction="down" />}
       {indicator === 'mixed' && (
         <div className="flex items-center gap-0.5">
-          <SparkleAnim size="sm" />
-          <TriStarAnim size="sm" />
+          <DriftArrow direction="up"   size="sm" />
+          <DriftArrow direction="down" size="sm" />
         </div>
       )}
     </span>
