@@ -2,25 +2,46 @@
  👑 React Queen's Blood 👑
 </h1>
 
-React Queen's Blood is a simplified multiplayer web version of the card game _Queen's Blood_ from _Final Fantasy VII Rebirth_, made using React.
+React Queen's Blood is a multiplayer web implementation inspired by the Queen's Blood minigame from _Final Fantasy VII Rebirth_.
 
 <img src=".github/game.png"/>
 
-Disclaimer: I do not own the Intellectual Property of Queen's Blood. I only implemented a simplistic version of the game.
+Disclaimer: I do not own the Queen's Blood IP. This project is a fan-made implementation.
 
-## 🖥️ Technologies used
+## What changed since 2024
 
-- React 18 + TypeScript
+### Gameplay
+
+- Added ready-room confirmation before each match starts
+- Added rematch flow with accept/decline statuses
+- Added play-vs-bot mode
+- Added card effects (continuous buffs + on-place debuffs)
+- Added card destruction when an on-place debuff drops a card to 0
+
+### Product/UI
+
+- Added Deck Builder with 15-card validation and max 2 copies per card
+- Added All Cards page as a card glossary
+- Added mobile-friendly interactions (tap to preview, then confirm)
+- Added live server-status indicator (online, waking, offline)
+
+### Engineering
+
+- Consolidated game rules in `packages/shared` for reuse between server and client
+- Added shared game-logic tests with Vitest
+- Added payload validation with Zod on server events
+
+## Stack
+
+- React + TypeScript (Vite)
 - React Router + TanStack Query
 - Tailwind CSS + Framer Motion
-- Zustand for client state management
-- Fastify + Socket.io for the game server
-- Zod for server payload validation
+- Zustand
+- Fastify + Socket.IO
+- Zod + Vitest
 - Turbo monorepo (`apps/web`, `apps/server`, `packages/shared`)
 
-## 🔧 How to set up the project locally
-
-In your terminal, run:
+## Local setup
 
 ```sh
 $ git clone https://github.com/xRiku/react-queens-blood.git
@@ -29,12 +50,10 @@ $ npm install
 $ npm run dev
 ```
 
-This starts both apps in parallel:
+- Web client: `http://localhost:5173`
+- Server: `http://localhost:4000`
 
-- Web client at `http://localhost:5173`
-- Socket server at `http://localhost:4000`
-
-If needed, run each app separately:
+Run apps separately if needed:
 
 ```sh
 $ npm run dev -w @queens-blood/server
@@ -43,111 +62,160 @@ $ npm run dev -w @queens-blood/web
 
 Optional environment variables:
 
-- `PORT` — server port (default `4000`)
-- `CORS_ORIGIN` — comma-separated allowed origins
-- `VITE_SOCKET_URL` — socket URL used by the client
+- `PORT` (default `4000`)
+- `CORS_ORIGIN` (comma-separated allowed origins)
+- `VITE_SOCKET_URL` (socket URL used by the client)
 
-### 🌟 Optimal way to play
+For two-device play on the same network, see `docs/local-network-setup.md`.
 
-Part of the fun in a Queen's Blood game is not having access to the opponent's hand. So the optimal way to play is setting up the server and playing on two different devices in the same network. This requires that the 5173 port of the device running the app is exposed to the LAN.
-
-Once the port is exposed, access the application in the other computer's browser using the following address `<IP_RUNNING_THE_APP>:5173`. In order to acquire the IP, run the following command:
-
-Linux
-
-```
-ifconfig | grep 192.168
-```
-
-<img src=".github/linux_ip.png" >
-
-Windows
-
-```
-ipconfig
-```
-
-On Windows, the IP is located after `IPv4 Address`.
-
-<img src=".github/windows_ip.png" >
-
-## 🧩 How to play
-
-### ✨ Feature highlights
+## Feature highlights
 
 - Multiplayer rooms with shareable 6-digit room code
-- Ready-room confirmation before each match starts
-- Play against a local bot without the server
-- Card effects system (continuous buffs + on-place debuffs)
-- Card destruction when an on-place debuff drops a card to 0
-- End-game rematch flow with accept/decline status
-- Deck Builder (15-card deck, max 2 copies per card)
-- Rules page + full card gallery
-- Mobile-friendly board interactions (tap to preview, then confirm)
+- Ready-room gate before gameplay starts
+- End-game rematch flow
+- Play vs bot without running the server
+- Deck Builder and All Cards glossary
+- Responsive UI for desktop and mobile
 
-### ➡️ Entering the game
+## UI snapshots
 
-You can either create a game room or join a game. Each room has its own game ID and you can only have two players per room.
+<img src=".github/deck_builder.png">
+
+<img src=".github/cards_gallery.png">
+
+Server status indicator:
+
+- Online state
+
+<img src=".github/server_status_indicator_online.png">
+
+- Startup/waking state
+
+<img src=".github/server_status_indicator.png">
+
+## Quick match flow
+
+1. Create a room or join one with a 6-digit code.
 
 <img src=".github/home_screen.png">
 
-To start a new game, type your name and click the `Create Room` button. A random game ID is generated and shown while waiting for the second player.
+2. Room creator receives a game code while waiting for the second player.
 
 <img src=".github/game_ID.png">
 
-This 6-digit room code is used by the second player. To join, enter the code in the join input and click `Join`, then enter your player name.
+3. Player two joins with code + player name.
 
 <img src=".github/join_game.png">
 
-After clicking `Join`, both players enter a ready room. The match starts after both confirm they are ready. The room creator is always Player 1.
+4. Both players confirm readiness in the ready room.
 
-### 📜 Rules
+<img src=".github/ready_room.png">
 
-The game is composed of a board and a deck of 15 cards. The board contains three rows and five playable columns. Each player has a score for each row. Points are scored by placing cards on the board. Whoever has the highest sum of the points for each row wins.
-
-<img src=".github/game_board.png">
-
-The user playing is always displayed in green, on the left side, and the opponent in red, on the right side. The first and last column of the board represents the total score for that row in each player's respective color. You may also note that there are pawns in each row and each side of the board. In React Queen's Blood, you can only place a card in a tile with a pawn in it and if it is from your color, which is green. The tile can contain 1-3 pawns, which represent the cost of the card (to be explained).
-
-Each card has 4 key pieces of information. The text at the bottom is the card name, and each deck can only contain 2 copies of the same card. The pawn icon at the top-left indicates the card cost (1-3). The number at the top-right indicates the card score.
-
-<img src=".github/card.png">
-
-Each card also has a 5x5 inner grid that defines how it interacts with the board. When you place a card, it can also place pawns and expand your available positions. The inner grid uses three tile colors: **Gray** tiles have no effect, the **White** tile is the card placement position, and **Yellow** tiles are where pawns are placed relative to the played card.
-
-<img src=".github/yellow_tile_example.png">
-
-:warning: If a yellow target tile already contains your pawn(s), one pawn is added to that tile. If it contains opponent pawn(s), all pawns on that tile are converted to your color.
-
-<img src=".github/pawn_converted_example.gif">
-
-The game starts with Player 1. Both players begin with 5 cards. On each following turn, the active player draws 1 random card before acting. Each turn, you either place a card on the board or skip by clicking `Skip Turn`. Placing a card adds its score to that row for the player who placed it. The game ends when both players skip consecutively. At the end, each row is scored independently: if your row score is higher, that row's score is added to your total; if you lose or tie the row, you gain 0 from it. The highest total wins.
+5. Match ends when both players skip consecutively; result can be win/lose/tie, then rematch flow starts.
 
 <img src=".github/end_game_example.png">
 
-## 🚧 Roadmap
+## Rules
 
-Originally planned items, updated with current status:
+- The board has 3 rows and 5 playable columns.
+- Each player has row scores; winning row scores are added to the final total.
+- A card can be placed only on a valid tile with your pawn color and enough pawns for cost.
+- Cards place pawns based on their 5x5 pattern.
+
+<img src=".github/game_board.png">
+
+Card anatomy:
+
+- Top-left: cost (1-3)
+- Top-right: power
+- Bottom: card name
+- Center grid: pawn placement pattern
+
+<img src=".github/card.png">
+
+Grid legend:
+
+- Gray: no effect
+- White: card placement tile
+- Yellow: tiles affected by this card pattern
+
+<img src=".github/yellow_tile_example.png">
+
+If a yellow target already has your pawn(s), one pawn is added. If it has opponent pawn(s), those pawns are converted.
+
+<img src=".github/pawn_converted_example.gif">
+
+## Card effects
+
+- Continuous effects stay active while the source card remains in play.
+- On-place effects apply once when the card is played.
+- Debuffs do not reduce power below 0.
+- If an on-place debuff drops a card to 0, that card is destroyed.
+
+Card images below are reference captures from the All Cards glossary.
+
+Continuous buffs (ally):
+
+- `Crystalline Crab` (+2)
+
+<img src=".github/effect-crystalline-crab.png">
+
+- `Mu` (+1)
+
+<img src=".github/effect-mu.png">
+
+- `Cactuar` (+3)
+
+<img src=".github/effect-cactuar.png">
+
+On-place debuff (enemy):
+
+- `Archdragon` (-3 on play)
+
+<img src=".github/effect-archdragon.png">
+
+## Responsive design
+
+The UI supports desktop and mobile layouts, including touch-friendly card interactions.
+
+<img src=".github/mobile_home.png">
+
+Active game on mobile with a selected card, tile preview, and `Place card` action:
+
+<img src=".github/mobile_game_place_card.png">
+
+## Tech and architecture
+
+- `apps/web`: React client (routes, game UI, bot mode, deck builder, card glossary)
+- `apps/server`: Fastify + Socket.IO room/match lifecycle and realtime events
+- `packages/shared`: board logic, card/deck data, and shared types
+
+## Roadmap
+
+### Completed
 
 - [x] Add buffs and debuffs
-- [x] Add a pawn preview for the selected card
-- [x] Add a tile highlight for available tiles to place the card
+- [x] Add a pawn preview for selected cards
+- [x] Add tile highlights for valid placement
 - [x] Add more cards
 - [x] Add responsive design
-- [x] Add a rematch button
+- [x] Add rematch flow
 - [x] Add deck builder
 - [x] Add play-vs-bot mode
 - [x] Add ready-room confirmation before game start
-- [ ] Add a mulligan phase to prevent cards with high cost in the first hand
+
+### Next
+
+- [ ] Add mulligan phase to reduce high-cost first hands
 - [ ] Add chat/emotes between players
 - [ ] Add turn timer to prevent endless matches
-- [ ] Improve code legibility
-- [ ] Improve animations and timings (such as initial draw and card use)
+- [ ] Improve code readability
+- [ ] Improve animations and timings (initial draw and card usage)
 - [ ] Improve SFX
 - [ ] Improve card visual design
-- [ ] Create database to store user and match data
+- [ ] Create a database for user and match data
 - [ ] Deploy and document all environments
 
-## 👥 Contributing
+## Contributing
 
-Feel free to submit pull requests, create issues with suggestions or anything you find valuable to the project.
+Pull requests and issues are welcome.

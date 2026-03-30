@@ -120,7 +120,7 @@ export function RematchDialog() {
               gameResult === Result.DRAW && 'bg-gradient-to-t text-transparent bg-clip-text from-blue-600 via-blue-500 to-white inline-block',
             )}
           >
-            {gameResult === Result.WIN ? 'You Win!' : gameResult === Result.LOSE ? 'You Lose!' : "It's a Draw!"}
+            {gameResult === Result.WIN ? 'You Win!' : gameResult === Result.LOSE ? 'You Lose!' : 'Tie'}
           </m.h2>
           <m.div
             initial={{ opacity: 0 }}

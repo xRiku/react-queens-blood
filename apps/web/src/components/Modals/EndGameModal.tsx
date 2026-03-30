@@ -56,7 +56,7 @@ export function EndGameModal() {
       ) : null}
       {gameResult === Result.DRAW ? (
         <div className="px-10 py-6 xl:px-16 xl:py-10 2xl:px-20 2xl:py-12 mb-48 xl:mb-72 2xl:mb-96">
-          <h2 className="text-5xl xl:text-6xl 2xl:text-8xl font-semibold bg-gradient-to-t text-transparent bg-clip-text from-blue-600 via-blue-500 to-white inline-block">It's a Draw!</h2>
+          <h2 className="text-5xl xl:text-6xl 2xl:text-8xl font-semibold bg-gradient-to-t text-transparent bg-clip-text from-blue-600 via-blue-500 to-white inline-block">Tie</h2>
         </div>
       ) : null}
     </m.div>
