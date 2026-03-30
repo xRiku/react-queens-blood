@@ -25,7 +25,8 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
   return (
     <div
       className={cn(
-        'relative flex flex-col justify-between w-full h-full rounded-lg',
+        'relative flex flex-col justify-between w-full h-full',
+        placed ? 'rounded-md md:rounded-lg' : 'rounded-lg',
         placed ? 'border border-gray-400 overflow-hidden' : 'bg-white',
         placed && getPlacedBgColor(amIP1, card?.placedByPlayerOne),
       )}
@@ -135,7 +136,8 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
         </div>
       </div>
       <div title={card!.description} className={cn(
-        'flex items-center justify-center gap-0.5 rounded-b-md font-medium w-full bg-black border-t-2 border-t-yellow-400 text-yellow-400 leading-tight text-center',
+        'flex items-center justify-center gap-0.5 font-medium w-full bg-black border-t-2 border-t-yellow-400 text-yellow-400 leading-tight text-center',
+        placed ? 'rounded-b-sm md:rounded-b-md' : 'rounded-b-md',
         placed
           ? 'text-[7px] md:text-xs xl:text-sm 2xl:text-base px-0.5 md:px-1 py-0 md:py-0.5'
           : 'text-[10px] md:text-sm xl:text-base 2xl:text-xl px-1 md:px-4 py-0.5 md:py-2',
