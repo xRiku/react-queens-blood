@@ -1,151 +1,18 @@
 import React from "react";
 import satori from "satori";
 import { Resvg } from "@resvg/resvg-js";
-import { readFile, writeFile, mkdir } from "fs/promises";
-import { join, dirname } from "path";
+import { mkdir, readFile, writeFile } from "fs/promises";
+import { dirname, join } from "path";
 import { fileURLToPath } from "url";
-import type { ReactNode } from "react";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const GREEN = "#4ADE80"; // green-400
-const RED = "#F87171"; // red-400
-const YELLOW = "#FACC15"; // yellow-400
-const GRAY_800 = "#1F2937";
-const GRAY_400 = "#9CA3AF";
-const GRAY_500 = "#6B7280";
-const BLACK = "#000000";
-const WHITE = "#FFFFFF";
-
-function ScoreCircle({
-  color,
-  score,
-}: {
-  color: string;
-  score: number;
-}): ReactNode {
-  return (
-    <div
-      style={{
-        width: 56,
-        height: 56,
-        borderRadius: "50%",
-        backgroundColor: color,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        border: `3px solid ${YELLOW}`,
-      }}
-    >
-      <span
-        style={{
-          fontFamily: "Inter",
-          fontSize: 22,
-          fontWeight: 500,
-          color: WHITE,
-        }}
-      >
-        {score}
-      </span>
-    </div>
-  );
-}
-
-function BoardTile({
-  color,
-  hasCard,
-}: {
-  color?: string;
-  hasCard?: boolean;
-}): ReactNode {
-  return (
-    <div
-      style={{
-        width: 72,
-        height: 72,
-        backgroundColor: color || WHITE,
-        border: `2px solid ${BLACK}`,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      {hasCard && (
-        <div
-          style={{
-            width: 52,
-            height: 64,
-            backgroundColor: WHITE,
-            border: `1px solid ${GRAY_400}`,
-            borderRadius: 4,
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <div
-              style={{
-                width: 20,
-                height: 20,
-                display: "flex",
-                flexWrap: "wrap",
-                gap: 1,
-              }}
-            >
-              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                <div
-                  key={i}
-                  style={{
-                    width: 6,
-                    height: 6,
-                    backgroundColor:
-                      i === 4 ? WHITE : [1, 5, 7].includes(i) ? YELLOW : GRAY_400,
-                    border: `0.5px solid ${BLACK}`,
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-          <div
-            style={{
-              height: 14,
-              backgroundColor: BLACK,
-              borderTop: `1px solid ${YELLOW}`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <span
-              style={{
-                fontFamily: "Inter",
-                fontSize: 7,
-                color: YELLOW,
-              }}
-            >
-              Card
-            </span>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
 async function main() {
-  const canterburyFont = await readFile(
-    join(__dirname, "fonts", "Canterbury.ttf")
-  );
-  const interFont = await readFile(
-    join(__dirname, "fonts", "Inter-Regular.ttf")
-  );
+  const canterburyFont = await readFile(join(__dirname, "fonts", "Canterbury.ttf"));
+  const interFont = await readFile(join(__dirname, "fonts", "Inter-Regular.ttf"));
+  const boardImage = await readFile(join(__dirname, "..", "..", "..", ".github", "game_board.png"));
+
+  const boardImageDataUrl = `data:image/png;base64,${boardImage.toString("base64")}`;
 
   const svg = await satori(
     <div
@@ -153,122 +20,126 @@ async function main() {
         width: 1200,
         height: 630,
         display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: WHITE,
         position: "relative",
+        overflow: "hidden",
+        backgroundColor: "#F9FAFB",
       }}
     >
-      {/* Title — matching app header exactly */}
-      <div
-        style={{
-          fontFamily: "Canterbury",
-          fontSize: 80,
-          color: BLACK,
-          lineHeight: 1.1,
-          textAlign: "center",
-          marginBottom: 32,
-        }}
-      >
-        Queen's Blood
-      </div>
-
-      {/* Mini board row — 1 row of the game board */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          marginBottom: 36,
-        }}
-      >
-        {/* P1 score column */}
-        <div
-          style={{
-            width: 80,
-            height: 76,
-            backgroundColor: GRAY_800,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            border: `2px solid ${BLACK}`,
-          }}
-        >
-          <ScoreCircle color={GREEN} score={5} />
-        </div>
-
-        {/* Board tiles */}
-        <BoardTile color={GREEN} hasCard />
-        <BoardTile />
-        <BoardTile hasCard />
-        <BoardTile />
-        <BoardTile color={RED} hasCard />
-
-        {/* P2 score column */}
-        <div
-          style={{
-            width: 80,
-            height: 76,
-            backgroundColor: GRAY_800,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            border: `2px solid ${BLACK}`,
-          }}
-        >
-          <ScoreCircle color={RED} score={3} />
-        </div>
-      </div>
-
-      {/* Tagline */}
-      <div
-        style={{
-          fontFamily: "Inter",
-          fontSize: 24,
-          color: GRAY_500,
-          letterSpacing: 4,
-          textTransform: "uppercase",
-          marginBottom: 12,
-        }}
-      >
-        A Strategic Card Game
-      </div>
-
-      {/* Subtitle */}
-      <div
-        style={{
-          fontFamily: "Inter",
-          fontSize: 16,
-          color: GRAY_400,
-          letterSpacing: 1,
-        }}
-      >
-        Inspired by Final Fantasy VII Rebirth
-      </div>
-
-      {/* Bottom links hint — mirroring home page */}
       <div
         style={{
           position: "absolute",
-          bottom: 32,
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 330,
+          background: "linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)",
+        }}
+      />
+
+      <div
+        style={{
+          position: "absolute",
+          top: 42,
+          left: 0,
+          right: 0,
           display: "flex",
-          gap: 24,
+          justifyContent: "center",
+          fontFamily: "Canterbury",
+          fontSize: 136,
+          lineHeight: 0.9,
+          color: "#0F172A",
         }}
       >
-        {["How to Play", "All Cards", "Deck Builder"].map((label) => (
-          <span
-            key={label}
-            style={{
-              fontFamily: "Inter",
-              fontSize: 14,
-              color: GRAY_500,
-              textDecoration: "underline",
-            }}
-          >
-            {label}
-          </span>
-        ))}
+        Queen&apos;s Blood
       </div>
+
+      <div
+        style={{
+          position: "absolute",
+          top: 184,
+          left: 0,
+          right: 0,
+          display: "flex",
+          justifyContent: "center",
+          fontFamily: "Inter",
+          fontSize: 28,
+          color: "#6B7280",
+          letterSpacing: 0.2,
+        }}
+      >
+        Fan-made multiplayer strategy card game inspired by FFVII Rebirth
+      </div>
+
+      <div
+        style={{
+          position: "absolute",
+          top: 238,
+          left: 0,
+          right: 0,
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          style={{
+            borderRadius: 999,
+            padding: "12px 30px",
+            border: "2px solid #111827",
+            backgroundColor: "#FFFFFF",
+            fontFamily: "Inter",
+            fontSize: 28,
+            color: "#111827",
+          }}
+        >
+          Play Now
+        </div>
+      </div>
+
+      <img
+        src={boardImageDataUrl}
+        style={{
+          position: "absolute",
+          left: -240,
+          top: 328,
+          width: 1680,
+          height: 383,
+          opacity: 0.88,
+        }}
+      />
+
+      <div
+        style={{
+          position: "absolute",
+          left: 0,
+          right: 0,
+          top: 318,
+          bottom: 0,
+          background:
+            "linear-gradient(180deg, rgba(255,255,255,0.56) 0%, rgba(255,255,255,0.34) 42%, rgba(255,255,255,0.14) 100%)",
+        }}
+      />
+
+      <div
+        style={{
+          position: "absolute",
+          left: 0,
+          top: 318,
+          bottom: 0,
+          width: 64,
+          background: "linear-gradient(90deg, rgba(249,250,251,1) 0%, rgba(249,250,251,0) 100%)",
+        }}
+      />
+
+      <div
+        style={{
+          position: "absolute",
+          right: 0,
+          top: 318,
+          bottom: 0,
+          width: 64,
+          background: "linear-gradient(270deg, rgba(249,250,251,1) 0%, rgba(249,250,251,0) 100%)",
+        }}
+      />
     </div>,
     {
       width: 1200,
@@ -293,11 +164,11 @@ async function main() {
   const resvg = new Resvg(svg, {
     fitTo: { mode: "width", value: 1200 },
   });
-  const pngData = resvg.render();
-  const pngBuffer = pngData.asPng();
+  const pngBuffer = resvg.render().asPng();
 
   const outputDir = join(__dirname, "..", "public");
   await mkdir(outputDir, { recursive: true });
+
   const outputPath = join(outputDir, "og-image.png");
   await writeFile(outputPath, pngBuffer);
 
