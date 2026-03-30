@@ -1,0 +1,208 @@
+- generic [ref=e3]:
+  - status [ref=e4]:
+    - generic [ref=e6]: Server online
+  - button "Mute" [ref=e7] [cursor=pointer]:
+    - img [ref=e8]
+  - generic [ref=e12]:
+    - heading "Queen's Blood" [level=1] [ref=e13]:
+      - button "Queen's Blood" [ref=e14] [cursor=pointer]
+    - generic [ref=e32]:
+      - generic [ref=e33]:
+        - heading "Deck Builder" [level=2] [ref=e34]
+        - generic [ref=e35]:
+          - button "Reset" [ref=e36] [cursor=pointer]
+          - generic [ref=e37]: 2/15
+      - generic [ref=e39]:
+        - button "1 Security Officer ×1" [ref=e1305] [cursor=pointer]:
+          - generic [ref=e1306]:
+            - generic [ref=e1307]:
+              - img [ref=e1309]
+              - generic [ref=e1313]: "1"
+            - generic "This card has no abilities." [ref=e1341]: Security Officer
+          - generic [ref=e78]: ×1
+        - button "3 Riot Trooper ×1" [ref=e1343] [cursor=pointer]:
+          - generic [ref=e1344]:
+            - generic [ref=e1345]:
+              - generic [ref=e1346]:
+                - img [ref=e1347]
+                - img [ref=e1351]
+              - generic [ref=e1355]: "3"
+            - generic "This card has no abilities." [ref=e1383]: Riot Trooper
+          - generic [ref=e117]: ×1
+        - generic [ref=e156]: ×0
+        - generic [ref=e195]: ×0
+        - generic [ref=e234]: ×0
+        - generic [ref=e277]: ×0
+        - generic [ref=e316]: ×0
+        - generic [ref=e359]: ×0
+        - generic [ref=e402]: ×0
+        - generic [ref=e445]: ×0
+        - generic [ref=e449]: ×0
+        - generic [ref=e453]: ×0
+        - generic [ref=e457]: ×0
+        - generic [ref=e461]: ×0
+        - generic [ref=e465]: ×0
+      - heading "Cards Available" [level=3] [ref=e466]
+      - generic [ref=e468]:
+        - button "1 Security Officer 1/2" [ref=e1342] [cursor=pointer]:
+          - generic [ref=e470]:
+            - generic [ref=e471]:
+              - img [ref=e473]
+              - generic [ref=e477]: "1"
+            - generic "This card has no abilities." [ref=e505]: Security Officer
+          - generic [ref=e506]: 1/2
+        - button "3 Riot Trooper 1/2" [active] [ref=e1384] [cursor=pointer]:
+          - generic [ref=e508]:
+            - generic [ref=e509]:
+              - generic [ref=e510]:
+                - img [ref=e511]
+                - img [ref=e515]
+              - generic [ref=e519]: "3"
+            - generic "This card has no abilities." [ref=e547]: Riot Trooper
+          - generic [ref=e548]: 1/2
+        - button "2 J-Unit Sweeper 0/2" [ref=e549] [cursor=pointer]:
+          - generic [ref=e550]:
+            - generic [ref=e551]:
+              - generic [ref=e552]:
+                - img [ref=e553]
+                - img [ref=e557]
+              - generic [ref=e561]: "2"
+            - generic "This card has no abilities." [ref=e589]: J-Unit Sweeper
+          - generic [ref=e590]: 0/2
+        - button "1 Queen Bee 0/2" [ref=e1297] [cursor=pointer]:
+          - generic [ref=e592]:
+            - generic [ref=e593]:
+              - img [ref=e595]
+              - generic [ref=e599]: "1"
+            - generic "This card has no abilities." [ref=e627]: Queen Bee
+          - generic [ref=e628]: 0/2
+        - button "2 Levrikon 0/2" [ref=e1298] [cursor=pointer]:
+          - generic [ref=e630]:
+            - generic [ref=e631]:
+              - img [ref=e633]
+              - generic [ref=e637]: "2"
+            - generic "This card has no abilities." [ref=e665]: Levrikon
+          - generic [ref=e666]: 0/2
+        - button "2 Grasslands Wolf 0/2" [ref=e1299] [cursor=pointer]:
+          - generic [ref=e668]:
+            - generic [ref=e669]:
+              - img [ref=e671]
+              - generic [ref=e675]: "2"
+            - generic "This card has no abilities." [ref=e703]: Grasslands Wolf
+          - generic [ref=e704]: 0/2
+        - button "4 Elphadunk 0/2" [ref=e705] [cursor=pointer]:
+          - generic [ref=e706]:
+            - generic [ref=e707]:
+              - generic [ref=e708]:
+                - img [ref=e709]
+                - img [ref=e713]
+              - generic [ref=e717]: "4"
+            - generic "This card has no abilities." [ref=e745]: Elphadunk
+          - generic [ref=e746]: 0/2
+        - button "3 Quetzalcoatl 0/2" [ref=e1300] [cursor=pointer]:
+          - generic [ref=e748]:
+            - generic [ref=e749]:
+              - generic [ref=e750]:
+                - img [ref=e751]
+                - img [ref=e755]
+              - generic [ref=e759]: "3"
+            - generic "This card has no abilities." [ref=e787]: Quetzalcoatl
+          - generic [ref=e788]: 0/2
+        - button "2 Zu 0/2" [ref=e789] [cursor=pointer]:
+          - generic [ref=e790]:
+            - generic [ref=e791]:
+              - generic [ref=e792]:
+                - img [ref=e793]
+                - img [ref=e797]
+              - generic [ref=e801]: "2"
+            - generic "This card has no abilities." [ref=e829]: Zu
+          - generic [ref=e830]: 0/2
+        - button "4 Devil Rider 0/2" [ref=e831] [cursor=pointer]:
+          - generic [ref=e832]:
+            - generic [ref=e833]:
+              - generic [ref=e834]:
+                - img [ref=e835]
+                - img [ref=e839]
+              - generic [ref=e843]: "4"
+            - generic "This card has no abilities." [ref=e871]: Devil Rider
+          - generic [ref=e872]: 0/2
+        - button "2 Flan 0/2" [ref=e1301] [cursor=pointer]:
+          - generic [ref=e874]:
+            - generic [ref=e875]:
+              - img [ref=e877]
+              - generic [ref=e881]: "2"
+            - generic "This card has no abilities." [ref=e909]: Flan
+          - generic [ref=e910]: 0/2
+        - button "2 Crawler 0/2" [ref=e911] [cursor=pointer]:
+          - generic [ref=e912]:
+            - generic [ref=e913]:
+              - img [ref=e915]
+              - generic [ref=e919]: "2"
+            - generic "This card has no abilities." [ref=e947]: Crawler
+          - generic [ref=e948]: 0/2
+        - button "3 Fleetwing 0/2" [ref=e949] [cursor=pointer]:
+          - generic [ref=e950]:
+            - generic [ref=e951]:
+              - img [ref=e953]
+              - generic [ref=e957]: "3"
+            - generic "This card has no abilities." [ref=e985]: Fleetwing
+          - generic [ref=e986]: 0/2
+        - button "4 Thug 0/2" [ref=e987] [cursor=pointer]:
+          - generic [ref=e988]:
+            - generic [ref=e989]:
+              - generic [ref=e990]:
+                - img [ref=e991]
+                - img [ref=e995]
+              - generic [ref=e999]: "4"
+            - generic "This card has no abilities." [ref=e1027]: Thug
+          - generic [ref=e1028]: 0/2
+        - button "1 Screamer 0/2" [ref=e1029] [cursor=pointer]:
+          - generic [ref=e1030]:
+            - generic [ref=e1031]:
+              - generic [ref=e1032]:
+                - img [ref=e1033]
+                - img [ref=e1037]
+                - img [ref=e1041]
+              - generic [ref=e1045]: "1"
+            - generic "This card has no abilities." [ref=e1073]: Screamer
+          - generic [ref=e1074]: 0/2
+        - button "5 Ogre 0/2" [ref=e1302] [cursor=pointer]:
+          - generic [ref=e1076]:
+            - generic [ref=e1077]:
+              - generic [ref=e1078]:
+                - img [ref=e1079]
+                - img [ref=e1083]
+              - generic [ref=e1087]: "5"
+            - generic "This card has no abilities." [ref=e1115]: Ogre
+          - generic [ref=e1116]: 0/2
+        - button "1 Crystalline Crab 0/2" [ref=e1303] [cursor=pointer]:
+          - generic [ref=e1118]:
+            - generic [ref=e1119]:
+              - img [ref=e1121]
+              - generic [ref=e1125]: "1"
+            - generic "Raise the power of allied cards on affected tiles by 2 while this card is in play." [ref=e1153]: Crystalline Crab
+          - generic [ref=e1154]: 0/2
+        - button "1 Mu 0/2" [ref=e1304] [cursor=pointer]:
+          - generic [ref=e1156]:
+            - generic [ref=e1157]:
+              - generic [ref=e1158]:
+                - img [ref=e1159]
+                - img [ref=e1163]
+              - generic [ref=e1167]: "1"
+            - generic "Raise the power of allied cards on affected tiles by 1 while this card is in play." [ref=e1195]: Mu
+          - generic [ref=e1196]: 0/2
+        - button "1 Cactuar 0/2" [ref=e1197] [cursor=pointer]:
+          - generic [ref=e1198]:
+            - generic [ref=e1199]:
+              - img [ref=e1201]
+              - generic [ref=e1205]: "1"
+            - generic "Raise the power of allied cards on affected tiles by 3 while this card is in play." [ref=e1233]: Cactuar
+          - generic [ref=e1234]: 0/2
+        - button "3 Archdragon 0/2" [ref=e1235] [cursor=pointer]:
+          - generic [ref=e1236]:
+            - generic [ref=e1237]:
+              - img [ref=e1239]
+              - generic [ref=e1243]: "3"
+            - generic "When played, lower the power of enemy cards on affected tiles by 3." [ref=e1271]: Archdragon
+          - generic [ref=e1272]: 0/2
+      - button "Back" [ref=e1274] [cursor=pointer]

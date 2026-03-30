@@ -1,0 +1,23 @@
+{
+  "name": "@queens-blood/video",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "remotion studio",
+    "build": "remotion render ShowcaseVideo out/showcase.mp4",
+    "render": "remotion render ShowcaseVideo out/showcase.mp4"
+  },
+  "dependencies": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "remotion": "^4.0.0",
+    "@remotion/cli": "^4.0.0",
+    "@remotion/transitions": "^4.0.0",
+    "@remotion/gif": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "typescript": "5.2.2"
+  }
+}

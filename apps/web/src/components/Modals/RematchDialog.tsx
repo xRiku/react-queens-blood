@@ -8,8 +8,15 @@ import Hourglass from '../Hourglass'
 import { useBotGameActions } from '../../contexts/BotGameContext'
 import { cn } from '../../utils/cn'
 import { useMemo } from 'react'
+import { useRef } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { calcPlayerScores } from '../../utils/calcPlayerScores'
+import { Fireworks } from '@fireworks-js/react'
+import type { FireworksHandlers } from '@fireworks-js/react'
+import explosion0 from '../../assets/sounds/explosion0.mp3'
+import explosion1 from '../../assets/sounds/explosion1.mp3'
+import explosion2 from '../../assets/sounds/explosion2.mp3'
+import useSoundStore from '../../store/SoundStore'
 
 function OpponentStatus({ status }: { status: RematchStatus }) {
   if (status === 'waiting') {
@@ -42,9 +49,11 @@ export function RematchDialog() {
     state.amIP1,
   ])
   const gameResult = useGameStore((state) => state.gameResult)
+  const [muted] = useSoundStore((state) => [state.muted])
   const [hideRematchDialog] = useModalStore((state) => [
     state.hideRematchDialog,
   ])
+  const fireworksRef = useRef<FireworksHandlers>(null)
   const { playerOnePointsArray, playerTwoPointsArray } = usePointStore(useShallow(state => ({ playerOnePointsArray: state.playerOnePoints, playerTwoPointsArray: state.playerTwoPoints })))
 
   const scores = useMemo(
@@ -101,12 +110,32 @@ export function RematchDialog() {
         : 'Rematch'
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
+    <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-[2px]">
+      {gameResult === Result.WIN ? (
+        <Fireworks
+          ref={fireworksRef}
+          options={{
+            opacity: 0.5,
+            acceleration: 1.0,
+            intensity: 20,
+            particles: 100,
+            sound: { enabled: !muted, files: [explosion0, explosion1, explosion2], volume: { min: 0, max: 4 } },
+          }}
+          style={{
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            position: 'fixed',
+            pointerEvents: 'none',
+          }}
+        />
+      ) : null}
       <m.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
-        className="bg-white border border-black rounded-lg p-8 w-80"
+        className="relative z-10 bg-white border border-black rounded-lg p-8 w-80"
       >
         <div className="flex flex-col items-center mb-4">
           <m.h2

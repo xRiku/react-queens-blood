@@ -1,0 +1,21 @@
+- generic [ref=e3]:
+  - status [ref=e4]:
+    - generic [ref=e6]: Server online
+  - button "Mute" [ref=e7] [cursor=pointer]:
+    - img [ref=e8]
+  - generic [ref=e12]:
+    - heading "Queen's Blood" [level=1] [ref=e13]:
+      - button "Queen's Blood" [ref=e14] [cursor=pointer]
+    - generic [ref=e15]:
+      - generic [ref=e16]:
+        - textbox "Your name" [ref=e17]
+        - button "Create Room" [ref=e18] [cursor=pointer]
+      - button "Play vs Bot" [ref=e19] [cursor=pointer]
+      - generic [ref=e22]: or join
+      - generic [ref=e24]:
+        - textbox "Game Code" [ref=e25]
+        - button "Join" [ref=e26] [cursor=pointer]
+      - generic [ref=e27]:
+        - button "How to Play" [ref=e28] [cursor=pointer]
+        - button "All Cards" [ref=e29] [cursor=pointer]
+        - button "Deck Builder" [ref=e30] [cursor=pointer]
