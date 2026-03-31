@@ -21,9 +21,9 @@ function App() {
             <Route path="/rules" element={<Rules />} />
             <Route path="/cards" element={<Cards />} />
             <Route path="/deck-builder" element={<DeckBuilder />} />
+            <Route path="/playground" element={<Playground />} />
             <Route path="/game/:id" element={<Game />} />
             <Route path="/waiting-room/:id" element={<WaitingRoom />} />
-            <Route path="/playground" element={<Playground />} />
           </Route>
         </Routes>
       </LazyMotion>

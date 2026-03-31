@@ -8,4 +8,5 @@ export {
   drawCards,
   findAllValidMoves,
   getActiveEffectPositions,
+  getActiveEffectIndicators,
 } from './gameLogic'

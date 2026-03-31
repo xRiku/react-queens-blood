@@ -5,6 +5,7 @@ import {
   mapPawns,
   shuffleDeck,
   drawCards,
+  getActiveEffectIndicators,
 } from '../gameLogic'
 import type { CardInfo, Tile } from '../types'
 
@@ -68,6 +69,77 @@ describe('createInitialBoard', () => {
         expect(tile.card).toBeNull()
       }
     }
+  })
+})
+
+describe('getActiveEffectIndicators', () => {
+  it('returns up for tiles with positive continuous total', () => {
+    const board = createInitialBoard()
+    board[1][1] = makeTile({
+      card: {
+        name: 'Aura+',
+        pawnsPositions: [],
+        points: 1,
+        pawnsCost: 1,
+        description: '',
+        placedByPlayerOne: true,
+        effect: { value: 2, target: 'ally', trigger: 'continuous' },
+        effectPositions: [[1, 0]],
+      },
+    })
+
+    const indicators = getActiveEffectIndicators(board)
+    expect(indicators.get('1-2')).toBe('up')
+  })
+
+  it('returns down for tiles with negative continuous total', () => {
+    const board = createInitialBoard()
+    board[1][1] = makeTile({
+      card: {
+        name: 'Aura-',
+        pawnsPositions: [],
+        points: 1,
+        pawnsCost: 1,
+        description: '',
+        placedByPlayerOne: true,
+        effect: { value: -2, target: 'enemy', trigger: 'continuous' },
+        effectPositions: [[1, 0]],
+      },
+    })
+
+    const indicators = getActiveEffectIndicators(board)
+    expect(indicators.get('1-2')).toBe('down')
+  })
+
+  it('returns mixed when positive and negative effects cancel out', () => {
+    const board = createInitialBoard()
+    board[1][1] = makeTile({
+      card: {
+        name: 'Aura+',
+        pawnsPositions: [],
+        points: 1,
+        pawnsCost: 1,
+        description: '',
+        placedByPlayerOne: true,
+        effect: { value: 2, target: 'ally', trigger: 'continuous' },
+        effectPositions: [[1, 0]],
+      },
+    })
+    board[1][3] = makeTile({
+      card: {
+        name: 'Aura-',
+        pawnsPositions: [],
+        points: 1,
+        pawnsCost: 1,
+        description: '',
+        placedByPlayerOne: false,
+        effect: { value: -2, target: 'enemy', trigger: 'continuous' },
+        effectPositions: [[1, 0]],
+      },
+    })
+
+    const indicators = getActiveEffectIndicators(board)
+    expect(indicators.get('1-2')).toBe('mixed')
   })
 })
 

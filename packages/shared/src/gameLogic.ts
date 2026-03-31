@@ -241,6 +241,39 @@ export function getActiveEffectPositions(board: Tile[][]): Set<string> {
   return affected
 }
 
+export type EffectIndicatorDirection = 'up' | 'down' | 'mixed'
+
+export function getActiveEffectIndicators(board: Tile[][]): Map<string, EffectIndicatorDirection> {
+  const rawValues = new Map<string, number>()
+
+  for (let r = 0; r < BOARD_ROWS; r++) {
+    for (let c = 0; c < BOARD_COLS; c++) {
+      const tile = board[r][c]
+      if (!tile.card?.effect || !tile.card.effectPositions) continue
+      if (tile.card.effect.trigger !== 'continuous') continue
+
+      const isPlayerOne = tile.card.placedByPlayerOne === true
+      for (const [offsetX, offsetY] of tile.card.effectPositions) {
+        const targetRow = r - offsetY
+        const targetCol = isPlayerOne ? c + offsetX : Math.abs(c - offsetX)
+        if (targetRow < 0 || targetRow >= BOARD_ROWS || targetCol < 0 || targetCol >= BOARD_COLS) continue
+
+        const key = `${targetRow}-${targetCol}`
+        rawValues.set(key, (rawValues.get(key) ?? 0) + tile.card.effect.value)
+      }
+    }
+  }
+
+  const indicators = new Map<string, EffectIndicatorDirection>()
+  for (const [key, value] of rawValues) {
+    if (value > 0) indicators.set(key, 'up')
+    else if (value < 0) indicators.set(key, 'down')
+    else indicators.set(key, 'mixed')
+  }
+
+  return indicators
+}
+
 export function findAllValidMoves(
   board: Tile[][],
   hand: CardUnity[],
