@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import socket, { connectSocket } from '../../socket'
 import { useEffect, useState } from 'react'
 import { useServerHealth } from '../../hooks/useServerHealth'
+import { trackEvent } from '../../lib/analytics'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -46,6 +47,7 @@ export default function Home() {
     setConnecting(true)
     try {
       await connectSocket()
+      trackEvent('room_created')
       socket.emit('create-game', { playerName: playerName.trim() })
     } catch {
       setErrorMessage('Could not connect to server. Please try again.')
@@ -65,6 +67,7 @@ export default function Home() {
     setConnecting(true)
     try {
       await connectSocket()
+      trackEvent('room_join_attempted', { game_id_length: gameId.trim().length })
       socket.emit('attempt-to-join-game', { gameId })
     } catch {
       setErrorMessage('Could not connect to server. Please try again.')
@@ -168,6 +171,12 @@ export default function Home() {
           className="text-sm xl:text-base text-gray-500 hover:text-black underline underline-offset-2"
         >
           Deck Builder
+        </button>
+        <button
+          onClick={() => navigate('/patch-notes')}
+          className="text-sm xl:text-base text-gray-500 hover:text-black underline underline-offset-2"
+        >
+          Patch Notes
         </button>
       </div>
     </div>

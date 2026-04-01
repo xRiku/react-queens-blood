@@ -17,6 +17,7 @@ import explosion0 from '../../assets/sounds/explosion0.mp3'
 import explosion1 from '../../assets/sounds/explosion1.mp3'
 import explosion2 from '../../assets/sounds/explosion2.mp3'
 import useSoundStore from '../../store/SoundStore'
+import { trackEvent } from '../../lib/analytics'
 
 function OpponentStatus({ status }: { status: RematchStatus }) {
   if (status === 'waiting') {
@@ -76,6 +77,7 @@ export function RematchDialog() {
     : playerOneName || 'Player 1'
 
   const handleRematch = () => {
+    trackEvent('rematch_requested', { mode: botActions ? 'bot' : 'multiplayer' })
     if (botActions) {
       botActions.rematchRespond('confirmed')
       return
@@ -84,6 +86,7 @@ export function RematchDialog() {
   }
 
   const handleQuit = () => {
+    trackEvent('rematch_declined', { mode: botActions ? 'bot' : 'multiplayer' })
     if (botActions) {
       hideRematchDialog()
       navigate('/')

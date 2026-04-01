@@ -24,6 +24,7 @@ import {
   readyRespondSchema,
 } from "./schemas";
 import { checkRateLimit, cleanupRateLimit } from "./rateLimit";
+import { captureServerEvent, shutdownAnalytics } from "./analytics";
 
 const isDev = process.env.NODE_ENV !== "production";
 const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:5173";
@@ -197,6 +198,11 @@ io.on("connection", (socket) => {
         [game.playerIds[0]]: "waiting",
         [game.playerIds[1]]: "waiting",
       };
+      captureServerEvent(`game:${parsed.gameId}`, "multiplayer_game_completed", {
+        game_id: parsed.gameId,
+        mode: "multiplayer",
+        ended_by: "double_skip",
+      });
       io.to(game.playerIds).emit("game-end");
       return;
     }
@@ -270,6 +276,15 @@ io.on("connection", (socket) => {
         });
         io.to(remainingId).emit("rematch-cancelled");
       } else {
+        captureServerEvent(
+          `game:${gameIdForDcedPlayer}`,
+          "multiplayer_game_completed",
+          {
+            game_id: gameIdForDcedPlayer,
+            mode: "multiplayer",
+            ended_by: "disconnect",
+          }
+        );
         io.to(dcGame.playerIds).emit("game-end", {
           playerDisconnected: true,
         });
@@ -391,6 +406,11 @@ io.on("connection", (socket) => {
       game.readyStatus[p1Id] === "confirmed" &&
       game.readyStatus[p2Id] === "confirmed"
     ) {
+      captureServerEvent(`game:${parsed.gameId}`, "multiplayer_game_started", {
+        game_id: parsed.gameId,
+        mode: "multiplayer",
+        player_count: 2,
+      });
       game.readyStatus = null;
       game.currentTurnPlayerId = p1Id;
 
@@ -467,6 +487,11 @@ io.on("connection", (socket) => {
       game.rematchStatus[p1Id] === "confirmed" &&
       game.rematchStatus[p2Id] === "confirmed"
     ) {
+      captureServerEvent(`game:${parsed.gameId}`, "multiplayer_game_started", {
+        game_id: parsed.gameId,
+        mode: "multiplayer",
+        player_count: 2,
+      });
       // Reset game state for rematch
       game.board = createInitialBoard();
       game.playerSkippedTurn = false;
@@ -529,6 +554,13 @@ async function start() {
       process.exit(1);
     }
     console.log(`Server listening at ${address}`);
+  });
+}
+
+const shutdownSignals = ["SIGINT", "SIGTERM"] as const;
+for (const signal of shutdownSignals) {
+  process.on(signal, () => {
+    void shutdownAnalytics();
   });
 }
 

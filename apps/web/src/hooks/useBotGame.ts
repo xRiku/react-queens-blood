@@ -18,6 +18,7 @@ import useNeoHandStore from '../store/NeoHandStore'
 import { useModalStore } from '../store/ModalStore'
 import useCardStore from '../store/CardStore'
 import type { BotGameActions } from '../contexts/BotGameContext'
+import { trackEvent } from '../lib/analytics'
 
 type BotGameState = {
   board: Tile[][];
@@ -107,6 +108,7 @@ export function useBotGame(
     setPlayerOneName(playerName)
     setPlayerTwoName('Bot')
     setHand(humanDraw.drawn)
+    trackEvent('bot_game_started', { mode: 'bot' })
     onNewMatchStart?.()
     setBoard(board)
     setPoints(board)
@@ -115,6 +117,7 @@ export function useBotGame(
   }, [])
 
   const triggerGameEnd = useCallback(() => {
+    trackEvent('bot_game_completed', { mode: 'bot' })
     setGameOver(true)
     setShowEndGame?.(true)
     setTimeout(() => {

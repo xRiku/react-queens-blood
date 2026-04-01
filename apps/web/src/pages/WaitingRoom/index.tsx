@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import socket from '../../socket'
 import { useState } from 'react'
+import { trackEvent } from '../../lib/analytics'
 
 export function WaitingRoom() {
   const [playerName, setPlayerName] = useState<string>('')
@@ -8,6 +9,7 @@ export function WaitingRoom() {
   const { id: gameId } = useParams<{ id: string }>()
 
   const handleJoinGame = () => {
+    trackEvent('room_join_submitted')
     navigate(`/game/${gameId}`, { state: { joining: true } })
     socket.emit('join-game', {
       playerName,

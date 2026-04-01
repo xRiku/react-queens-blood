@@ -65,8 +65,18 @@ Optional environment variables:
 - `PORT` (default `4000`)
 - `CORS_ORIGIN` (comma-separated allowed origins)
 - `VITE_SOCKET_URL` (socket URL used by the client)
+- `VITE_POSTHOG_KEY` (PostHog project API key for web analytics)
+- `VITE_POSTHOG_HOST` (optional PostHog host, defaults to `https://us.i.posthog.com`)
+- `VITE_PUBLIC_POSTHOG_PROJECT_TOKEN` / `VITE_PUBLIC_POSTHOG_HOST` (alternate env names also supported)
+- `POSTHOG_API_KEY` (optional server-side PostHog API key for multiplayer lifecycle analytics)
+- `POSTHOG_HOST` (optional server-side PostHog host, defaults to `https://us.i.posthog.com`)
 
 For two-device play on the same network, see `docs/local-network-setup.md`.
+
+### Analytics events (PostHog)
+
+- Web: `site_visited`, `room_created`, `room_join_attempted`, `room_join_submitted`, `bot_game_started`, `bot_game_completed`, `rematch_requested`, `rematch_declined`
+- Server (when `POSTHOG_API_KEY` is set): `multiplayer_game_started`, `multiplayer_game_completed`
 
 ## Feature highlights
 

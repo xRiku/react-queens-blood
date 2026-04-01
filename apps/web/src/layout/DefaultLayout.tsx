@@ -1,4 +1,5 @@
 import { Outlet, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 import socket from '../socket'
 import useBoardStore from '../store/BoardStore'
 import { useGameStore } from '../store/GameStore'
@@ -9,6 +10,7 @@ import useNeoHandStore from '../store/NeoHandStore'
 import useSoundStore from '../store/SoundStore'
 import { Volume2, VolumeOff } from 'lucide-react'
 import { useServerHealth } from '../hooks/useServerHealth'
+import { trackSiteVisitedOnce } from '../lib/analytics'
 
 export default function DefaultLayout() {
   const navigate = useNavigate()
@@ -32,6 +34,10 @@ export default function DefaultLayout() {
     resetModalStore()
     resetNeoHandStore()
   }
+
+  useEffect(() => {
+    trackSiteVisitedOnce()
+  }, [])
 
   const handleTitleClick = () => {
     socket.disconnect()

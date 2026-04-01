@@ -12,6 +12,7 @@
     "@fastify/helmet": "13.0.1",
     "@queens-blood/shared": "*",
     "fastify": "5.8.3",
+    "posthog-node": "^5.28.10",
     "socket.io": "4.8.3",
     "zod": "3.24.4"
   },
