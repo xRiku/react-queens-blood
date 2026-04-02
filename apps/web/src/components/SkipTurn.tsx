@@ -6,10 +6,12 @@ import useTurnStore from '../store/TurnStore'
 import { useParams } from 'react-router-dom'
 import { useBotGameActions } from '../contexts/BotGameContext'
 import { useShallow } from 'zustand/react/shallow'
+import { useHaptics } from '../hooks/useHaptics'
 
 export default function SkipTurn() {
   const { isMyTurn, playerSkippedTurn } = useTurnStore(useShallow((state) => ({ isMyTurn: state.isMyTurn, playerSkippedTurn: state.playerSkippedTurn })))
   const botActions = useBotGameActions()
+  const haptics = useHaptics()
 
   const resetSelectedCard = useCardStore((state) => state.resetSelectedCard)
 
@@ -18,6 +20,7 @@ export default function SkipTurn() {
   const { id: gameId } = useParams<{ id: string }>()
 
   function handleSkipTurn() {
+    haptics.impactMedium()
     resetSelectedCard()
     if (botActions) {
       botActions.skipTurn()

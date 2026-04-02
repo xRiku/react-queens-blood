@@ -21,6 +21,7 @@ import { cn } from '../utils/cn'
 import { useShallow } from 'zustand/react/shallow'
 import { calcPlayerScores } from '../utils/calcPlayerScores'
 import { TileEffectBadge } from './TileIndicator'
+import { useHaptics } from '../hooks/useHaptics'
 
 function ScoreCell({
   score,
@@ -124,6 +125,7 @@ export default function Board({
   const isMyTurn = useTurnStore((state) => state.isMyTurn)
   const isMobile = useIsMobile()
   const { confirmPlacement } = usePlaceCard()
+  const haptics = useHaptics()
 
   const { gameOver, setGameResult, playerOneName, playerTwoName, playerDisconnected } = useGameStore(useShallow((state) => ({ gameOver: state.gameOver, setGameResult: state.setGameResult, playerOneName: state.playerOneName, playerTwoName: state.playerTwoName, playerDisconnected: state.playerDisconnected })))
   const { playerOnePointsArray, playerTwoPointsArray } = usePointStore(useShallow(state => ({ playerOnePointsArray: state.playerOnePoints, playerTwoPointsArray: state.playerTwoPoints })))
@@ -202,10 +204,12 @@ export default function Board({
 
     if (!canPlace(position)) {
       playSynthSound('invalid')
+      haptics.warning()
       return
     }
 
     if (isMobile) {
+      haptics.selection()
       setPreviewTile([rowIndex, colIndex])
       return
     }

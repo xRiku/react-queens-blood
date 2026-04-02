@@ -2,13 +2,16 @@ import { useNavigate, useParams } from 'react-router-dom'
 import socket from '../../socket'
 import { useState } from 'react'
 import { trackEvent } from '../../lib/analytics'
+import { useHaptics } from '../../hooks/useHaptics'
 
 export function WaitingRoom() {
   const [playerName, setPlayerName] = useState<string>('')
   const navigate = useNavigate()
   const { id: gameId } = useParams<{ id: string }>()
+  const haptics = useHaptics()
 
   const handleJoinGame = () => {
+    haptics.impactMedium()
     trackEvent('room_join_submitted')
     navigate(`/game/${gameId}`, { state: { joining: true } })
     socket.emit('join-game', {

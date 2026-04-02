@@ -23,6 +23,8 @@ import { useBotGame } from '../../hooks/useBotGame'
 import { BotGameContext } from '../../contexts/BotGameContext'
 import useCardStore from '../../store/CardStore'
 import PlaceCardButton from '../../components/PlaceCardButton'
+import { trackEvent, trackSessionMatchStarted } from '../../lib/analytics'
+import { useHaptics } from '../../hooks/useHaptics'
 
 export default function Game() {
   const { id: gameId } = useParams<{ id: string }>()
@@ -59,6 +61,10 @@ export default function Game() {
   const navigate = useNavigate()
   const [showEndGame, setShowEndGame] = useState(false)
   const endGameTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const multiplayerMatchCountRef = useRef(0)
+  const haptics = useHaptics()
+  const hapticsRef = useRef(haptics)
+  useEffect(() => { hapticsRef.current = haptics }, [haptics])
 
   const gameStartModal = useModalStore((s) => s.gameStartModal)
   const toggleGameStartModal = useModalStore((s) => s.toggleGameStartModal)
@@ -91,6 +97,11 @@ export default function Game() {
       initialHand: CardUnity[];
       isPlayerOne: boolean;
     }) => {
+      const startReason = multiplayerMatchCountRef.current === 0 ? 'initial' : 'rematch'
+      trackSessionMatchStarted('multiplayer')
+      trackEvent('ready_room_match_started', { start_reason: startReason })
+      multiplayerMatchCountRef.current += 1
+
       // Reset for rematch if game was over
       if (endGameTimerRef.current) {
         clearTimeout(endGameTimerRef.current)
@@ -131,6 +142,7 @@ export default function Game() {
       if (data.drawnCard) {
         addCard(data.drawnCard)
       }
+      hapticsRef.current.selection()
       toggleTurnModal()
       toggleTurn()
     })
@@ -175,11 +187,15 @@ export default function Game() {
     })
 
     socket.on('game-busy', () => {
+      hapticsRef.current.error()
       setLoading(false)
       setGameBusy(true)
     })
 
     socket.on('ready-room', (data: { playerNames: string[], isPlayerOne: boolean }) => {
+      trackEvent('ready_room_entered', {
+        is_player_one: data.isPlayerOne,
+      })
       setPlayerOneName(data.playerNames[0])
       setPlayerTwoName(data.playerNames[1])
       setAmIP1(data.isPlayerOne)
@@ -221,7 +237,34 @@ export default function Game() {
       socket.off('ready-player-left')
       if (endGameTimerRef.current) clearTimeout(endGameTimerRef.current)
     }
-  }, [])
+  }, [
+    addCard,
+    hideReadyRoom,
+    hideRematchDialog,
+    navigate,
+    resetBoardStore,
+    resetCardStore,
+    resetNeoHandStore,
+    resetPointsStore,
+    resetPreviewTile,
+    resetTurnStore,
+    setAmIP1,
+    setBoard,
+    setGameOver,
+    setHand,
+    setPlayerDisconnected,
+    setPlayerOneName,
+    setPlayerSkippedTurn,
+    setPlayerTwoName,
+    setPoints,
+    setReadyStatuses,
+    setRematchStatuses,
+    showReadyRoom,
+    showRematchDialog,
+    toggleGameStartModal,
+    toggleTurn,
+    toggleTurnModal,
+  ])
 
   const handleGameIdClick = async (gameId?: string) => {
     try {

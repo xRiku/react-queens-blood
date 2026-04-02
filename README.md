@@ -24,6 +24,7 @@ Disclaimer: I do not own the Queen's Blood IP. This project is a fan-made implem
 - Added All Cards page as a card glossary
 - Added mobile-friendly interactions (tap to preview, then confirm)
 - Added live server-status indicator (online, waking, offline)
+- Added mobile/tablet haptic feedback for key game interactions
 
 ### Engineering
 
@@ -75,8 +76,8 @@ For two-device play on the same network, see `docs/local-network-setup.md`.
 
 ### Analytics events (PostHog)
 
-- Web: `site_visited`, `room_created`, `room_join_attempted`, `room_join_submitted`, `bot_game_started`, `bot_game_completed`, `rematch_requested`, `rematch_declined`
-- Server (when `POSTHOG_API_KEY` is set): `multiplayer_game_started`, `multiplayer_game_completed`
+- Web: `site_visited`, `server_offline_seen`, `sfx_toggled`, `room_created`, `room_join_attempted`, `room_join_submitted`, `ready_room_entered`, `ready_room_response`, `ready_room_match_started`, `session_match_started`, `bot_game_started`, `bot_game_completed`, `rematch_requested`, `rematch_declined`
+- Server (when `POSTHOG_API_KEY` is set): `multiplayer_game_started`, `multiplayer_game_completed` (`start_reason` is included on game started)
 
 ## Feature highlights
 
@@ -86,6 +87,16 @@ For two-device play on the same network, see `docs/local-network-setup.md`.
 - Play vs bot without running the server
 - Deck Builder and All Cards glossary
 - Responsive UI for desktop and mobile
+- Touch haptics for meaningful actions (selection, placement, success/error outcomes)
+
+## Haptics guidelines
+
+- Haptics are implemented with `web-haptics` and degrade silently on unsupported devices.
+- Trigger haptics only on high-value interactions and always pair with visual feedback.
+- Keep trigger meaning consistent:
+  - `selection`: discrete stepping interactions
+  - `light` / `medium` / `heavy`: impact intensity by action significance
+  - `success` / `warning` / `error`: async outcomes and status feedback
 
 ## UI snapshots
 

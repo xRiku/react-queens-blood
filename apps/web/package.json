@@ -21,6 +21,7 @@
     "react-router-dom": "6.30.3",
     "socket.io-client": "4.8.3",
     "tailwind-merge": "^3.5.0",
+    "web-haptics": "^0.0.6",
     "zustand": "4.5.2"
   },
   "devDependencies": {

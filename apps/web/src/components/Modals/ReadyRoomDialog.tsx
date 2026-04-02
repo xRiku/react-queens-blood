@@ -5,6 +5,8 @@ import socket from '../../socket'
 import { useNavigate, useParams } from 'react-router-dom'
 import Hourglass from '../Hourglass'
 import { cn } from '../../utils/cn'
+import { trackEvent } from '../../lib/analytics'
+import { useHaptics } from '../../hooks/useHaptics'
 
 function OpponentStatus({ status }: { status: RematchStatus }) {
   if (status === 'waiting') {
@@ -38,6 +40,7 @@ export function ReadyRoomDialog() {
     state.amIP1,
   ])
   const [hideReadyRoom] = useModalStore((state) => [state.hideReadyRoom])
+  const haptics = useHaptics()
 
   const myName = amIP1
     ? playerOneName || 'Player 1'
@@ -51,10 +54,18 @@ export function ReadyRoomDialog() {
 
   const handleReady = () => {
     const response = myStatus === 'confirmed' ? 'waiting' : 'confirmed'
+    if (response === 'confirmed') {
+      haptics.success()
+    } else {
+      haptics.impactLight()
+    }
+    trackEvent('ready_room_response', { response })
     socket.emit('ready-respond', { gameId, response })
   }
 
   const handleQuit = () => {
+    haptics.warning()
+    trackEvent('ready_room_response', { response: 'refused' })
     socket.emit('ready-respond', { gameId, response: 'refused' })
     hideReadyRoom()
     socket.disconnect()

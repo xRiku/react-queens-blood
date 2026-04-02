@@ -8,6 +8,7 @@ import flickSound from '../assets/sounds/cardflick.mp3'
 import { playSound } from '../store/SoundStore'
 import { cn } from '../utils/cn'
 import { useIsMobile } from '../hooks/useIsMobile'
+import { useHaptics } from '../hooks/useHaptics'
 
 const flickAudio = new Audio(flickSound)
 const hoverAudio = new Audio(hoverSound)
@@ -17,13 +18,16 @@ export default function Hand() {
   const selectedCard = useCardStore((state) => state.selectedCard)
   const setSelectedCard = useCardStore((state) => state.setSelectedCard)
   const isMobile = useIsMobile()
+  const haptics = useHaptics()
 
   const handleCardClick = (card: CardUnity) => {
     if (selectedCard?.id === card.id) {
+      haptics.impactLight()
       setSelectedCard(null)
       return
     }
 
+    haptics.impactLight()
     setSelectedCard(card)
     playSound(flickAudio, 0.4)
   }
