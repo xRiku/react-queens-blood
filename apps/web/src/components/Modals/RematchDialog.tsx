@@ -18,6 +18,7 @@ import explosion1 from '../../assets/sounds/explosion1.mp3'
 import explosion2 from '../../assets/sounds/explosion2.mp3'
 import useSoundStore from '../../store/SoundStore'
 import { trackEvent } from '../../lib/analytics'
+import { useHaptics } from '../../hooks/useHaptics'
 
 function OpponentStatus({ status }: { status: RematchStatus }) {
   if (status === 'waiting') {
@@ -54,6 +55,7 @@ export function RematchDialog() {
   const [hideRematchDialog] = useModalStore((state) => [
     state.hideRematchDialog,
   ])
+  const haptics = useHaptics()
   const fireworksRef = useRef<FireworksHandlers>(null)
   const { playerOnePointsArray, playerTwoPointsArray } = usePointStore(useShallow(state => ({ playerOnePointsArray: state.playerOnePoints, playerTwoPointsArray: state.playerTwoPoints })))
 
@@ -77,6 +79,7 @@ export function RematchDialog() {
     : playerOneName || 'Player 1'
 
   const handleRematch = () => {
+    haptics.success()
     trackEvent('rematch_requested', { mode: botActions ? 'bot' : 'multiplayer' })
     if (botActions) {
       botActions.rematchRespond('confirmed')
@@ -86,6 +89,7 @@ export function RematchDialog() {
   }
 
   const handleQuit = () => {
+    haptics.warning()
     trackEvent('rematch_declined', { mode: botActions ? 'bot' : 'multiplayer' })
     if (botActions) {
       hideRematchDialog()

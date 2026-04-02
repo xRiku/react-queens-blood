@@ -2,16 +2,32 @@ import { m } from 'framer-motion'
 import { Fireworks } from '@fireworks-js/react'
 import type { FireworksHandlers } from '@fireworks-js/react'
 import { Result, useGameStore } from '../../store/GameStore'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import explosion0 from '../../assets/sounds/explosion0.mp3'
 import explosion1 from '../../assets/sounds/explosion1.mp3'
 import explosion2 from '../../assets/sounds/explosion2.mp3'
 import useSoundStore from '../../store/SoundStore'
+import { useHaptics } from '../../hooks/useHaptics'
 
 export function EndGameModal() {
   const [gameResult] = useGameStore((state) => [state.gameResult])
   const [muted] = useSoundStore((state) => [state.muted])
   const ref = useRef<FireworksHandlers>(null)
+  const haptics = useHaptics()
+
+  useEffect(() => {
+    if (gameResult === Result.WIN) {
+      haptics.success()
+      return
+    }
+
+    if (gameResult === Result.LOSE) {
+      haptics.error()
+      return
+    }
+
+    haptics.impactMedium()
+  }, [gameResult, haptics])
 
   return (
     <m.div

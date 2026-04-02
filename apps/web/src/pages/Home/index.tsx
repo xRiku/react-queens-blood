@@ -3,6 +3,7 @@ import socket, { connectSocket } from '../../socket'
 import { useEffect, useState } from 'react'
 import { useServerHealth } from '../../hooks/useServerHealth'
 import { trackEvent } from '../../lib/analytics'
+import { useHaptics } from '../../hooks/useHaptics'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -12,21 +13,26 @@ export default function Home() {
   const [connecting, setConnecting] = useState(false)
   const { isOnline } = useServerHealth()
   const multiplayerDisabled = connecting || !isOnline
+  const haptics = useHaptics()
 
   useEffect(() => {
     socket.on('game-busy', () => {
+      haptics.error()
       setErrorMessage('Game is busy')
     })
 
     socket.on('game-not-found', () => {
+      haptics.error()
       setErrorMessage('Game not found')
     })
 
     socket.on('game-found', (data: { gameIdFound: string }) => {
+      haptics.success()
       navigate(`/waiting-room/${data.gameIdFound}`)
     })
 
     socket.on('game-created', (data: { gameId: string }) => {
+      haptics.success()
       navigate(`/game/${data.gameId}`)
     })
 
@@ -36,10 +42,11 @@ export default function Home() {
       socket.off('game-busy')
       socket.off('game-created')
     }
-  }, [])
+  }, [haptics, navigate])
 
   const handleStartGame = async () => {
     if (!playerName.trim()) {
+      haptics.error()
       setErrorMessage('Please enter your name')
       return
     }
@@ -50,6 +57,7 @@ export default function Home() {
       trackEvent('room_created')
       socket.emit('create-game', { playerName: playerName.trim() })
     } catch {
+      haptics.error()
       setErrorMessage('Could not connect to server. Please try again.')
     } finally {
       setConnecting(false)
@@ -57,6 +65,7 @@ export default function Home() {
   }
 
   const handleStartBotGame = () => {
+    haptics.impactMedium()
     navigate('/game/bot', {
       state: { playerName: playerName || 'Player' },
     })
@@ -70,6 +79,7 @@ export default function Home() {
       trackEvent('room_join_attempted', { game_id_length: gameId.trim().length })
       socket.emit('attempt-to-join-game', { gameId })
     } catch {
+      haptics.error()
       setErrorMessage('Could not connect to server. Please try again.')
     } finally {
       setConnecting(false)
