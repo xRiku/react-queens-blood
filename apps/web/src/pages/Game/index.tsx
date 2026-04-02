@@ -63,6 +63,8 @@ export default function Game() {
   const endGameTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const multiplayerMatchCountRef = useRef(0)
   const haptics = useHaptics()
+  const hapticsRef = useRef(haptics)
+  useEffect(() => { hapticsRef.current = haptics }, [haptics])
 
   const gameStartModal = useModalStore((s) => s.gameStartModal)
   const toggleGameStartModal = useModalStore((s) => s.toggleGameStartModal)
@@ -140,7 +142,7 @@ export default function Game() {
       if (data.drawnCard) {
         addCard(data.drawnCard)
       }
-      haptics.selection()
+      hapticsRef.current.selection()
       toggleTurnModal()
       toggleTurn()
     })
@@ -185,7 +187,7 @@ export default function Game() {
     })
 
     socket.on('game-busy', () => {
-      haptics.error()
+      hapticsRef.current.error()
       setLoading(false)
       setGameBusy(true)
     })
@@ -239,7 +241,6 @@ export default function Game() {
     addCard,
     hideReadyRoom,
     hideRematchDialog,
-    haptics,
     navigate,
     resetBoardStore,
     resetCardStore,
