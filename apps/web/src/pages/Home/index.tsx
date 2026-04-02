@@ -97,18 +97,18 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] md:min-h-0 md:mt-24 xl:mt-36 2xl:mt-48 gap-6 px-6 sm:px-0 w-full sm:w-96 mx-auto">
-      <div className="flex gap-2 w-full">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] min-[480px]:min-h-0 min-[480px]:mt-24 xl:mt-36 2xl:mt-48 gap-6 px-4 min-[480px]:px-0 w-full max-w-sm mx-auto">
+      <div className="flex flex-row max-[479px]:flex-col gap-2 w-full">
         <input
           value={playerName}
           onChange={handleChangePlayerNameInput}
-          className="text-sm xl:text-base flex-1 py-2 px-3 text-center border border-gray-400 rounded-md"
+          className="text-sm xl:text-base flex-1 min-w-0 w-full py-2 px-3 text-center border border-gray-400 rounded-md"
           placeholder="Your name"
         />
         <button
           onClick={handleStartGame}
           disabled={multiplayerDisabled}
-          className="rounded-md px-5 py-2 border text-black border-black hover:bg-gray-700 hover:border-gray-700 group active:translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="rounded-md px-5 py-2 border text-black border-black hover:bg-gray-700 hover:border-gray-700 group active:translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed w-auto max-[479px]:w-full shrink-0"
         >
           <span className="text-base font-medium text-black group-hover:text-white whitespace-nowrap">
             Create Room
@@ -133,11 +133,11 @@ export default function Home() {
         <div className="flex-1 h-px bg-gray-300" />
       </div>
 
-      <div className="flex gap-2 w-full">
+      <div className="flex flex-row max-[479px]:flex-col gap-2 w-full">
         <input
           value={gameId}
           onChange={handleChangeGameIdInput}
-          className="text-sm flex-1 py-2 px-3 text-center border border-gray-400 rounded-md"
+          className="text-sm flex-1 min-w-0 w-full py-2 px-3 text-center border border-gray-400 rounded-md"
           placeholder="Game Code"
           maxLength={6}
           inputMode="numeric"
@@ -145,7 +145,7 @@ export default function Home() {
         <button
           onClick={handleJoinGame}
           disabled={multiplayerDisabled}
-          className="rounded-md px-5 py-2 border text-black border-black hover:bg-gray-700 hover:border-gray-700 group active:translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="rounded-md px-5 py-2 border text-black border-black hover:bg-gray-700 hover:border-gray-700 group active:translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed w-auto max-[479px]:w-full shrink-0"
         >
           <span className="text-base font-medium text-black group-hover:text-white">
             Join
@@ -163,7 +163,7 @@ export default function Home() {
         )}
       </span>
 
-      <div className="flex gap-4 mt-2">
+      <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mt-2 w-full">
         <button
           onClick={() => navigate('/rules')}
           className="text-sm xl:text-base text-gray-500 hover:text-black underline underline-offset-2"
