@@ -9,6 +9,8 @@ const POSTHOG_HOST =
   'https://us.i.posthog.com'
 const SESSION_VISIT_KEY = 'qb_site_visited_session'
 const SESSION_BOOT_KEY = 'qb_analytics_boot_session'
+const SESSION_SERVER_OFFLINE_KEY = 'qb_server_offline_seen_session'
+const SESSION_MATCH_COUNT_KEY = 'qb_session_match_count'
 
 let initialized = false
 
@@ -66,4 +68,28 @@ export function trackSiteVisitedOnce() {
   })
 
   sessionStorage.setItem(SESSION_VISIT_KEY, '1')
+}
+
+export function trackServerOfflineSeenOnce(retryCount: number) {
+  if (!initialized) return
+  if (sessionStorage.getItem(SESSION_SERVER_OFFLINE_KEY)) return
+
+  trackEvent('server_offline_seen', {
+    retry_count: retryCount,
+    entry_path: window.location.pathname,
+    env: import.meta.env.MODE,
+  })
+
+  sessionStorage.setItem(SESSION_SERVER_OFFLINE_KEY, '1')
+}
+
+export function trackSessionMatchStarted(mode: 'bot' | 'multiplayer') {
+  const currentCount = Number(sessionStorage.getItem(SESSION_MATCH_COUNT_KEY) || '0')
+  const nextCount = currentCount + 1
+  sessionStorage.setItem(SESSION_MATCH_COUNT_KEY, String(nextCount))
+
+  trackEvent('session_match_started', {
+    mode,
+    session_match_count: nextCount,
+  })
 }
