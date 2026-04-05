@@ -19,7 +19,7 @@ function getPlacedBgColor(amIP1: boolean | undefined, placedByPlayerOne: boolean
 
 export default function Card({ card, placed = false, amIP1, effectivePoints }: CardProps) {
   const cellSize = placed
-    ? 'h-1 w-1 md:h-2 md:w-2 xl:h-3 xl:w-3'
+    ? 'h-1.5 w-1.5 md:h-2 md:w-2 xl:h-3 xl:w-3'
     : 'h-2 w-2 md:h-3 md:w-3 2xl:h-4 2xl:w-4'
   const points = effectivePoints !== undefined ? effectivePoints : card!.points
   const delta = points - card!.points
@@ -73,27 +73,19 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
           </span>
         )}
 
-        <div className="absolute top-0 left-0 right-0 h-5 md:h-9 xl:h-11 px-1 pt-0.5 md:px-1.5 md:pt-1 flex items-start justify-between">
+        <div className="absolute top-0 left-0 right-0 h-6 md:h-9 xl:h-11 px-0 md:px-1.5 -translate-y-[1px] md:translate-y-0 flex items-center justify-between">
           <span className="flex -space-x-1">
             {Array.from({ length: card!.pawnsCost }).map((_, idx) => (
               <Pawn
                 key={idx}
                 color="black"
-                className="h-2 w-2 md:h-3 md:w-3 xl:h-4 xl:w-4 2xl:h-5 2xl:w-5"
+                className="h-2.5 w-2.5 md:h-3.5 md:w-3.5 xl:h-4 xl:w-4 2xl:h-5 2xl:w-5"
               />
             ))}
           </span>
-          <span className="flex items-start gap-0.5">
-            {hasDelta && (
-              <span className={cn(
-                'font-bold leading-none rounded px-0.5 text-[6px] md:hidden',
-                delta > 0 ? 'bg-green-500 text-white' : 'bg-red-500 text-white',
-              )}>
-                {delta > 0 ? '+' : ''}{delta}
-              </span>
-            )}
+          <span className="relative inline-flex items-center justify-center">
             <span className={cn(
-              'flex items-center justify-center border font-semibold border-solid rounded-full w-3.5 h-3.5 text-[8px] md:w-7 md:h-7 md:text-sm xl:w-10 xl:h-10 xl:text-base 2xl:w-12 2xl:h-12 2xl:text-xl',
+              'flex items-center justify-center border font-semibold border-solid rounded-full p-0 md:p-1 w-4 h-4 text-[9px] md:w-8 md:h-8 md:text-sm xl:w-10 xl:h-10 xl:text-base 2xl:w-12 2xl:h-12 2xl:text-xl',
               delta > 0
                 ? 'bg-green-200 border-green-500'
                 : delta < 0
@@ -103,10 +95,18 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
             >
               {points}
             </span>
+            {hasDelta && (
+              <span className={cn(
+                'absolute top-full right-0 mt-0.5 font-bold leading-none rounded px-0.5 text-[6px] md:hidden',
+                delta > 0 ? 'bg-green-500 text-white' : 'bg-red-500 text-white',
+              )}>
+                {delta > 0 ? '+' : ''}{delta}
+              </span>
+            )}
           </span>
         </div>
 
-        <div className="absolute top-5 md:top-9 xl:top-11 bottom-0 left-0 right-0 flex items-center justify-center">
+        <div className="absolute top-7 md:top-9 xl:top-11 bottom-0 left-0 right-0 flex items-center justify-center">
           {grid}
         </div>
       </div>

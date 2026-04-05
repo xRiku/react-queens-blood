@@ -1,0 +1,31 @@
+{
+  "name": "@queens-blood/video",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts ShowcaseVideo out/showcase.mp4",
+    "render:vertical": "remotion render src/index.ts ShowcaseVideoVertical out/showcase-vertical.mp4",
+    "capture": "tsx capture/capture-all.ts",
+    "capture:play": "tsx capture/play-instantly.ts",
+    "capture:effects": "tsx capture/card-effects.ts",
+    "capture:preview": "tsx capture/preview.ts",
+    "capture:deck": "tsx capture/deck-builder.ts"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.443",
+    "@remotion/google-fonts": "4.0.443",
+    "@remotion/media": "4.0.443",
+    "@remotion/transitions": "4.0.443",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remotion": "4.0.443"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@types/react": "^19.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.7.0"
+  }
+}

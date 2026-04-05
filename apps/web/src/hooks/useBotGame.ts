@@ -18,7 +18,7 @@ import useNeoHandStore from '../store/NeoHandStore'
 import { useModalStore } from '../store/ModalStore'
 import useCardStore from '../store/CardStore'
 import type { BotGameActions } from '../contexts/BotGameContext'
-import { trackEvent } from '../lib/analytics'
+import { trackEvent, trackSessionMatchStarted } from '../lib/analytics'
 
 type BotGameState = {
   board: Tile[][];
@@ -108,6 +108,7 @@ export function useBotGame(
     setPlayerOneName(playerName)
     setPlayerTwoName('Bot')
     setHand(humanDraw.drawn)
+    trackSessionMatchStarted('bot')
     trackEvent('bot_game_started', { mode: 'bot' })
     onNewMatchStart?.()
     setBoard(board)

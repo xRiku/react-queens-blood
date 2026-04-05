@@ -410,6 +410,7 @@ io.on("connection", (socket) => {
         game_id: parsed.gameId,
         mode: "multiplayer",
         player_count: 2,
+        start_reason: "initial",
       });
       game.readyStatus = null;
       game.currentTurnPlayerId = p1Id;
@@ -491,6 +492,7 @@ io.on("connection", (socket) => {
         game_id: parsed.gameId,
         mode: "multiplayer",
         player_count: 2,
+        start_reason: "rematch",
       });
       // Reset game state for rematch
       game.board = createInitialBoard();
