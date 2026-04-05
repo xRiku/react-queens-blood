@@ -64,6 +64,15 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
           getPlacedBgColor(amIP1, card?.placedByPlayerOne),
         )}
       >
+        {hasDelta && (
+          <span className={cn(
+            'hidden md:inline-flex absolute top-0 right-0 z-10 font-bold leading-tight rounded-bl rounded-tr-md px-0.5 text-[7px] xl:text-[9px]',
+            delta > 0 ? 'bg-green-500 text-white' : 'bg-red-500 text-white',
+          )}>
+            {delta > 0 ? '+' : ''}{delta}
+          </span>
+        )}
+
         <div className="absolute top-0 left-0 right-0 h-5 md:h-9 xl:h-11 px-1 pt-0.5 md:px-1.5 md:pt-1 flex items-start justify-between">
           <span className="flex -space-x-1">
             {Array.from({ length: card!.pawnsCost }).map((_, idx) => (
@@ -77,7 +86,7 @@ export default function Card({ card, placed = false, amIP1, effectivePoints }: C
           <span className="flex items-start gap-0.5">
             {hasDelta && (
               <span className={cn(
-                'font-bold leading-none rounded px-0.5 text-[6px] md:text-[8px] xl:text-[10px]',
+                'font-bold leading-none rounded px-0.5 text-[6px] md:hidden',
                 delta > 0 ? 'bg-green-500 text-white' : 'bg-red-500 text-white',
               )}>
                 {delta > 0 ? '+' : ''}{delta}
