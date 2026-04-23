@@ -137,7 +137,7 @@ export default function DeckBuilder() {
 
         {/* Scrollable card gallery */}
         <div className="flex-1 overflow-y-auto min-h-0 pb-2">
-          <div className="grid grid-cols-4 md:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-1.5 md:gap-2.5">
+          <div className="grid grid-cols-3 min-[480px]:grid-cols-4 md:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-1.5 md:gap-2.5">
             {allCards.map((card) => {
               const count = getCountInDeck(card.name)
               const maxed = count >= 2
