@@ -14,13 +14,13 @@
     "capture:deck": "tsx capture/deck-builder.ts"
   },
   "dependencies": {
-    "@remotion/cli": "4.0.443",
-    "@remotion/google-fonts": "4.0.443",
-    "@remotion/media": "4.0.443",
-    "@remotion/transitions": "4.0.443",
+    "@remotion/cli": "4.0.456",
+    "@remotion/google-fonts": "4.0.456",
+    "@remotion/media": "4.0.456",
+    "@remotion/transitions": "4.0.456",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "remotion": "4.0.443"
+    "remotion": "4.0.456"
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
