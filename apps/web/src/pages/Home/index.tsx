@@ -184,12 +184,6 @@ export default function Home() {
           >
             Deck Builder
           </button>
-          <button
-            onClick={() => navigate('/patch-notes')}
-            className="text-sm xl:text-base text-gray-500 hover:text-black underline underline-offset-2"
-          >
-            Patch Notes
-          </button>
         </div>
       </div>
       <HomeFooter />
