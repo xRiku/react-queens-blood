@@ -53,8 +53,8 @@ function EffectGrid({ card, compact = false }: { card: CardInfo; compact?: boole
               isOrigin && 'bg-white',
               !isOrigin && !hasPawn && !hasEffect && 'bg-gray-400',
               hasPawn && !hasEffect && 'bg-yellow-400',
-              hasEffect && !hasPawn && 'border-red-500 bg-gray-400',
-              hasPawn && hasEffect && 'border-red-500 bg-yellow-400',
+              hasEffect && !hasPawn && 'border-2 border-red-500 bg-gray-400',
+              hasPawn && hasEffect && 'border-2 border-red-500 bg-yellow-400',
             )}
           />
         )
