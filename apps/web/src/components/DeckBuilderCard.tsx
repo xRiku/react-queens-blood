@@ -30,9 +30,7 @@ export default function DeckBuilderCard({
 
   return (
     <button
-      onClick={() => {
-        if (!disabled) onClick()
-      }}
+      onClick={onClick}
       aria-disabled={disabled}
       onMouseEnter={onInspectStart}
       onMouseLeave={onInspectEnd}
@@ -43,16 +41,16 @@ export default function DeckBuilderCard({
         'group flex w-full flex-col items-center gap-1.5 text-left transition-[opacity,transform] duration-150 focus:outline-none',
         disabled
           ? 'cursor-not-allowed opacity-45'
-          : 'cursor-pointer hover:-translate-y-0.5',
+          : 'cursor-pointer md:hover:-translate-y-0.5',
       )}
     >
       <div
         className={cn(
           'flex w-full flex-col overflow-hidden rounded-md border bg-white shadow-sm aspect-[2/3] transition-[border-color,box-shadow,opacity,transform] duration-150',
-          selected && 'border-amber-300 shadow-[0_0_0_2px_rgba(250,204,21,0.55),0_18px_36px_rgba(15,23,42,0.22)]',
           disabled
             ? 'border-gray-300'
-            : 'border-gray-700 group-hover:border-black group-hover:shadow-md',
+            : 'border-gray-700 md:group-hover:border-black md:group-hover:shadow-md',
+          selected && 'border-yellow-400',
           'group-focus-visible:border-amber-400 group-focus-visible:shadow-[0_0_0_3px_rgba(250,204,21,0.38)]',
         )}
       >

@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import socket from '../socket'
 import useBoardStore from '../store/BoardStore'
@@ -11,13 +11,58 @@ import useSoundStore from '../store/SoundStore'
 import { Volume2, VolumeOff } from 'lucide-react'
 import { useServerHealth } from '../hooks/useServerHealth'
 import { trackEvent, trackServerOfflineSeenOnce, trackSiteVisitedOnce } from '../lib/analytics'
+import { useIsMobile } from '../hooks/useIsMobile'
+
+function getServerHealthDotClass({
+  isOnline,
+  isWaking,
+  isOffline,
+}: {
+  isOnline: boolean
+  isWaking: boolean
+  isOffline: boolean
+}) {
+  if (isOnline) return 'bg-green-500'
+  if (isWaking) return 'bg-amber-400 animate-pulse'
+  if (isOffline) return 'bg-red-500'
+  return 'bg-gray-300 animate-pulse'
+}
+
+function getServerHealthLabel({
+  isOnline,
+  isWaking,
+  isOffline,
+  retryCount,
+}: {
+  isOnline: boolean
+  isWaking: boolean
+  isOffline: boolean
+  retryCount: number
+}) {
+  if (isOnline) return 'Server online'
+  if (isWaking) return `Starting up… (${retryCount}/30)`
+  if (isOffline) return 'Server offline'
+  return 'Checking server…'
+}
 
 export default function DefaultLayout() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const isMobile = useIsMobile()
   const { isWaking, isOnline, isOffline, retryCount } = useServerHealth()
+  const hideServerHealth = isMobile && location.pathname === '/deck-builder'
 
-  const dotClass = isOnline ? 'bg-green-500' : isWaking ? 'bg-amber-400 animate-pulse' : isOffline ? 'bg-red-500' : 'bg-gray-300 animate-pulse'
-  const label = isOnline ? 'Server online' : isWaking ? `Starting up… (${retryCount}/30)` : isOffline ? 'Server offline' : 'Checking server…'
+  const dotClass = getServerHealthDotClass({
+    isOnline,
+    isWaking,
+    isOffline,
+  })
+  const label = getServerHealthLabel({
+    isOnline,
+    isWaking,
+    isOffline,
+    retryCount,
+  })
   const [resetBoardStore] = useBoardStore((state) => [state.resetStore])
   const [resetGameStore] = useGameStore((state) => [state.resetStore])
   const [resetPointsStore] = usePointStore((state) => [state.resetStore])
@@ -59,10 +104,12 @@ export default function DefaultLayout() {
 
   return (
     <div className="min-h-full min-[480px]:h-full overflow-x-hidden overflow-y-auto min-[480px]:overflow-y-hidden relative">
-      <div role="status" aria-live="polite" className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 z-50 flex items-center justify-center sm:justify-start gap-2 bg-white border border-gray-200 shadow-md rounded-full px-3 py-1.5 max-w-[calc(100vw-2rem)] sm:max-w-none">
-        <span className={`w-2 h-2 rounded-full ${dotClass}`} />
-        <span className="text-xs text-gray-600 whitespace-nowrap truncate">{label}</span>
-      </div>
+      {!hideServerHealth && (
+        <div role="status" aria-live="polite" className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 z-50 flex items-center justify-center sm:justify-start gap-2 bg-white border border-gray-200 shadow-md rounded-full px-3 py-1.5 max-w-[calc(100vw-2rem)] sm:max-w-none">
+          <span className={`w-2 h-2 rounded-full ${dotClass}`} />
+          <span className="text-xs text-gray-600 whitespace-nowrap truncate">{label}</span>
+        </div>
+      )}
       <button
         onClick={handleToggleMute}
         className="absolute top-4 right-6 z-50 p-2 rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-all cursor-pointer"
