@@ -37,7 +37,7 @@ export default function DeckBuilder() {
   )
 
   const isMobile = useIsMobile()
-  const [inspectedCard, setInspectedCard] = useState<CardInfo | null>(allCards.find((card) => card.effect) ?? allCards[0] ?? null)
+  const [inspectedCard, setInspectedCard] = useState<CardInfo | null>(null)
   const deckEntries = deduplicateDeck(deck)
   const deckFull = deck.length >= 15
 
