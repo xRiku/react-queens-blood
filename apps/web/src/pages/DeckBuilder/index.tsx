@@ -1,9 +1,11 @@
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import { allCards } from '@queens-blood/shared'
 import type { CardInfo } from '@queens-blood/shared'
 import { useShallow } from 'zustand/react/shallow'
 import MiniCard from '../../components/MiniCard'
 import DeckBuilderCard from '../../components/DeckBuilderCard'
+import CardDetailPanel from '../../components/CardDetailPanel'
 import useDeckStore from '../../store/DeckStore'
 import { cn } from '../../utils/cn'
 import { useIsMobile } from '../../hooks/useIsMobile'
@@ -35,6 +37,7 @@ export default function DeckBuilder() {
   )
 
   const isMobile = useIsMobile()
+  const [inspectedCard, setInspectedCard] = useState<CardInfo | null>(allCards.find((card) => card.effect) ?? allCards[0] ?? null)
   const deckEntries = deduplicateDeck(deck)
   const deckFull = deck.length >= 15
 
@@ -85,16 +88,28 @@ export default function DeckBuilder() {
             )}
           >
             {Array.from({ length: 15 }).map((_, i) => {
-              const entry = i < deckEntries.length ? deckEntries[i] : null
+              const entry = i < deckEntries.length
+                ? deckEntries[i]
+                : null
 
               return (
                 <div
                   key={i}
-                  role={entry ? 'button' : undefined}
-                  tabIndex={entry ? 0 : undefined}
-                  onClick={entry ? () => removeCard(entry.card.name) : undefined}
-                  onKeyDown={entry ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); removeCard(entry.card.name) } } : undefined}
-                  title={entry ? `Remove ${entry.card.name}` : undefined}
+                  role={entry
+                    ? 'button'
+                    : undefined}
+                  tabIndex={entry
+                    ? 0
+                    : undefined}
+                  onClick={entry
+                    ? () => removeCard(entry.card.name)
+                    : undefined}
+                  onKeyDown={entry
+                    ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); removeCard(entry.card.name) } }
+                    : undefined}
+                  title={entry
+                    ? `Remove ${entry.card.name}`
+                    : undefined}
                   className={cn(
                     'w-full flex flex-col items-center',
                     entry && 'group cursor-pointer',
@@ -108,11 +123,13 @@ export default function DeckBuilder() {
                         : 'border-dashed border-gray-300 bg-gray-50',
                     )}
                   >
-                    {entry ? (
-                      <MiniCard card={entry.card} />
-                    ) : (
-                      <div className="h-full w-full" />
-                    )}
+                    {entry
+                      ? (
+                        <MiniCard card={entry.card} />
+                        )
+                      : (
+                        <div className="h-full w-full" />
+                        )}
                   </div>
                   <span
                     className={cn(
@@ -135,24 +152,50 @@ export default function DeckBuilder() {
           Cards Available
         </h3>
 
-        {/* Scrollable card gallery */}
-        <div className="flex-1 overflow-y-auto min-h-0 pb-2">
-          <div className="grid grid-cols-3 min-[480px]:grid-cols-4 md:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-1.5 md:gap-2.5">
-            {allCards.map((card) => {
-              const count = getCountInDeck(card.name)
-              const maxed = count >= 2
-              const disabled = maxed || deckFull
+        <CardDetailPanel
+          card={inspectedCard}
+          compact
+          className="mb-2 shrink-0 md:hidden"
+          emptyLabel="Tap a card to inspect its official Queen's Blood ability text."
+        />
 
-              return (
-                <DeckBuilderCard
-                  key={card.name}
-                  card={card}
-                  count={count}
-                  disabled={disabled}
-                  onClick={() => addCard(card)}
-                />
-              )
-            })}
+        {/* Scrollable card gallery */}
+        <div className="grid flex-1 min-h-0 gap-4 md:grid-cols-[minmax(0,1fr)_minmax(18rem,22rem)] xl:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className="min-h-0 overflow-y-auto pb-2 pr-0 md:pr-1">
+            <div className="grid grid-cols-3 min-[480px]:grid-cols-4 md:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-1.5 md:gap-2.5">
+              {allCards.map((card) => {
+                const count = getCountInDeck(card.name)
+                const maxed = count >= 2
+                const disabled = maxed || deckFull
+
+                return (
+                  <DeckBuilderCard
+                    key={card.name}
+                    card={card}
+                    count={count}
+                    disabled={disabled}
+                    selected={inspectedCard?.name === card.name}
+                    onInspectStart={() => setInspectedCard(card)}
+                    onInspectEnd={() => {
+                      if (!isMobile) setInspectedCard(null)
+                    }}
+                    onClick={() => {
+                      setInspectedCard(card)
+                      addCard(card)
+                    }}
+                  />
+                )
+              })}
+            </div>
+          </div>
+
+          <div className="hidden min-h-0 md:block">
+            <div className="sticky top-0">
+              <CardDetailPanel
+                card={inspectedCard}
+                emptyLabel="Hover or focus any card to inspect its official Queen's Blood ability text."
+              />
+            </div>
           </div>
         </div>
 

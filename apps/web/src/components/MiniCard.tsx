@@ -52,7 +52,7 @@ export default function MiniCard({ card, className }: MiniCardProps) {
       </div>
 
       {/* Name */}
-      <div title={card.description} className="bg-black text-yellow-400 text-[7px] leading-tight text-center px-0.5 py-0.5 rounded-b font-medium truncate flex items-center justify-center gap-0.5">
+      <div className="bg-black text-yellow-400 text-[7px] leading-tight text-center px-0.5 py-0.5 rounded-b font-medium truncate flex items-center justify-center gap-0.5">
         {card.name}
       </div>
     </div>

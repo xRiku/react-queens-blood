@@ -7,14 +7,20 @@ type DeckBuilderCardProps = {
   card: CardInfo
   count: number
   disabled: boolean
+  selected?: boolean
   onClick: () => void
+  onInspectStart?: () => void
+  onInspectEnd?: () => void
 }
 
 export default function DeckBuilderCard({
   card,
   count,
   disabled,
+  selected = false,
   onClick,
+  onInspectStart,
+  onInspectEnd,
 }: DeckBuilderCardProps) {
   const countBadgeClass = count >= 2
     ? 'bg-yellow-400 text-black border-yellow-400'
@@ -24,10 +30,17 @@ export default function DeckBuilderCard({
 
   return (
     <button
-      onClick={onClick}
-      disabled={disabled}
+      onClick={() => {
+        if (!disabled) onClick()
+      }}
+      aria-disabled={disabled}
+      onMouseEnter={onInspectStart}
+      onMouseLeave={onInspectEnd}
+      onFocus={onInspectStart}
+      onBlur={onInspectEnd}
+      aria-label={`${card.name}. ${card.description}`}
       className={cn(
-        'group flex w-full flex-col items-center gap-1.5 text-left transition-[opacity,transform] duration-150',
+        'group flex w-full flex-col items-center gap-1.5 text-left transition-[opacity,transform] duration-150 focus:outline-none',
         disabled
           ? 'cursor-not-allowed opacity-45'
           : 'cursor-pointer hover:-translate-y-0.5',
@@ -35,10 +48,12 @@ export default function DeckBuilderCard({
     >
       <div
         className={cn(
-          'flex w-full flex-col overflow-hidden rounded-md border bg-white shadow-sm aspect-[2/3] transition-[border-color,box-shadow,opacity] duration-150',
+          'flex w-full flex-col overflow-hidden rounded-md border bg-white shadow-sm aspect-[2/3] transition-[border-color,box-shadow,opacity,transform] duration-150',
+          selected && 'border-amber-300 shadow-[0_0_0_2px_rgba(250,204,21,0.55),0_18px_36px_rgba(15,23,42,0.22)]',
           disabled
             ? 'border-gray-300'
             : 'border-gray-700 group-hover:border-black group-hover:shadow-md',
+          'group-focus-visible:border-amber-400 group-focus-visible:shadow-[0_0_0_3px_rgba(250,204,21,0.38)]',
         )}
       >
         {/* Top row: pawns + points */}
@@ -65,7 +80,7 @@ export default function DeckBuilderCard({
                     ? 'bg-white'
                     : pawn === 3
                       ? 'bg-yellow-400 border-red-500'
-                    : pawn === 2
+                      : pawn === 2
                         ? 'bg-gray-400 border-red-500'
                         : pawn === 1
                           ? 'bg-yellow-400'
@@ -77,10 +92,7 @@ export default function DeckBuilderCard({
         </div>
 
         {/* Name */}
-        <div
-          title={card.description}
-          className="flex items-center justify-center border-t border-yellow-400 bg-black px-1 py-1 text-center text-[8px] font-medium leading-tight text-yellow-400 min-[480px]:px-1.5 min-[480px]:py-1.5 min-[480px]:text-[10px] md:px-2 md:py-2 md:text-xs"
-        >
+        <div className="flex items-center justify-center border-t border-yellow-400 bg-black px-1 py-1 text-center text-[8px] font-medium leading-tight text-yellow-400 min-[480px]:px-1.5 min-[480px]:py-1.5 min-[480px]:text-[10px] md:px-2 md:py-2 md:text-xs">
           <span className="block w-full truncate">{card.name}</span>
         </div>
       </div>
