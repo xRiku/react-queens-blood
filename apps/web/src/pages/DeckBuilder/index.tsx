@@ -104,6 +104,18 @@ export default function DeckBuilder() {
                   onClick={entry
                     ? () => removeCard(entry.card.name)
                     : undefined}
+                  onMouseEnter={entry
+                    ? () => setInspectedCard(entry.card)
+                    : undefined}
+                  onMouseLeave={entry && !isMobile
+                    ? () => setInspectedCard(null)
+                    : undefined}
+                  onFocus={entry
+                    ? () => setInspectedCard(entry.card)
+                    : undefined}
+                  onBlur={entry && !isMobile
+                    ? () => setInspectedCard(null)
+                    : undefined}
                   onKeyDown={entry
                     ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); removeCard(entry.card.name) } }
                     : undefined}
@@ -119,8 +131,10 @@ export default function DeckBuilder() {
                     className={cn(
                       'w-full aspect-[2/3] rounded overflow-hidden border',
                       entry
-                        ? 'border-gray-700 bg-white group-hover:opacity-60 transition-opacity'
+                        ? 'border-gray-700 bg-white transition-[border-color,box-shadow,opacity] group-hover:opacity-60'
                         : 'border-dashed border-gray-300 bg-gray-50',
+                      entry && inspectedCard && entry.card.name === inspectedCard.name &&
+                      'border-amber-400 shadow-[0_0_0_2px_rgba(250,204,21,0.45)]',
                     )}
                   >
                     {entry

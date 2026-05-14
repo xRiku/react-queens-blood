@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { deckCards } from '@queens-blood/shared'
+import { allCards, deckCards } from '@queens-blood/shared'
 import type { CardInfo } from '@queens-blood/shared'
 
 type DeckStoreType = {
@@ -10,12 +10,19 @@ type DeckStoreType = {
   clearDeck: () => void
 }
 
+const availableCardNames = new Set(allCards.map(card => card.name))
+
+function sanitizeDeck(deck: CardInfo[]) {
+  return deck.filter(card => availableCardNames.has(card.name))
+}
+
 const useDeckStore = create<DeckStoreType>()(
   persist(
     (set, get) => ({
-      deck: [...deckCards],
+      deck: sanitizeDeck([...deckCards]),
 
       addCard: (card) => {
+        if (!availableCardNames.has(card.name)) return
         const { deck } = get()
         if (deck.length >= 15) return
         const count = deck.filter(c => c.name === card.name).length
@@ -39,6 +46,16 @@ const useDeckStore = create<DeckStoreType>()(
     }),
     {
       name: 'queens-blood-deck',
+      merge: (persistedState, currentState) => {
+        const persistedDeck = (persistedState as Partial<DeckStoreType> | undefined)
+          ?.deck
+
+        return {
+          ...currentState,
+          ...(persistedState as Partial<DeckStoreType> | undefined),
+          deck: sanitizeDeck(persistedDeck ?? currentState.deck),
+        }
+      },
     },
   ),
 )

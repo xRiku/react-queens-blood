@@ -79,9 +79,9 @@ export default function DeckBuilderCard({
                   index === 12
                     ? 'bg-white'
                     : pawn === 3
-                      ? 'bg-yellow-400 border-red-500'
+                      ? 'border-2 border-red-500 bg-yellow-400 md:border-2'
                       : pawn === 2
-                        ? 'bg-gray-400 border-red-500'
+                        ? 'border-2 border-red-500 bg-gray-400 md:border-2'
                         : pawn === 1
                           ? 'bg-yellow-400'
                           : 'bg-gray-400',
